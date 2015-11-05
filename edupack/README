@@ -1,0 +1,186 @@
+  ###########################################################################
+  ##      README                                                           ##
+  ##                                                                       ##
+  ##      BSPedupack Version 1.02                                          ##
+  ##      Copyright (C) 2004 Rob H. Bisseling                              ##
+  ##                                                                       ##
+  ##      BSPedupack is released under the GNU GENERAL PUBLIC LICENSE      ##
+  ##      Version 2, June 1991 (given in the file LICENSE)                 ##
+  ##                                                                       ##
+  ###########################################################################
+
+To compile the whole BSPedupack package on a UNIX system:
+    $ make
+(where the $ stands for the prompt).
+
+This produces five executables:
+    ip     for inner product computation (Chapter 1)
+    bench  for BSP benchmarking (Chapter 1)
+    lu     for LU decomposition (Chapter 2)
+    fft    for fast Fourier transforms (Chapter 3)
+    matvec for sparse matrix-vector multiplication (Chapter 4)
+
+To produce only the ip program:
+    $ make ip
+
+To clean up, deleting object files and executables:
+    $ make clean
+
+---------------------------------------------------------------
+To run the ip program on at most three processors:
+    $ bsprun -npes 3 ip
+    How many processors do you want to use?
+    2
+    Please enter n:
+    10
+    Processor 0: sum of squares up to 10*10 is 385
+    This took only 0.001064 seconds.
+    Processor 1: sum of squares up to 10*10 is 385
+The program or the user can decide to use less than three
+processors; here two processors are actually used.
+Note that the output of the different processors is multiplexed
+and hence can be garbled.
+
+---------------------------------------------------------------
+To run the bench program on four processors:
+    $ bsprun -npes 4 bench
+    How many processors do you want to use?
+    4
+    n=     1 min=   5.333 max=   6.349 av=   5.743 Mflop/s  fool=    0.0
+    n=     2 min=   7.921 max=   8.000 av=   7.941 Mflop/s  fool=   -9.1
+    n=     4 min=   8.649 max=   8.696 av=   8.684 Mflop/s  fool=  -27.3
+    n=     8 min=   9.040 max=   9.091 av=   9.059 Mflop/s  fool=  -63.8
+    n=    16 min=   9.249 max=   9.275 av=   9.262 Mflop/s  fool= -136.7
+    n=    32 min=   9.357 max=   9.364 av=   9.362 Mflop/s  fool= -282.4
+    n=    64 min=   8.755 max=   9.415 av=   9.117 Mflop/s  fool= -574.0
+    n=   128 min=   9.433 max=   9.441 av=   9.437 Mflop/s  fool=-1157.1
+    n=   256 min=   8.909 max=   9.452 av=   9.261 Mflop/s  fool=-2323.3
+    n=   512 min=   6.917 max=   9.449 av=   8.796 Mflop/s  fool=-4655.8
+    n=  1024 min=   7.981 max=   9.437 av=   9.047 Mflop/s  fool=-9320.7
+    Time of     0-relation= 0.000027 sec=      242 flops
+    Time of     1-relation= 0.000099 sec=      892 flops
+    Time of     2-relation= 0.000167 sec=     1510 flops
+    Time of     3-relation= 0.000286 sec=     2585 flops
+    ...
+    Time of   254-relation= 0.001190 sec=    10767 flops
+    Time of   255-relation= 0.001183 sec=    10700 flops
+    Time of   256-relation= 0.001195 sec=    10807 flops
+    size of double = 8 bytes
+    Range h=0 to p   : g= 633.9, l= 290.9
+    Range h=p to HMAX: g= 35.8, l= 2157.2
+    The bottom line for this BSP computer is:
+    p= 4, r= 9.047 Mflop/s, g= 35.8, l= 2157.2
+Note that you may have to change the parameters to perform sensible
+benchmarks. Decrease NITERS if timing takes too long; increase it if 
+the resolution of the clock is low. Increase MAXH if you are interested
+in larger h-relations.
+
+It is always useful to plot the time of an h-relation
+as a function of h, e.g. by using gnuplot.
+To do this, delete all lines from the output except those starting with
+"Time of", name the resulting file bench_out, and use the gnuplot command
+    plot [0:256] 'bench_out' using 3:6
+Plotting is mandatory if you get negative values for g or l.
+
+---------------------------------------------------------------
+To run the lu program on four processors
+using a square cyclic distribution:
+    $ bsprun -npes 4 lu
+    Please enter number of processor rows M:
+    2
+    Please enter number of processor columns N:
+    2
+    Please enter matrix size n:
+    3
+    LU decomposition of 3 by 3 matrix
+    using the 2 by 2 cyclic distribution
+    Start of LU decomposition
+    End of LU decomposition
+    This took only 0.004386 seconds.
+    
+    The output permutation is:
+    i=0, pi=1, proc=(0,0)
+    i=2, pi=0, proc=(0,0)
+    i=1, pi=2, proc=(1,0)
+    
+    The output matrix is:
+    i=0, j=0, a=1.000000, proc=(0,0)
+    i=0, j=2, a=1.000000, proc=(0,0)
+    i=2, j=0, a=0.500000, proc=(0,0)
+    i=0, j=1, a=1.000000, proc=(0,1)
+    i=1, j=0, a=0.500000, proc=(1,0)
+    i=1, j=2, a=1.000000, proc=(1,0)
+    i=1, j=1, a=1.000000, proc=(1,1)
+    i=2, j=1, a=0.500000, proc=(0,1)
+    i=2, j=2, a=1.000000, proc=(0,0)
+Note that on output pi(i)= i+1 mod n,
+and a[i,j]= 1 for i<=j and a[i,j]= 0.5 for i>j.
+To prevent huge amounts of output for large n,
+remove some print statements.
+
+---------------------------------------------------------------
+To run the fft program on four processors,
+
+    $ bsprun -npes 4 fft
+    How many processors do you want to use?
+    4
+    Please enter length n: 
+    8
+    FFT of vector of length 8 using 4 processors
+    performing 5 forward and 5 backward transforms
+    proc=0 j=0 Re= 0.000000 Im= 1.000000 
+    proc=0 j=4 Re= 4.000000 Im= 1.000000 
+    proc=1 j=1 Re= 1.000000 Im= 1.000000 
+    proc=2 j=2 Re= 2.000000 Im= 1.000000 
+    proc=1 j=5 Re= 5.000000 Im= 1.000000 
+    proc=2 j=6 Re= 6.000000 Im= 1.000000 
+    proc=3 j=3 Re= 3.000000 Im= 1.000000 
+    proc=3 j=7 Re= 7.000000 Im= 1.000000 
+    Time per initialization = 0.000445 sec 
+    Time per FFT = 0.000508 sec 
+    Computing rate in FFT = 0.267717 Mflop/s 
+    Absolute error= 3.140185e-16 
+    Relative error= 3.925231e-17 
+
+The problem size n must satisfy n >= 2p,
+and n,p must be powers of two.
+Note that on output Re=j and Im=1. The error 
+and flop rate are computed automatically.
+To prevent huge amounts of output for large p,
+change NPRINT (the number of values per processor printed).
+Decrease NITERS if timing takes too long; increase it if
+the resolution of the clock is low.
+
+---------------------------------------------------------------
+To run the matvec program on two processors,
+ 
+    $ bsprun -npes 2 matvec
+    How many processors do you want to use?
+    2
+    Sparse matrix-vector multiplication using 2 processors
+    Please enter the filename of the matrix distribution
+    test.mtx-P2
+    Please enter the filename of the v-vector distribution
+    test.mtx-v2
+    Please enter the filename of the u-vector distribution
+    test.mtx-u2
+    Initialization for matrix-vector multiplications
+    Start of 10 matrix-vector multiplications.
+    End of matrix-vector multiplications.
+    Initialization took only 0.002390 seconds.
+    Each matvec took only 0.000398 seconds.
+    The computed solution is:
+    proc=0 i=0, u=11.000000 
+    proc=0 i=1, u=6.000000 
+    proc=0 i=3, u=41.000000 
+    proc=1 i=2, u=45.000000 
+    proc=1 i=4, u=92.000000 
+The three input files have been provided. They are in the output format
+of the sparse-matrix partitioner Mondriaan. The matrix is taken from 
+Example 4.2 in the accompanying book, and the data distribution
+is as given in Figure 4.3. Note that the vector distributions
+are read from file, but that the numerical values of the input vector are
+set to (1.0, 2.0, 3.0, ..., n) by the driver program bspmv_test.
+As a result, v differs from the vector v displayed in Figure 4.3,
+and u from the displayed u.
+The number of processors in this small test is fixed at p=2.

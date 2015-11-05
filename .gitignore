@@ -1,4 +1,13 @@
-*.opensdf
 *.sdf
+*.sln
+*.suo
 *.filters
-Debug/
+*.user
+bin/*
+build/
+*.opensdf
+*.vcxproj
+*.filters
+*.user
+*.vsp
+*.psess
