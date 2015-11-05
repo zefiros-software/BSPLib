@@ -9,9 +9,11 @@
 #include <future>
 #include <mutex>
 #include <stdarg.h>
+#include <cstring>
+#include <vector>
+#include <exception>
 #include <iterator>
-#include <iostream>
-#include <sstream>
+#include <cstddef>
 
 thread_local static size_t gPID = 0;
 
@@ -22,9 +24,11 @@ class BSP
 public:
 
     BSP()
-        : mAbort( false ),
+        : mThreadBarrier( 0 ),
+          mProcCount( 0 ),
+          mTagSize( 0 ),
           mEnded( true ),
-          mThreadBarrier( 0 )
+          mAbort( false )
     {
     }
 
@@ -73,18 +77,18 @@ public:
         }
     }
 
-    size_t PID() const
+    static size_t PID()
     {
         return gPID;
     }
 
-    double Time()
+    double Time() const
     {
         CheckAborted();
 
         const std::chrono::time_point< std::chrono::high_resolution_clock > now =
             std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> diff = now - mStartTimes[gPID];
+        std::chrono::duration<double> diff = now - mStartTime;
         return diff.count() / 1000000000.0;
     }
 
@@ -102,14 +106,14 @@ public:
 
     void Begin( size_t maxProcs )
     {
-        if ( mThreads.size() > 0 )
+        if ( gPID )
         {
-            StartTiming();
             return;
         }
 
         mAbort = false;
-        mEnded = true;
+        mEnded = false;
+        mProcCount = maxProcs;
 
         mRegisters.clear();
         mRegisters.resize( maxProcs );
@@ -136,16 +140,12 @@ public:
         mPopRequests.resize( maxProcs );
 
         mThreadBarrier.SetSize( maxProcs );
-        mProcCount = maxProcs;
 
         mNewTagSize.clear();
         mNewTagSize.resize( maxProcs );
 
         mSendReceivedIndex.clear();
         mSendReceivedIndex.resize( maxProcs );
-
-        mStartTimes.clear();
-        mStartTimes.resize( maxProcs );
 
         mThreads.reserve( maxProcs );
 
@@ -155,13 +155,21 @@ public:
             {
                 gPID = pid;
 
-                if ( mEntry )
+                try
                 {
-                    mEntry();
+                    if ( mEntry )
+                    {
+                        mEntry();
+                    }
+                    else
+                    {
+                        main( 0, nullptr );
+                    }
+
                 }
-                else
+                catch ( BSPAbort & )
                 {
-                    main( 0, nullptr );
+                    // pass
                 }
             }, i ) );
         }
@@ -234,7 +242,7 @@ public:
             }
         }
 
-        for ( volatile size_t owner = 0; owner < mProcCount; ++owner )
+        for ( size_t owner = 0; owner < mProcCount; ++owner )
         {
             std::vector< PutRequest > &putQueue = mPutRequests.GetQueueToMe( owner );
 
@@ -264,7 +272,7 @@ public:
     {
         CheckAborted();
 
-        assert( gPID >= 0 && gPID < mProcCount );
+        assert( gPID < mProcCount );
         assert( mRegisters.size() > gPID );
         assert( mRegisterCount.size() > gPID );
         assert( mThreadRegisterLocation.size() > gPID );
@@ -276,7 +284,7 @@ public:
     {
         CheckAborted();
 
-        assert( gPID >= 0 && gPID < mProcCount );
+        assert( gPID < mProcCount );
         assert( mRegisters.size() > gPID );
         assert( mRegisterCount.size() > gPID );
         assert( mThreadRegisterLocation.size() > gPID );
@@ -362,7 +370,41 @@ public:
         }
     }
 
+    bool IsEnded() const
+    {
+        return mEnded;
+    }
+
+    static BSP &GetInstance()
+    {
+        static BSP mBSP;
+        return mBSP;
+    }
+
 private:
+
+    class BSPAbort
+        : public std::exception
+    {
+    public:
+
+        BSPAbort( std::string m )
+            : msg( m )
+        {
+        }
+
+        ~BSPAbort() throw()
+        {
+        }
+
+        const char *what() const throw()
+        {
+            return msg.c_str();
+        }
+
+    private:
+        std::string msg;
+    };
 
     class Barrier
     {
@@ -384,11 +426,11 @@ private:
         {
             std::unique_lock<std::mutex> lock( mMutex );
 
-            /*if ( aborted && *aborted )
+            if ( aborted && *aborted )
             {
                 mConVar.notify_all();
-                std::terminate();
-            }*/
+                throw BSPAbort( "Thread Exited" );
+            }
 
             if ( --mCount == 0 )
             {
@@ -552,7 +594,7 @@ private:
 
     std::vector< std::future< void > > mThreads;
     std::function< void() > mEntry;
-    std::vector< std::chrono::time_point< std::chrono::high_resolution_clock > > mStartTimes;
+    std::chrono::time_point< std::chrono::high_resolution_clock > mStartTime;
     size_t mProcCount;
     std::vector<size_t> mNewTagSize;
     size_t mTagSize;
@@ -562,7 +604,7 @@ private:
 
     void StartTiming()
     {
-        mStartTimes[gPID] = std::chrono::high_resolution_clock::now();
+        mStartTime = std::chrono::high_resolution_clock::now();
     }
 
     void SyncPoint()
@@ -570,7 +612,7 @@ private:
         mThreadBarrier.Wait( &mAbort );
     }
 
-    void CheckAborted()
+    void CheckAborted() const
     {
         if ( mAbort )
         {
@@ -580,135 +622,118 @@ private:
 
 };
 
-static BSP *gBSP = NULL;
-
-
-
 inline void bsp_init( void( *spmd )( void ), int argc, char **argv )
 {
-    if ( gBSP == NULL )
-    {
-        static BSP gSBSP;
-        gBSP = &gSBSP;
-    }
-
-    gBSP->Init( spmd, argc, argv );
+    BSP::GetInstance().Init( spmd, argc, argv );
 }
 
 inline void bsp_begin( size_t P )
 {
-    if ( gBSP == NULL )
-    {
-        bsp_init( []()
-        {
-            main( 0, NULL );
-        }, 0, NULL );
-    }
-
-    gBSP->Begin( P );
+    BSP::GetInstance().Begin( P );
 }
 
 inline void bsp_end()
 {
-    gBSP->End();
+    BSP::GetInstance().End();
 }
 
 inline size_t bsp_pid()
 {
-    return gBSP->PID();
+    return BSP::GetInstance().PID();
 }
 
 inline size_t bsp_nprocs()
 {
-    return gBSP->NProcs();
+    return BSP::GetInstance().NProcs();
 }
 
 inline void bsp_abort( const char *error_message, ... )
 {
-    gBSP->Abort( error_message );
+    BSP::GetInstance().Abort( error_message );
 }
 
 inline void bsp_vabort( const char *error_message, va_list args )
 {
-    gBSP->VAbort( error_message, args );
+    BSP::GetInstance().VAbort( error_message, args );
 }
 
 inline void bsp_sync()
 {
-    return gBSP->Sync();
+    BSP::GetInstance().Sync();
 }
 
 inline double bsp_time()
 {
-    return gBSP->Time();
+    return BSP::GetInstance().Time();
 }
 
 inline void bsp_push_reg( const void *ident, size_t size )
 {
-    gBSP->PushReg( ident, size );
+    BSP::GetInstance().PushReg( ident, size );
 }
 
 inline void bsp_pop_reg( const void *ident )
 {
-    gBSP->PopReg( ident );
+    BSP::GetInstance().PopReg( ident );
 }
 
 inline void bsp_put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
 {
-    gBSP->Put( pid, src, dst, offset, nbytes );
+    BSP::GetInstance().Put( pid, src, dst, offset, nbytes );
 }
 
 inline void bsp_get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
 {
-    gBSP->Get( pid, src, offset, dst, nbytes );
+    BSP::GetInstance().Get( pid, src, offset, dst, nbytes );
 }
 
 inline void bsp_set_tagsize( size_t *size )
 {
-    gBSP->SetTagsize( size );
+    BSP::GetInstance().SetTagsize( size );
 }
 
 inline void bsp_send( uint32_t pid, const void *tag, const void *payload, const size_t size )
 {
-    gBSP->Send( pid, tag, payload, size );
+    BSP::GetInstance().Send( pid, tag, payload, size );
 }
 
 inline void bsp_hpsend( uint32_t pid, const void *tag, const void *payload, const size_t size )
 {
-    gBSP->Send( pid, tag, payload, size );
+    BSP::GetInstance().Send( pid, tag, payload, size );
 }
 
 inline void bsp_qsize( size_t *packets, size_t *accumulated_size )
 {
-    gBSP->QSize( packets, accumulated_size );
+    BSP::GetInstance().QSize( packets, accumulated_size );
 }
 
 inline void bsp_get_tag( size_t *status, void *tag )
 {
-    gBSP->GetTag( status, tag );
+    BSP::GetInstance().GetTag( status, tag );
 }
 
 inline void bsp_move( void *payload, const size_t max_copy_size )
 {
-    gBSP->Move( payload, max_copy_size );
+    BSP::GetInstance().Move( payload, max_copy_size );
 }
 
 inline size_t bsp_hpmove( void **tag_ptr, void **payload_ptr )
 {
+    BSP &bsp = BSP::GetInstance();
     size_t status;
-    gBSP->GetTag( &status, *tag_ptr );
-    gBSP->Move( *payload_ptr, status );
+    bsp.GetTag( &status, *tag_ptr );
+    bsp.Move( *payload_ptr, status );
     return status;
 }
 
 inline void bsp_hpput( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
 {
-    gBSP->Put( pid, src, dst, offset, nbytes );
+    BSP::GetInstance().Put( pid, src, dst, offset, nbytes );
 }
 
 inline void bsp_hpget( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
 {
-    gBSP->Get( pid, src, offset, dst, nbytes );
+    BSP::GetInstance().Get( pid, src, offset, dst, nbytes );
 }
 
 #endif

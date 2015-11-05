@@ -35,7 +35,7 @@ void BspTest( BSP &bsp )
     bsp.End();
 }
 
-#define BSPTEST 1
+#define BSPTEST 0
 
 
 #if BSPTEST == 0

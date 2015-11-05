@@ -34,6 +34,17 @@ solution "bsp-library"
     configuration "Release"     
         flags "LinkTimeOptimization"
         optimize "Speed"
+			
+    configuration "gmake"
+        linkoptions {
+            "-Wl,--no-as-needed",
+            "-pthread"
+            }
+            
+        buildoptions {
+            "-std=c++11",
+            "-pthread"
+            }   
                 
     configuration {}
             
@@ -44,12 +55,13 @@ solution "bsp-library"
         flags "WinMain"
 
         includedirs {
+            root .. "bsp/",
             root
             }   
             
         files { 
-            root .. "lib/**.h",
-            root .. "lib/**.cpp",
+            root .. "bsp/**.h",
+            root .. "bsp/**.cpp",
             }
             
     project "bench"
@@ -59,7 +71,7 @@ solution "bsp-library"
         flags "WinMain"
 
         includedirs {
-            root .. "lib/",
+            root .. "bsp/",
             root .. "edupack/"
             }   
             

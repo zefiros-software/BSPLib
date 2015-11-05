@@ -11,3 +11,5 @@ build/
 *.user
 *.vsp
 *.psess
+*.make
+Makefile
