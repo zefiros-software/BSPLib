@@ -88,6 +88,7 @@ public:
 
         const std::chrono::time_point< std::chrono::high_resolution_clock > now =
             std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> diff = now - mStartTimes[gPID];
         std::chrono::duration<double> diff = now - mStartTime;
         return diff.count() / 1000000000.0;
     }
@@ -108,6 +109,7 @@ public:
     {
         if ( gPID )
         {
+            StartTiming();
             return;
         }
 
@@ -147,6 +149,8 @@ public:
         mSendReceivedIndex.clear();
         mSendReceivedIndex.resize( maxProcs );
 
+        mStartTimes.clear();
+        mStartTimes.resize( maxProcs );
         mThreads.reserve( maxProcs );
 
         for ( uint32_t i = 1; i < mProcCount; ++i )
