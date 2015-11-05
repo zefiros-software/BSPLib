@@ -598,7 +598,6 @@ private:
     std::vector< std::future< void > > mThreads;
     std::function< void() > mEntry;
     std::vector< std::chrono::time_point< std::chrono::high_resolution_clock > > mStartTimes;
-    std::chrono::time_point< std::chrono::high_resolution_clock > mStartTime;
     size_t mProcCount;
     std::vector<size_t> mNewTagSize;
     size_t mTagSize;
@@ -608,7 +607,7 @@ private:
 
     void StartTiming()
     {
-        mStartTime = std::chrono::high_resolution_clock::now();
+        mStartTimes[gPID] = std::chrono::high_resolution_clock::now();
     }
 
     void SyncPoint()
