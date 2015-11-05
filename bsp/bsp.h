@@ -89,7 +89,6 @@ public:
         const std::chrono::time_point< std::chrono::high_resolution_clock > now =
             std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> diff = now - mStartTimes[gPID];
-        std::chrono::duration<double> diff = now - mStartTime;
         return diff.count() / 1000000000.0;
     }
 
