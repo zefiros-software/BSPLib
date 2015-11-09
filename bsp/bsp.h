@@ -89,7 +89,7 @@ public:
         const std::chrono::time_point< std::chrono::high_resolution_clock > now =
             std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> diff = now - mStartTimes[gPID];
-        return diff.count() / 1000000000.0;
+        return diff.count();
     }
 
     void Init( std::function< void() > entry, uint32_t argc, char *argv[] )
@@ -424,7 +424,9 @@ private:
     public:
 
         explicit Barrier( std::size_t count )
-            : mCount( count ),
+            : mCurrentCon( &mConVar1 ),
+              mPreviousCon( &mConVar2 ),
+              mCount( count ),
               mMax( count )
         {
         }
@@ -441,31 +443,106 @@ private:
 
             if ( aborted && *aborted )
             {
-                mConVar.notify_all();
+                mCurrentCon->notify_all();
                 throw BSPAbort( "Thread Exited" );
             }
 
             if ( --mCount == 0 )
             {
                 Reset();
-                mConVar.notify_all();
+
             }
             else
             {
-                mConVar.wait( lock );
+                mCurrentCon->wait( lock );
             }
-        }
-
-        void Reset()
-        {
-            mCount = mMax;
         }
 
     private:
         std::mutex mMutex;
-        std::condition_variable mConVar;
+        std::condition_variable mConVar1;
+        std::condition_variable mConVar2;
+
+        std::condition_variable *mCurrentCon;
+        std::condition_variable *mPreviousCon;
+
         size_t mCount;
         size_t mMax;
+
+        void Reset()
+        {
+            mCount = mMax;
+            std::condition_variable *tmpCon = mCurrentCon;
+            mCurrentCon = mPreviousCon;
+            mPreviousCon = tmpCon;
+
+            tmpCon->notify_all();
+        }
+    };
+
+    class SpinningBarrier
+    {
+    public:
+
+        explicit SpinningBarrier( size_t count )
+            : mCount1( count ),
+              mCount2( count ),
+              mMax( count ),
+              mCondition1( false ),
+              mCondtion2( false ),
+              mCurrentCon( &mCondition1 ),
+              mPreviousCon( &mCondtion2 ),
+              mCurrentCount( &mCount1 ),
+              mPreviousCount( &mCount2 )
+        {
+
+        }
+
+        void SetSize( size_t count )
+        {
+            mCount1 = count;
+            mCount2 = count;
+            mMax = count;
+        }
+
+        void Wait( std::atomic_bool *aborted )
+        {
+            mMutex.lock();
+
+            size_t &count = *mCurrentCount;
+            std::atomic_bool &condition = *mCurrentCon;
+
+            if ( aborted && *aborted )
+            {
+                condition = true;
+                throw BSPAbort( "Thread Exited" );
+            }
+
+            if ( --count == 0 )
+            {
+                std::swap( mCurrentCount, mPreviousCount );
+                std::swap( mCurrentCon, mPreviousCon );
+                *mCurrentCount = mMax;
+                *mCurrentCon = false;
+                condition = true;
+            }
+
+            mMutex.unlock();
+
+            while ( !condition ) {}
+        }
+
+    private:
+
+        std::mutex mMutex;
+
+        size_t mCount1, mCount2;
+        size_t mMax;
+
+        std::atomic_bool mCondition1, mCondtion2;
+
+        std::atomic_bool *mCurrentCon, *mPreviousCon;
+        size_t *mCurrentCount, *mPreviousCount;
     };
 
     struct RegisterInfo
