@@ -35,7 +35,29 @@ void BspTest( BSP &bsp )
     bsp.End();
 }
 
-#define BSPTEST 0
+void SyncTest()
+{
+    bsp_begin( 8 );
+
+    size_t pid = bsp_pid();
+
+    uint32_t j = 0;
+    bsp_push_reg( &j, 4 );
+    bsp_sync();
+
+    for ( uint32_t i = 0; i < 1000000; ++i )
+    {
+        bsp_put( ( pid + 1 ) % 8, &j, &j, 0, 4 );
+        bsp_sync();
+
+        assert( j == i );
+        ++j;
+    }
+
+    bsp_end();
+}
+
+#define BSPTEST 2
 
 
 #if BSPTEST == 0
@@ -63,5 +85,12 @@ int main( int argc, char **argv )
 }
 #endif
 
-#if BSPTEST == 1
+#if BSPTEST == 2
+int main( int argc, char **argv )
+{
+    bsp_init( SyncTest, argc, argv );
+
+    SyncTest();
+    system( "pause" );
+}
 #endif
