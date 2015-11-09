@@ -252,7 +252,15 @@ public:
             for ( auto putRequest = putQueue.rbegin(), end = putQueue.rend(); putRequest != end; ++putRequest )
             {
                 std::vector< char > &buffer = putRequest->buffer;
-                memcpy( ( char * )putRequest->destination, &*buffer.begin(), buffer.size() );
+
+                assert( buffer.size() > 0 );
+                {
+                    char *dstCheck = ( char * )mThreadRegisterLocation[gPID][putRequest->globalId];
+                    assert( dstCheck + putRequest->offset == putRequest->destination );
+                    assert( putRequest->buffer.size() + putRequest->offset <= mRegisters[gPID][dstCheck].size );
+                }
+
+                memcpy( ( char * )putRequest->destination, buffer.data(), buffer.size() );
             }
 
             putQueue.clear();
@@ -307,7 +315,9 @@ public:
         assert( mRegisters[pid][mThreadRegisterLocation[pid][globalId]].size >= nbytes );
 
         const char *dstBuff = reinterpret_cast<const char *>( mThreadRegisterLocation[pid][globalId] );
-        mPutRequests.GetQueueFromMe( pid ).emplace_back( PutRequest{ std::vector< char >( srcBuff, srcBuff + nbytes ), dstBuff + offset } );
+        mPutRequests.GetQueueFromMe( pid ).emplace_back( PutRequest{ std::vector< char >( srcBuff, srcBuff + nbytes ), dstBuff + offset, globalId, offset } );
+
+        assert( mPutRequests.GetQueueFromMe( pid ).back().buffer.size() == nbytes );
     }
 
     void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
@@ -500,6 +510,8 @@ private:
     {
         std::vector< char > buffer;
         const void *destination;
+        size_t globalId;
+        ptrdiff_t offset;
     };
 
     struct GetRequest
