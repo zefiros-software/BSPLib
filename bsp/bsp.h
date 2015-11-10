@@ -29,7 +29,7 @@ public:
 
     BSP()
         : mThreadBarrier( 0 ),
-          mThreadBuffers( 0 ),
+          mThreadBufferStacks( 0 ),
           mProcCount( 0 ),
           mTagSize( 0 ),
           mEnded( true ),
@@ -146,7 +146,9 @@ public:
         mPopRequests.resize( maxProcs );
 
         mThreadBarrier.SetSize( maxProcs );
-        mThreadBuffers.SetSize( maxProcs );
+
+        mThreadBufferStacks.clear();
+        mThreadBufferStacks.resize( maxProcs );
 
         mNewTagSize.clear();
         mNewTagSize.resize( maxProcs );
@@ -219,10 +221,9 @@ public:
             {
                 const char *srcBuff = reinterpret_cast<const char *>( request->source );
 
-                std::vector< char > *buffer = mThreadBuffers.Aquire( request->size );
-                memcpy( buffer->data(), srcBuff, request->size );
+                StackAllocator::StackLocation bufferLocation = mThreadBufferStacks[gPID].Alloc( request->size, srcBuff );
 
-                mPutRequests.GetQueueFromMe( owner ).emplace_back( PutRequest{ buffer, request->destination } );
+                mPutRequests.GetQueueFromMe( owner ).emplace_back( PutRequest{ bufferLocation, request->destination, request->size } );
             }
 
             getQueue.clear();
@@ -260,8 +261,6 @@ public:
 
             for ( auto putRequest = putQueue.rbegin(), end = putQueue.rend(); putRequest != end; ++putRequest )
             {
-                std::vector< char > *buffer = putRequest->buffer;
-
 #ifndef SKIP_CHECKS
                 assert( buffer->size() > 0 );
                 {
@@ -270,16 +269,15 @@ public:
                     assert( buffer->size() + putRequest->offset <= mRegisters[gPID][dstCheck].size );
                 }
 #endif
-
-                memcpy( ( char * )putRequest->destination, buffer->data(), buffer->size() );
-
-                mThreadBuffers.Release( buffer );
+                mThreadBufferStacks[owner].Extract( putRequest->bufferLocation, putRequest->size, ( char * )putRequest->destination );
             }
 
             putQueue.clear();
         }
 
         SyncPoint();
+
+        mThreadBufferStacks[gPID].Clear();
 
         for ( const auto &pushRequest : mPushRequests[gPID] )
         {
@@ -336,9 +334,10 @@ public:
 #endif
 
         const char *dstBuff = reinterpret_cast<const char *>( mThreadRegisterLocation[pid][globalId] );
-        std::vector< char > *buffer = mThreadBuffers.Aquire( nbytes );
-        memcpy( buffer->data(), srcBuff, nbytes );
-        mPutRequests.GetQueueFromMe( pid ).emplace_back( PutRequest{ buffer, dstBuff + offset, globalId, offset } );
+        //std::vector< char > *buffer = mThreadBuffers.Aquire( nbytes );
+        StackAllocator::StackLocation bufferLocation = mThreadBufferStacks[gPID].Alloc( nbytes, srcBuff );
+
+        mPutRequests.GetQueueFromMe( pid ).emplace_back( PutRequest{ bufferLocation, dstBuff + offset, nbytes } );
 
 #ifndef SKIP_CHECKS
         assert( mPutRequests.GetQueueFromMe( pid ).back().buffer->size() == nbytes );
@@ -536,10 +535,10 @@ private:
             {
                 while ( mGeneration == myGeneration )
                 {
-                    if ( aborted )
+                    /*if ( aborted )
                     {
                         throw BSPAbort( "Thread Exited" );
-                    }
+                    }*/
                 }
             }
         }
@@ -566,11 +565,11 @@ private:
             mEntryCounts.resize( count );
         }
 
-        void Wait( std::atomic_bool *aborted )
+        void Wait( std::atomic_bool &aborted )
         {
             size_t myCount = ++mEntryCounts[gPID];
 
-            if ( aborted && *aborted )
+            if ( aborted )
             {
                 throw BSPAbort( "Thread Exited" );
             }
@@ -580,14 +579,14 @@ private:
                 while ( count < myCount )
                 {
                     // Besides being useful in breaking the loop, this check forces the count reference to sync
-                    if ( aborted && aborted->load() )
+                    if ( aborted.load( std::memory_order_acquire ) )
                     {
                         break;
                     }
                 }
             }
 
-            if ( aborted && *aborted )
+            if ( aborted )
             {
                 throw BSPAbort( "Thread Exited" );
             }
@@ -635,6 +634,65 @@ private:
         std::atomic_flag mLockValue;
 
         SpinLock( const SpinLock & );
+    };
+
+    class StackAllocator
+    {
+    public:
+
+        typedef std::ptrdiff_t StackLocation;
+
+        StackAllocator()
+            : mStack( 10, '@' ),
+              mCursor( 0 )
+        {}
+
+        StackAllocator( size_t size )
+            : mStack( size, '@' ),
+              mCursor( 0 )
+        {}
+
+        inline bool FitsInStack( size_t size )
+        {
+            return mCursor + size < mStack.size();
+        }
+
+
+        inline StackLocation Alloc( size_t size, const char *content )
+        {
+            if ( !FitsInStack( size ) )
+            {
+                Grow( size );
+            }
+
+            StackLocation loc = mCursor;
+            char *buffer = mStack.data() + loc;
+            memcpy( buffer, content, size );
+
+            mCursor += size;
+
+            return loc;
+        }
+
+        inline void Extract( StackLocation location, size_t size, char *dst ) const
+        {
+            memcpy( dst, mStack.data() + location, size );
+        }
+
+        inline void Clear()
+        {
+            mCursor = 0;
+        }
+
+    private:
+
+        std::vector< char > mStack;
+        StackLocation mCursor;
+
+        inline void Grow( size_t size )
+        {
+            mStack.resize( static_cast< size_t >( mStack.size() * 1.6f ) + size, '~' );
+        }
     };
 
     class CommunicationBuffers
@@ -715,10 +773,9 @@ private:
 
     struct PutRequest
     {
-        std::vector< char > *buffer;
+        StackAllocator::StackLocation bufferLocation;
         const void *destination;
-        size_t globalId;
-        ptrdiff_t offset;
+        size_t size;
     };
 
     struct GetRequest
@@ -798,8 +855,8 @@ private:
         }
     };
 
-    Barrier mThreadBarrier;
-    CommunicationBuffers mThreadBuffers;
+    CondVarBarrier mThreadBarrier;
+    std::vector< StackAllocator > mThreadBufferStacks;
 
     CommunicationQueues< std::vector< PutRequest > > mPutRequests;
     CommunicationQueues< std::vector< GetRequest > > mGetRequests;
