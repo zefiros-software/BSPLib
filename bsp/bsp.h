@@ -465,6 +465,54 @@ private:
         std::atomic_int_fast32_t mGeneration;
     };
 
+    class SpinningCountBarrier
+    {
+    public:
+
+        explicit SpinningCountBarrier( size_t count )
+            : mEntryCounts( count )
+        {
+        }
+
+        void SetSize( size_t count )
+        {
+            mEntryCounts.clear();
+            mEntryCounts.resize( count );
+        }
+
+        void Wait( std::atomic_bool *aborted )
+        {
+            size_t myCount = ++mEntryCounts[gPID];
+
+            if ( aborted && *aborted )
+            {
+                throw BSPAbort( "Thread Exited" );
+            }
+
+            for ( size_t &count : mEntryCounts )
+            {
+                while ( count < myCount )
+                {
+                    // Besides being useful in breaking the loop, this check forces the count reference to sync
+                    if ( aborted && aborted->load() )
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if ( aborted && *aborted )
+            {
+                throw BSPAbort( "Thread Exited" );
+            }
+        }
+
+    private:
+
+        std::vector< size_t > mEntryCounts;
+    };
+
+
     struct RegisterInfo
     {
         size_t size;
