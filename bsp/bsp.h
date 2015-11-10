@@ -15,6 +15,8 @@
 #include <iterator>
 #include <cstddef>
 
+#define SKIP_CHECKS
+
 thread_local static size_t gPID = 0;
 
 extern int main( int argc, char **argv );
@@ -258,12 +260,14 @@ public:
             {
                 std::vector< char > *buffer = putRequest->buffer;
 
+#ifndef SKIP_CHECKS
                 assert( buffer->size() > 0 );
                 {
                     char *dstCheck = ( char * )mThreadRegisterLocation[gPID][putRequest->globalId];
                     assert( dstCheck + putRequest->offset == putRequest->destination );
                     assert( buffer->size() + putRequest->offset <= mRegisters[gPID][dstCheck].size );
                 }
+#endif
 
                 memcpy( ( char * )putRequest->destination, buffer->data(), buffer->size() );
 
@@ -290,10 +294,12 @@ public:
     {
         CheckAborted();
 
+#ifndef SKIP_CHECKS
         assert( gPID < mProcCount );
         assert( mRegisters.size() > gPID );
         assert( mRegisterCount.size() > gPID );
         assert( mThreadRegisterLocation.size() > gPID );
+#endif
 
         mPushRequests[ gPID ].push_back( { ident, { size, mRegisterCount[ gPID ]++ } } );
     }
@@ -302,31 +308,39 @@ public:
     {
         CheckAborted();
 
+#ifndef SKIP_CHECKS
         assert( gPID < mProcCount );
         assert( mRegisters.size() > gPID );
         assert( mRegisterCount.size() > gPID );
         assert( mThreadRegisterLocation.size() > gPID );
+#endif
 
         mPopRequests[ gPID ].push_back( { ident } );
     }
 
     void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
     {
+#ifndef SKIP_CHECKS
         assert( pid < mProcCount );
         assert( gPID < mProcCount );
+#endif
 
         const char *srcBuff = reinterpret_cast<const char *>( src );
         const size_t globalId = mRegisters[gPID][dst].registerCount;
 
+#ifndef SKIP_CHECKS
         assert( mThreadRegisterLocation[ pid ].size() > globalId );
         assert( mRegisters[pid][mThreadRegisterLocation[pid][globalId]].size >= nbytes );
+#endif
 
         const char *dstBuff = reinterpret_cast<const char *>( mThreadRegisterLocation[pid][globalId] );
         std::vector< char > *buffer = mThreadBuffers.Aquire( nbytes );
         memcpy( buffer->data(), srcBuff, nbytes );
         mPutRequests.GetQueueFromMe( pid ).emplace_back( PutRequest{ buffer, dstBuff + offset, globalId, offset } );
 
+#ifndef SKIP_CHECKS
         assert( mPutRequests.GetQueueFromMe( pid ).back().buffer->size() == nbytes );
+#endif
     }
 
     void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
