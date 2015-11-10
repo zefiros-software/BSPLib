@@ -25,6 +25,7 @@ public:
 
     BSP()
         : mThreadBarrier( 0 ),
+          mThreadBuffers( 0 ),
           mProcCount( 0 ),
           mTagSize( 0 ),
           mEnded( true ),
@@ -141,6 +142,7 @@ public:
         mPopRequests.resize( maxProcs );
 
         mThreadBarrier.SetSize( maxProcs );
+        mThreadBuffers.SetSize( maxProcs );
 
         mNewTagSize.clear();
         mNewTagSize.resize( maxProcs );
@@ -213,7 +215,10 @@ public:
             {
                 const char *srcBuff = reinterpret_cast<const char *>( request->source );
 
-                mPutRequests.GetQueueFromMe( owner ).push_back( { std::vector< char >( srcBuff, srcBuff + request->size ), request->destination } );
+                std::vector< char > *buffer = mThreadBuffers.Aquire( request->size );
+                memcpy( buffer->data(), srcBuff, request->size );
+
+                mPutRequests.GetQueueFromMe( owner ).emplace_back( PutRequest{ buffer, request->destination } );
             }
 
             getQueue.clear();
@@ -251,16 +256,18 @@ public:
 
             for ( auto putRequest = putQueue.rbegin(), end = putQueue.rend(); putRequest != end; ++putRequest )
             {
-                std::vector< char > &buffer = putRequest->buffer;
+                std::vector< char > *buffer = putRequest->buffer;
 
-                assert( buffer.size() > 0 );
+                assert( buffer->size() > 0 );
                 {
                     char *dstCheck = ( char * )mThreadRegisterLocation[gPID][putRequest->globalId];
                     assert( dstCheck + putRequest->offset == putRequest->destination );
-                    assert( putRequest->buffer.size() + putRequest->offset <= mRegisters[gPID][dstCheck].size );
+                    assert( buffer->size() + putRequest->offset <= mRegisters[gPID][dstCheck].size );
                 }
 
-                memcpy( ( char * )putRequest->destination, buffer.data(), buffer.size() );
+                memcpy( ( char * )putRequest->destination, buffer->data(), buffer->size() );
+
+                mThreadBuffers.Release( buffer );
             }
 
             putQueue.clear();
@@ -315,9 +322,11 @@ public:
         assert( mRegisters[pid][mThreadRegisterLocation[pid][globalId]].size >= nbytes );
 
         const char *dstBuff = reinterpret_cast<const char *>( mThreadRegisterLocation[pid][globalId] );
-        mPutRequests.GetQueueFromMe( pid ).emplace_back( PutRequest{ std::vector< char >( srcBuff, srcBuff + nbytes ), dstBuff + offset, globalId, offset } );
+        std::vector< char > *buffer = mThreadBuffers.Aquire( nbytes );
+        memcpy( buffer->data(), srcBuff, nbytes );
+        mPutRequests.GetQueueFromMe( pid ).emplace_back( PutRequest{ buffer, dstBuff + offset, globalId, offset } );
 
-        assert( mPutRequests.GetQueueFromMe( pid ).back().buffer.size() == nbytes );
+        assert( mPutRequests.GetQueueFromMe( pid ).back().buffer->size() == nbytes );
     }
 
     void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
@@ -551,9 +560,84 @@ private:
         SpinLock( const SpinLock & );
     };
 
+    class CommunicationBuffers
+    {
+    public:
+
+        CommunicationBuffers( size_t count )
+            : mBuffers( count )
+        {
+        }
+
+        ~CommunicationBuffers()
+        {
+            Clear();
+        }
+
+        void SetSize( size_t count )
+        {
+            if ( count < mCount )
+            {
+                for ( auto threadBuffers = mBuffers.begin() + mCount, end = mBuffers.end(); threadBuffers != end; ++threadBuffers )
+                {
+                    for ( auto &buffers : *threadBuffers )
+                    {
+                        for ( std::vector< char > *buffer : buffers.second )
+                        {
+                            delete buffer;
+                        }
+                    }
+                }
+            }
+
+            mCount = count;
+            mBuffers.resize( count );
+        }
+
+        std::vector< char > *Aquire( size_t size )
+        {
+            std::vector< std::vector< char > * > &buffers = mBuffers[gPID][size];
+
+            if ( buffers.size() > 0 )
+            {
+                std::vector< char > *buffer = buffers.back();
+                buffers.pop_back();
+                return buffer;
+            }
+            else
+            {
+                return new std::vector< char >( size );
+            }
+        }
+
+        void Release( std::vector< char > *buffer )
+        {
+            mBuffers[gPID][buffer->size()].push_back( buffer );
+        }
+
+        void Clear()
+        {
+            for ( auto &threadBuffers : mBuffers )
+            {
+                for ( auto &buffers : threadBuffers )
+                {
+                    for ( std::vector< char > *buffer : buffers.second )
+                    {
+                        delete buffer;
+                    }
+                }
+            }
+        }
+
+    private:
+
+        std::vector< std::unordered_map< size_t, std::vector< std::vector< char > * > >  > mBuffers;
+        size_t mCount;
+    };
+
     struct PutRequest
     {
-        std::vector< char > buffer;
+        std::vector< char > *buffer;
         const void *destination;
         size_t globalId;
         ptrdiff_t offset;
@@ -637,6 +721,7 @@ private:
     };
 
     Barrier mThreadBarrier;
+    CommunicationBuffers mThreadBuffers;
 
     CommunicationQueues< std::vector< PutRequest > > mPutRequests;
     CommunicationQueues< std::vector< GetRequest > > mGetRequests;
