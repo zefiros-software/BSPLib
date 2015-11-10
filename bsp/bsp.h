@@ -15,7 +15,9 @@
 #include <iterator>
 #include <cstddef>
 
+#ifndef DEBUG
 #define SKIP_CHECKS
+#endif
 
 thread_local static size_t gPID = 0;
 
@@ -446,9 +448,9 @@ private:
     {
     public:
 
-        Barrier( uint32_t count_ ) :
-            mCount( count_ ),
-            mSpaces( count_ ),
+        Barrier( uint32_t count ) :
+            mCount( count ),
+            mSpaces( count ),
             mGeneration( 0 )
         {
         }
@@ -460,7 +462,7 @@ private:
             mGeneration = 0;
         }
 
-        __declspec( noinline ) void Wait( std::atomic_bool *aborted )
+        __declspec( noinline ) void Wait( std::atomic_bool &aborted )
         {
             const uint32_t myGeneration = mGeneration;
 
@@ -473,7 +475,7 @@ private:
             {
                 while ( mGeneration == myGeneration )
                 {
-                    if ( aborted && *aborted )
+                    if ( aborted )
                     {
                         throw BSPAbort( "Thread Exited" );
                     }
@@ -579,7 +581,8 @@ private:
     public:
 
         CommunicationBuffers( size_t count )
-            : mBuffers( count )
+            : mBuffers( count ),
+              mCount( count )
         {
         }
 
@@ -768,7 +771,7 @@ private:
 
     void SyncPoint()
     {
-        mThreadBarrier.Wait( &mAbort );
+        mThreadBarrier.Wait( mAbort );
     }
 
     void CheckAborted() const
