@@ -2,7 +2,7 @@
 #ifndef __BARRIER_H__
 #define __BARRIER_H__
 
-#include "bspAbort.h"
+#include "bsp/bspAbort.h"
 
 namespace BspInternal
 {

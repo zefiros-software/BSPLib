@@ -14,3 +14,4 @@ build/
 *.make
 Makefile
 My Amplifier XE Results*
+*.orig

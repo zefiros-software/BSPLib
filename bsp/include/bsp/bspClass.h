@@ -2,17 +2,17 @@
 #ifndef __BSPCLASS_H__
 #define __BSPCLASS_H__
 
-#include "barrier.h"
-#include "requests.h"
-#include "condVarBarrier.h"
-#include "communicationQueues.h"
+#include "bsp/communicationQueues.h"
+#include "bsp/condVarBarrier.h"
+#include "bsp/requests.h"
+#include "bsp/barrier.h"
 
-#include <stdarg.h>
-#include <future>
 #include <unordered_map>
 #include <assert.h>
 #include <iterator>
 #include <map>
+#include <stdarg.h>
+#include <future>
 
 extern int main( int argc, char **argv );
 

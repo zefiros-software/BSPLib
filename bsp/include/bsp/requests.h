@@ -2,7 +2,7 @@
 #ifndef __REQUESTS_H__
 #define __REQUESTS_H__
 
-#include "stackAllocator.h"
+#include "bsp/stackAllocator.h"
 
 namespace BspInternal
 {

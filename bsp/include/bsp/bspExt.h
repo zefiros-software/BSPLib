@@ -2,7 +2,7 @@
 #ifndef __BSPEXT_H__
 #define __BSPEXT_H__
 
-#include "bsp.h"
+#include "bsp/bspLib.h"
 
 template< typename tPrimitive >
 void bsp_push_reg( tPrimitive &ident )

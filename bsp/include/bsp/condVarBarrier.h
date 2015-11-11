@@ -2,7 +2,7 @@
 #ifndef __CONDVARBARRIER_H__
 #define __CONDVARBARRIER_H__
 
-#include "bspAbort.h"
+#include "bsp/bspAbort.h"
 
 #include <mutex>
 

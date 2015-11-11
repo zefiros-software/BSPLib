@@ -55,12 +55,12 @@ solution "bsp-library"
         flags "WinMain"
 
         includedirs {
-            root .. "bsp/",
+            root .. "bsp/include/",
             }   
             
         files { 
-            root .. "bsp/**.h",
-            root .. "bsp/**.cpp",
+            root .. "bsp/include/**.h",
+            root .. "bsp/include/**.cpp",
             }
             
     project "bench"
@@ -70,7 +70,7 @@ solution "bsp-library"
         flags "WinMain"
 
         includedirs {
-            root .. "bsp/",
+            root .. "bsp/include/",
             root .. "edupack/"
             }   
             
@@ -89,7 +89,7 @@ solution "bsp-library"
         defines "M_PI=3.14159265358979323846"
 
         includedirs {
-            root .. "bsp/",
+            root .. "bsp/include/",
             root .. "edupack/"
             }   
             
@@ -109,7 +109,7 @@ solution "bsp-library"
         defines "M_PI=3.14159265358979323846"
 
         includedirs {
-            root .. "bsp/",
+            root .. "bsp/include/",
             root .. "edupack/"
             }   
             
@@ -127,7 +127,7 @@ solution "bsp-library"
         flags "WinMain"
 
         includedirs {
-            root .. "bsp/",
+            root .. "bsp/include/",
             root .. "edupack/"
             }   
             
@@ -144,7 +144,7 @@ solution "bsp-library"
         flags "WinMain"
 
         includedirs {
-            root .. "bsp/",
+            root .. "bsp/include/",
             root .. "edupack/"
             }   
             
@@ -164,7 +164,7 @@ solution "bsp-library"
         defines "M_PI=3.14159265358979323846"
 
         includedirs {
-            root .. "bsp/",
+            root .. "bsp/include/",
             root .. "edupack/"
             }   
             
@@ -184,7 +184,7 @@ solution "bsp-library"
         defines "M_PI=3.14159265358979323846"
 
         includedirs {
-            root .. "bsp/",
+            root .. "bsp/include/",
             root .. "edupack/"
             }   
             
