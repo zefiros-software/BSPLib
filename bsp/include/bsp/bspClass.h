@@ -215,8 +215,6 @@ public:
 
         ProcessPopRequests( pid );
 
-        assert( mTagSize == mNewTagSize[pid] );
-
         ProcessSendRequests( pid );
 
         ProcessPutRequests( pid );
@@ -303,6 +301,7 @@ public:
 
         assert( pid < mProcCount );
         assert( tpid < mProcCount );
+        assert( mNewTagSize[tpid] == mTagSize );
 
         const char *srcBuff = reinterpret_cast<const char *>( payload );
         const char *tagBuff = reinterpret_cast<const char *>( tag );
@@ -396,7 +395,7 @@ private:
     std::vector< std::chrono::time_point< std::chrono::high_resolution_clock > > mStartTimes;
     size_t mProcCount;
     std::vector<size_t> mNewTagSize;
-    size_t mTagSize;
+    std::atomic_size_t mTagSize;
 
     bool mEnded;
     std::atomic_bool mAbort;
