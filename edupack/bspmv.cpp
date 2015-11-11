@@ -55,7 +55,7 @@ void bspmv(int p, int s, int n, int nz, int nrows, int ncols,
     vloc= vecallocd(ncols);
     bsp_push_reg(v,nv*SZDBL);
     tagsz= SZINT;
-    bsp_set_tagsize(&tagsz);
+    bsp_set_tagsize((size_t *)&tagsz);
     bsp_sync();
 
     /****** Superstep 1. Fanout ******/
@@ -85,13 +85,13 @@ void bspmv(int p, int s, int n, int nz, int nrows, int ncols,
     bsp_sync();
 
     /****** Superstep 3. Summation of nonzero partial sums ******/
-    bsp_qsize(&nsums,&nbytes);
-    bsp_get_tag(&status,&i);
+    bsp_qsize((size_t *)&nsums,(size_t *)&nbytes);
+    bsp_get_tag((size_t *)&status,&i);
     for(k=0; k<nsums; k++){
         /* status != -1, but its value is not used */
         bsp_move(&sum,SZDBL); 
         u[i] += sum;
-        bsp_get_tag(&status,&i);
+        bsp_get_tag((size_t *)&status,&i);
     }
 
     bsp_pop_reg(v);

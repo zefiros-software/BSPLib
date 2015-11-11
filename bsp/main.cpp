@@ -1,38 +1,35 @@
-#include "bsp.h"
-#include "edupack/bspedupack.h"
+#include "bspExt.h"
 
 #include <iostream>
 #include <sstream>
 
-void BspTest( BSP &bsp )
+void BspTest()
 {
-    bsp.Begin( 20 );
+    bsp_begin( 20 );
 
-    size_t s = bsp.PID();
-    size_t nprocs = bsp.NProcs();
+    size_t s = bsp_pid();
+    size_t nprocs = bsp_nprocs();
 
     size_t i = s;
 
-    bsp.PushReg( &i, sizeof( uint32_t ) );
+    bsp_push_reg( i );
 
-    bsp.Sync();
+    bsp_sync();
 
-    //bsp.Get( ( s + 7 ) % nprocs, &i, 0, &i, sizeof( uint32_t ) );
+    bsp_send( ( uint32_t )( ( s + 7 ) % nprocs ), NULL, i );
 
-    bsp.Send( ( uint32_t )( ( s + 7 ) % nprocs ), NULL, &i, sizeof( uint32_t ) );
+    bsp_sync();
 
-    bsp.Sync();
-
-    bsp.Move( &i, sizeof( uint32_t ) );
+    bsp_move( i );
 
     std::stringstream ss;
-    ss << gPID << " has " << i << "\n";
+    ss << s << " has " << i << "\n";
 
     std::cout << ss.str();
 
-    bsp.PopReg( &i );
+    bsp_pop_reg( i );
 
-    bsp.End();
+    bsp_end();
 }
 
 void SyncTest()
@@ -57,20 +54,15 @@ void SyncTest()
     bsp_end();
 }
 
-#define BSPTEST 2
+#define BSPTEST 0
 
 
 #if BSPTEST == 0
 int main( int argc, char **argv )
 {
-    BSP bsp;
+    bsp_init( BspTest, argc, argv );
 
-    bsp.Init( [&bsp]()
-    {
-        BspTest( bsp );
-    }, argc, argv );
-
-    BspTest( bsp );
+    BspTest();
 
     system( "pause" );
 }

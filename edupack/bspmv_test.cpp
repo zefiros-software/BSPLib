@@ -73,7 +73,7 @@ void bspinput2triple(int p, int s, int *pnA, int *pnz,
     bsp_push_reg(&nA,SZINT);
     bsp_push_reg(&nz,SZINT);
     tagsz= sizeof(indexpair);
-    bsp_set_tagsize(&tagsz);
+    bsp_set_tagsize((size_t *)&tagsz);
     bsp_sync();
 
     if (s==0){
@@ -130,7 +130,7 @@ void bspinput2triple(int p, int s, int *pnA, int *pnz,
         if (s==q){
             /* Store the received nonzeros */
             for(k=0; k<nz; k++){
-                bsp_get_tag(&status,&t);
+                bsp_get_tag((size_t *)&status,&t);
                 ia[k]= t.i;
                 ja[k]= t.j;
                 bsp_move(&a[k],SZDBL);

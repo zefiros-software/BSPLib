@@ -233,7 +233,8 @@ int main( int argc, char **argv )
     bsp_init( bspbench, argc, argv );
     printf( "How many processors do you want to use?\n" );
     fflush( stdout );
-    scanf( "%d", &P );
+    //scanf( "%d", &P );
+    P = 8;
 
     if ( P > bsp_nprocs() )
     {
