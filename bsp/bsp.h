@@ -19,7 +19,9 @@
 #define SKIP_CHECKS
 #endif
 
-thread_local static size_t gPID = 0;
+#define  SKIP_CHECKS
+
+thread_local static size_t gPID = 0xdeadbeef;
 
 extern int main( int argc, char **argv );
 
