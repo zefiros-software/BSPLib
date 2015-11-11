@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <assert.h>
 #include <iterator>
+#include <map>
 
 extern int main( int argc, char **argv );
 
@@ -19,14 +20,14 @@ class BSP
 {
 public:
 
-    void VAbort( const char *format, va_list args )
+    BSP_FORCEINLINE void VAbort( const char *format, va_list args )
     {
         mAbort = true;
         vfprintf( stderr, format, args );
         CheckAborted();
     }
 
-    void Abort( const char *format, ... )
+    BSP_FORCEINLINE void Abort( const char *format, ... )
     {
         va_list args;
         va_start( args, format );
@@ -38,12 +39,12 @@ public:
         va_end( args );
     }
 
-    size_t NProcs() const
+    BSP_FORCEINLINE size_t NProcs() const
     {
         return mProcCount > 0 ? mProcCount : std::thread::hardware_concurrency();
     }
 
-    void QSize( size_t *packets, size_t *accumulated_size )
+    BSP_FORCEINLINE void QSize( size_t *packets, size_t *accumulated_size )
     {
         *packets = 0;
 
@@ -64,14 +65,14 @@ public:
         }
     }
 
-    size_t &PID()
+    BSP_FORCEINLINE size_t &PID()
     {
         static thread_local size_t gPID = 0xdeadbeef;
 
         return gPID;
     }
 
-    double Time()
+    BSP_FORCEINLINE double Time()
     {
         CheckAborted();
 
@@ -81,7 +82,7 @@ public:
         return diff.count();
     }
 
-    void Init( std::function< void() > entry, uint32_t, char *[] )
+    BSP_FORCEINLINE void Init( std::function< void() > entry, uint32_t, char *[] )
     {
         mEntry = entry;
         mTagSize = 0;
@@ -145,7 +146,7 @@ public:
         mThreadBarrier.SetSize( maxProcs );
 
         mPutBufferStacks.clear();
-        mPutBufferStacks.resize( maxProcs );
+        mPutBufferStacks.resize( maxProcs, 9064 );
 
         mNewTagSize.clear();
         mNewTagSize.resize( maxProcs );
@@ -197,7 +198,7 @@ public:
         }
     }
 
-    void Sync()
+    BSP_FORCEINLINE void Sync()
     {
         size_t &pid = PID();
 
@@ -229,7 +230,7 @@ public:
         SyncPoint();
     }
 
-    void PushReg( const void *ident, size_t size )
+    BSP_FORCEINLINE void PushReg( const void *ident, size_t size )
     {
         size_t &pid = PID();
 
@@ -257,7 +258,7 @@ public:
         mPopRequests[pid].emplace_back( BspInternal::PopRequest{ ident } );
     }
 
-    void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
+    BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
     {
         size_t &tpid = PID();
 
@@ -280,7 +281,7 @@ public:
         mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::PutRequest{ bufferLocation, dstBuff + offset, nbytes } );
     }
 
-    void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
+    BSP_FORCEINLINE void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
     {
         size_t &tpid = PID();
 
@@ -296,7 +297,7 @@ public:
         mGetRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::GetRequest{ dst, srcBuff + offset, nbytes } );
     }
 
-    void Send( uint32_t pid, const void *tag, const void *payload, const size_t size )
+    BSP_FORCEINLINE void Send( uint32_t pid, const void *tag, const void *payload, const size_t size )
     {
         size_t &tpid = PID();
 
@@ -314,7 +315,7 @@ public:
         mTmpSendRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::SendRequest{ bufferLocation, size, tagLocation, mTagSize } );
     }
 
-    void Move( void *payload, size_t max_copy_size_in )
+    BSP_FORCEINLINE void Move( void *payload, size_t max_copy_size_in )
     {
         size_t &pid = PID();
 
@@ -329,14 +330,14 @@ public:
         mSendBuffers[pid].Extract( request.bufferLocation, copySize, ( char * )payload );
     }
 
-    void SetTagsize( size_t *size )
+    BSP_FORCEINLINE void SetTagsize( size_t *size )
     {
         const size_t newSize = *size;
         *size = mTagSize;
         mNewTagSize[PID()] = newSize;
     }
 
-    void GetTag( size_t *status, void *tag )
+    BSP_FORCEINLINE void GetTag( size_t *status, void *tag )
     {
         size_t &pid = PID();
         *status = ( size_t ) - 1;
@@ -357,12 +358,12 @@ public:
         }
     }
 
-    bool IsEnded() const
+    BSP_FORCEINLINE bool IsEnded() const
     {
         return mEnded;
     }
 
-    static BSP &GetInstance()
+    BSP_FORCEINLINE static BSP &GetInstance()
     {
         static BSP mBSP;
         return mBSP;
@@ -387,7 +388,7 @@ private:
     std::vector< std::vector< BspInternal::PopRequest > > mPopRequests;
 
     std::vector< size_t > mRegisterCount;
-    std::vector<std::unordered_map< const void *, BspInternal::RegisterInfo > > mRegisters;
+    std::vector< std::map< const void *, BspInternal::RegisterInfo > > mRegisters;
     std::vector< std::vector< const void * > > mThreadRegisterLocation;
 
     std::vector< std::future< void > > mThreads;

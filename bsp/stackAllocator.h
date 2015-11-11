@@ -2,6 +2,8 @@
 #ifndef __STACKALLOCATOR_H__
 #define __STACKALLOCATOR_H__
 
+#include "util.h"
+
 #include <vector>
 
 namespace BspInternal
@@ -15,27 +17,29 @@ namespace BspInternal
         StackAllocator()
             : mStack( 10, '@' ),
               mCursor( 0 )
-        {}
+        {
+        }
 
         StackAllocator( size_t size )
             : mStack( size, '@' ),
               mCursor( 0 )
-        {}
+        {
+        }
 
-        inline bool FitsInStack( size_t size )
+        BSP_FORCEINLINE bool FitsInStack( size_t size )
         {
             return mCursor + size < mStack.size();
         }
 
 
-        inline StackLocation Alloc( size_t size, const char *content )
+        BSP_FORCEINLINE StackLocation Alloc( size_t size, const char *content )
         {
             if ( !FitsInStack( size ) )
             {
                 Grow( size );
             }
 
-            StackLocation loc = mCursor;
+            const StackLocation loc = mCursor;
             char *buffer = mStack.data() + loc;
             memcpy( buffer, content, size );
 
@@ -71,7 +75,7 @@ namespace BspInternal
         std::vector< char > mStack;
         StackLocation mCursor;
 
-        inline void Grow( size_t size )
+        BSP_FORCEINLINE void Grow( size_t size )
         {
             mStack.resize( static_cast<size_t>( mStack.size() * 1.6f ) + size, '~' );
         }

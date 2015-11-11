@@ -56,7 +56,7 @@ void leastsquares( int h0, int h1, double *t, double *g, double *l )
 
 } /* end leastsquares */
 
-void bspbench()
+__declspec( noinline ) void bspbench()
 {
     void leastsquares( int h0, int h1, double * t, double * g, double * l );
     int p, s, s1, iter, i, n, h, destproc[MAXH], destindex[MAXH];
@@ -234,7 +234,7 @@ int main( int argc, char **argv )
     printf( "How many processors do you want to use?\n" );
     fflush( stdout );
     //scanf( "%d", &P );
-    P = 8;
+    P = 2;
 
     if ( P > bsp_nprocs() )
     {
@@ -243,7 +243,7 @@ int main( int argc, char **argv )
     }
 
     bspbench();
-    system( "pause" );
+    //system( "pause" );
     exit( 0 );
 
 } /* end main */
