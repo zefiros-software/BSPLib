@@ -2,6 +2,8 @@
 #ifndef __COMMUNICATIONQUEUES_H__
 #define __COMMUNICATIONQUEUES_H__
 
+#include <vector>
+
 namespace BspInternal
 {
     template< typename tQueue >

@@ -6,7 +6,7 @@
 #define SKIP_CHECKS
 #endif
 
-#include "bspClass.h"
+#include "bsp/bspClass.h"
 
 inline void bsp_init( void( *spmd )( void ), int argc, char **argv )
 {
