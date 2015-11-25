@@ -13,7 +13,7 @@ BSP_FORCEINLINE void bsp_init( void( *spmd )( void ), int argc, char **argv )
     BSP::GetInstance().Init( spmd, argc, argv );
 }
 
-BSP_FORCEINLINE void bsp_begin( size_t P )
+BSP_FORCEINLINE void bsp_begin( uint32_t P )
 {
     BSP::GetInstance().Begin( P );
 }
@@ -33,7 +33,7 @@ BSP_FORCEINLINE size_t bsp_nprocs()
     return BSP::GetInstance().NProcs();
 }
 
-BSP_FORCEINLINE void bsp_abort( const char *error_message, ... )
+inline void bsp_abort( const char *error_message, ... )
 {
     BSP::GetInstance().Abort( error_message );
 }

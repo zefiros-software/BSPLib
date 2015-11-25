@@ -2,8 +2,11 @@
 #ifndef __BSPCLASS_H__
 #define __BSPCLASS_H__
 
+#define SKIP_CHECKS
+
 #include "bsp/communicationQueues.h"
 #include "bsp/condVarBarrier.h"
+#include "bsp/mixedBarrier.h"
 #include "bsp/requests.h"
 #include "bsp/barrier.h"
 
@@ -27,7 +30,7 @@ public:
         CheckAborted();
     }
 
-    BSP_FORCEINLINE void Abort( const char *format, ... )
+    inline void Abort( const char *format, ... )
     {
         va_list args;
         va_start( args, format );
@@ -96,7 +99,7 @@ public:
         PID() = 0;
     }
 
-    void Begin( size_t maxProcs )
+    void Begin( uint32_t maxProcs )
     {
         //fprintf( stderr, "Begin %ld-%ld\n", PID(), std::this_thread::get_id() );
 
@@ -362,7 +365,7 @@ public:
         return mEnded;
     }
 
-    BSP_FORCEINLINE static BSP &GetInstance()
+    static BSP_FORCEINLINE BSP &GetInstance()
     {
         static BSP mBSP;
         return mBSP;
@@ -370,7 +373,7 @@ public:
 
 private:
 
-    BspInternal::CondVarBarrier mThreadBarrier;
+    BspInternal::MixedBarrier mThreadBarrier;
     std::vector< BspInternal::StackAllocator > mPutBufferStacks;
 
     BspInternal::CommunicationQueues< std::vector< BspInternal::PutRequest > > mPutRequests;
@@ -428,7 +431,7 @@ private:
         }
     }
 
-    inline void ProcessPushRequests( size_t pid )
+    BSP_FORCEINLINE void ProcessPushRequests( size_t pid )
     {
         if ( !mPushRequests[pid].empty() )
         {
@@ -442,7 +445,7 @@ private:
         }
     }
 
-    inline void ProcessPutRequests( size_t pid )
+    BSP_FORCEINLINE void ProcessPutRequests( size_t pid )
     {
         for ( size_t owner = 0; owner < mProcCount; ++owner )
         {
@@ -463,7 +466,7 @@ private:
         }
     }
 
-    inline void ProcessSendRequests( size_t pid )
+    BSP_FORCEINLINE void ProcessSendRequests( size_t pid )
     {
         mSendRequests[pid].clear();
         mSendReceivedIndex[pid] = 0;
@@ -497,7 +500,7 @@ private:
         }
     }
 
-    inline void ProcessPopRequests( size_t pid )
+    BSP_FORCEINLINE void ProcessPopRequests( size_t pid )
     {
         if ( !mPopRequests[pid].empty() )
         {
@@ -510,7 +513,7 @@ private:
         }
     }
 
-    inline void ProcessGetRequests( size_t pid )
+    BSP_FORCEINLINE void ProcessGetRequests( size_t pid )
     {
         for ( uint32_t owner = 0; owner < mProcCount; ++owner )
         {

@@ -4,7 +4,7 @@
     using bsp_put for communication.
 */
 
-#define NITERS 100     /* number of iterations */
+#define NITERS 10000     /* number of iterations */
 #define MAXN 1024      /* maximum length of DAXPY computation */
 #define MAXH 256       /* maximum h in h-relation */
 #define MEGA 1000000.0
@@ -234,7 +234,7 @@ int main( int argc, char **argv )
     printf( "How many processors do you want to use?\n" );
     fflush( stdout );
     //scanf( "%d", &P );
-    P = 2;
+    P = 4;
 
     if ( P > bsp_nprocs() )
     {
@@ -243,7 +243,7 @@ int main( int argc, char **argv )
     }
 
     bspbench();
-    //system( "pause" );
+    system( "pause" );
     exit( 0 );
 
 } /* end main */

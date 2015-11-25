@@ -12,22 +12,47 @@ void BspTest()
 
     size_t i = s;
 
-    bsp_push_reg( i );
+    BSPLib::PushReg( i );
 
     bsp_sync();
 
-    bsp_send( ( uint32_t )( ( s + 7 ) % nprocs ), NULL, i );
+    BSPLib::Send( ( uint32_t )( ( s + 7 ) % nprocs ), NULL, i );
 
     bsp_sync();
 
-    bsp_move( i );
+    BSPLib::Move( i );
 
-    std::stringstream ss;
-    ss << s << " has " << i << "\n";
+    {
+        std::stringstream ss;
+        ss << s << " has " << i << "\n";
 
-    std::cout << ss.str();
+        std::cout << ss.str();
+    }
 
-    bsp_pop_reg( i );
+    BSPLib::PopReg( i );
+
+    bsp_sync();
+
+    std::vector< uint32_t > ints( 100 );
+
+    ints[25] = ( uint32_t )s;
+
+    BSPLib::PushReg( ints.begin(), ints.end() );
+
+    bsp_sync();
+
+    BSPLib::Put( ( uint32_t )( ( s + 7 ) % nprocs ), ints.begin() + 10, ints.begin() + 40, ints.begin(),
+                 ints.begin() + 10 );
+    //bsp_put( ( uint32_t )( ( s + 7 ) % nprocs ), ints[25], ints[25] );
+
+    bsp_sync();
+
+    {
+        std::stringstream ss;
+        ss << s << " has " << ints[25] << "\n";
+
+        std::cout << ss.str();
+    }
 
     bsp_end();
 }
