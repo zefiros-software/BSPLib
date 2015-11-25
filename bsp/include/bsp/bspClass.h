@@ -2,7 +2,7 @@
 #ifndef __BSPCLASS_H__
 #define __BSPCLASS_H__
 
-#define SKIP_CHECKS
+#define BSP_SKIP_CHECKS
 
 #include "bsp/communicationQueues.h"
 #include "bsp/condVarBarrier.h"
@@ -56,7 +56,7 @@ public:
             *accumulated_size = 0;
         }
 
-        std::vector< BspInternal::SendRequest > &sendQueue = mSendRequests[PID()];
+        std::vector< BspInternal::SendRequest > &sendQueue = mSendRequests[ProcId()];
         *packets += sendQueue.size();
 
         if ( accumulated_size )
@@ -68,7 +68,7 @@ public:
         }
     }
 
-    BSP_FORCEINLINE size_t &PID()
+    BSP_FORCEINLINE size_t &ProcId()
     {
         static thread_local size_t gPID = 0xdeadbeef;
 
@@ -81,7 +81,7 @@ public:
 
         const std::chrono::time_point< std::chrono::high_resolution_clock > now =
             std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> diff = now - mStartTimes[PID()];
+        std::chrono::duration<double> diff = now - mStartTimes[ProcId()];
         return diff.count();
     }
 
@@ -96,19 +96,19 @@ public:
             fprintf( stderr, "         and this other run did not terminate (gracefully).\n" );
         }
 
-        PID() = 0;
+        ProcId() = 0;
     }
 
     void Begin( uint32_t maxProcs )
     {
         //fprintf( stderr, "Begin %ld-%ld\n", PID(), std::this_thread::get_id() );
 
-        if ( PID() )
+        if ( ProcId() )
         {
 
-#ifndef SKIP_CHECKS
+#ifndef BSP_SKIP_CHECKS
             assert( maxProcs == mProcCount );
-            assert( PID() < maxProcs );
+            assert( ProcId() < maxProcs );
 #endif // SKIP_CHECKS
 
             StartTiming();
@@ -165,7 +165,7 @@ public:
         {
             mThreads.emplace_back( std::async( std::launch::async, [this]( uint32_t pid )
             {
-                PID() = pid;
+                ProcId() = pid;
 
                 try
                 {
@@ -195,7 +195,7 @@ public:
 
         SyncPoint();
 
-        if ( PID() == 0 )
+        if ( ProcId() == 0 )
         {
             mThreads.clear();
         }
@@ -203,7 +203,7 @@ public:
 
     BSP_FORCEINLINE void Sync()
     {
-        size_t &pid = PID();
+        size_t &pid = ProcId();
 
         SyncPoint();
 
@@ -233,9 +233,9 @@ public:
 
     BSP_FORCEINLINE void PushReg( const void *ident, size_t size )
     {
-        size_t &pid = PID();
+        size_t &pid = ProcId();
 
-#ifndef SKIP_CHECKS
+#ifndef BSP_SKIP_CHECKS
         assert( pid < mProcCount );
         assert( mRegisters.size() > pid );
         assert( mRegisterCount.size() > pid );
@@ -247,9 +247,9 @@ public:
 
     void PopReg( const void *ident )
     {
-        size_t &pid = PID();
+        size_t &pid = ProcId();
 
-#ifndef SKIP_CHECKS
+#ifndef BSP_SKIP_CHECKS
         assert( pid < mProcCount );
         assert( mRegisters.size() > pid );
         assert( mRegisterCount.size() > pid );
@@ -261,9 +261,9 @@ public:
 
     BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
     {
-        size_t &tpid = PID();
+        size_t &tpid = ProcId();
 
-#ifndef SKIP_CHECKS
+#ifndef BSP_SKIP_CHECKS
         assert( tpid < mProcCount );
         assert( pid < mProcCount );
 #endif
@@ -271,7 +271,7 @@ public:
         const char *srcBuff = reinterpret_cast<const char *>( src );
         const size_t globalId = mRegisters[tpid][dst].registerCount;
 
-#ifndef SKIP_CHECKS
+#ifndef BSP_SKIP_CHECKS
         assert( mThreadRegisterLocation[pid].size() > globalId );
         assert( mRegisters[pid][mThreadRegisterLocation[tpid][globalId]].size >= nbytes );
 #endif
@@ -284,7 +284,7 @@ public:
 
     BSP_FORCEINLINE void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
     {
-        size_t &tpid = PID();
+        size_t &tpid = ProcId();
 
         assert( pid < mProcCount );
         assert( tpid < mProcCount );
@@ -300,7 +300,7 @@ public:
 
     BSP_FORCEINLINE void Send( uint32_t pid, const void *tag, const void *payload, const size_t size )
     {
-        size_t &tpid = PID();
+        size_t &tpid = ProcId();
 
         assert( pid < mProcCount );
         assert( tpid < mProcCount );
@@ -319,7 +319,7 @@ public:
 
     BSP_FORCEINLINE void Move( void *payload, size_t max_copy_size_in )
     {
-        size_t &pid = PID();
+        size_t &pid = ProcId();
 
         if ( mSendRequests[pid].empty() )
         {
@@ -336,12 +336,12 @@ public:
     {
         const size_t newSize = *size;
         *size = mTagSize;
-        mNewTagSize[PID()] = newSize;
+        mNewTagSize[ProcId()] = newSize;
     }
 
     BSP_FORCEINLINE void GetTag( size_t *status, void *tag )
     {
-        size_t &pid = PID();
+        size_t &pid = ProcId();
         *status = ( size_t ) - 1;
 
         size_t index = mSendReceivedIndex[pid];
@@ -415,7 +415,7 @@ private:
 
     void StartTiming()
     {
-        mStartTimes[PID()] = std::chrono::high_resolution_clock::now();
+        mStartTimes[ProcId()] = std::chrono::high_resolution_clock::now();
     }
 
     void SyncPoint()
@@ -455,7 +455,7 @@ private:
             {
                 for ( auto putRequest = putQueue.rbegin(), end = putQueue.rend(); putRequest != end; ++putRequest )
                 {
-#ifndef SKIP_CHECKS
+#ifndef BSP_SKIP_CHECKS
                     assert( putRequest->size > 0 );
 #endif
                     mPutBufferStacks[owner].Extract( putRequest->bufferLocation, putRequest->size, ( char * )putRequest->destination );

@@ -3,123 +3,36 @@
 #define __BSP_H__
 
 #ifndef DEBUG
-#define SKIP_CHECKS
+#define BSP_SKIP_CHECKS
 #endif
 
-#include "bsp/bspClass.h"
+#include "bsp/bspExt.h"
 
-BSP_FORCEINLINE void bsp_init( void( *spmd )( void ), int argc, char **argv )
-{
-    BSP::GetInstance().Init( spmd, argc, argv );
-}
+#ifndef BSP_DISABLE_LEGACY
 
-BSP_FORCEINLINE void bsp_begin( uint32_t P )
-{
-    BSP::GetInstance().Begin( P );
-}
+#define bsp_init ::BSP_NAMESPACE::Init
+#define bsp_begin ::BSP_NAMESPACE::Begin
+#define bsp_end ::BSP_NAMESPACE::End
+#define bsp_pid ::BSP_NAMESPACE::ProcId
+#define bsp_nprocs ::BSP_NAMESPACE::NProcs
+#define bsp_abort ::BSP_NAMESPACE::Abort
+#define bsp_vabort ::BSP_NAMESPACE::VAbort
+#define bsp_sync ::BSP_NAMESPACE::Sync
+#define bsp_time ::BSP_NAMESPACE::Time
+#define bsp_push_reg ::BSP_NAMESPACE::PushReg
+#define bsp_pop_reg ::BSP_NAMESPACE::PopReg
+#define bsp_put ::BSP_NAMESPACE::Put
+#define bsp_get ::BSP_NAMESPACE::Get
+#define bsp_set_tagsize ::BSP_NAMESPACE::SetTagSize
+#define bsp_send ::BSP_NAMESPACE::Send
+#define bsp_hpsend ::BSP_NAMESPACE::HPSend
+#define bsp_qsize ::BSP_NAMESPACE::QSize
+#define bsp_get_tag ::BSP_NAMESPACE::GetTag
+#define bsp_move ::BSP_NAMESPACE::Move
+#define bsp_hpmove ::BSP_NAMESPACE::HPMove
+#define bsp_hpput ::BSP_NAMESPACE::HPPut
+#define bsp_hpget ::BSP_NAMESPACE::HPGet
 
-BSP_FORCEINLINE void bsp_end()
-{
-    BSP::GetInstance().End();
-}
-
-BSP_FORCEINLINE size_t bsp_pid()
-{
-    return BSP::GetInstance().PID();
-}
-
-BSP_FORCEINLINE size_t bsp_nprocs()
-{
-    return BSP::GetInstance().NProcs();
-}
-
-inline void bsp_abort( const char *error_message, ... )
-{
-    BSP::GetInstance().Abort( error_message );
-}
-
-BSP_FORCEINLINE void bsp_vabort( const char *error_message, va_list args )
-{
-    BSP::GetInstance().VAbort( error_message, args );
-}
-
-BSP_FORCEINLINE void bsp_sync()
-{
-    BSP::GetInstance().Sync();
-}
-
-BSP_FORCEINLINE double bsp_time()
-{
-    return BSP::GetInstance().Time();
-}
-
-BSP_FORCEINLINE void bsp_push_reg( const void *ident, size_t size )
-{
-    BSP::GetInstance().PushReg( ident, size );
-}
-
-BSP_FORCEINLINE void bsp_pop_reg( const void *ident )
-{
-    BSP::GetInstance().PopReg( ident );
-}
-
-BSP_FORCEINLINE void bsp_put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
-{
-    BSP::GetInstance().Put( pid, src, dst, offset, nbytes );
-}
-
-BSP_FORCEINLINE void bsp_get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
-{
-    BSP::GetInstance().Get( pid, src, offset, dst, nbytes );
-}
-
-BSP_FORCEINLINE void bsp_set_tagsize( size_t *size )
-{
-    BSP::GetInstance().SetTagsize( size );
-}
-
-BSP_FORCEINLINE void bsp_send( uint32_t pid, const void *tag, const void *payload, const size_t size )
-{
-    BSP::GetInstance().Send( pid, tag, payload, size );
-}
-
-BSP_FORCEINLINE void bsp_hpsend( uint32_t pid, const void *tag, const void *payload, const size_t size )
-{
-    BSP::GetInstance().Send( pid, tag, payload, size );
-}
-
-BSP_FORCEINLINE void bsp_qsize( size_t *packets, size_t *accumulated_size )
-{
-    BSP::GetInstance().QSize( packets, accumulated_size );
-}
-
-BSP_FORCEINLINE void bsp_get_tag( size_t *status, void *tag )
-{
-    BSP::GetInstance().GetTag( status, tag );
-}
-
-BSP_FORCEINLINE void bsp_move( void *payload, const size_t max_copy_size )
-{
-    BSP::GetInstance().Move( payload, max_copy_size );
-}
-
-BSP_FORCEINLINE size_t bsp_hpmove( void **tag_ptr, void **payload_ptr )
-{
-    BSP &bsp = BSP::GetInstance();
-    size_t status;
-    bsp.GetTag( &status, *tag_ptr );
-    bsp.Move( *payload_ptr, status );
-    return status;
-}
-
-BSP_FORCEINLINE void bsp_hpput( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
-{
-    BSP::GetInstance().Put( pid, src, dst, offset, nbytes );
-}
-
-BSP_FORCEINLINE void bsp_hpget( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
-{
-    BSP::GetInstance().Get( pid, src, offset, dst, nbytes );
-}
+#endif
 
 #endif
