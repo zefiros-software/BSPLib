@@ -2,8 +2,6 @@
 #ifndef __BSPCLASS_H__
 #define __BSPCLASS_H__
 
-#define BSP_SKIP_CHECKS
-
 #include "bsp/communicationQueues.h"
 #include "bsp/condVarBarrier.h"
 #include "bsp/mixedBarrier.h"
