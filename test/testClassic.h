@@ -3,6 +3,30 @@
 #define __TESTCLASSIC_H__
 
 #include "helper.h"
+#include <random>
+
+
+
+
+
+inline void AbortTest()
+{
+    BSPLib::Sync();
+    BSPLib::Classic::Abort( "" );
+}
+
+TEST( P( Classic ), AbortTest )
+{
+    try
+    {
+        BspExecute( AbortTest, 32 );
+    }
+    catch ( std::exception &e )
+    {
+        ASSERT_STREQ( "Aborted", e.what() );
+    }
+}
+
 
 inline void EmptyTest()
 {
@@ -222,21 +246,153 @@ inline void TimerTest()
     EXPECT_NEAR( end - start, 10.0, 0.1 );
 }
 
-inline void AbortTest()
+template< uint32_t tRounds, uint32_t tPacketCount, uint32_t tPacketSize, int32_t tOffset >
+void QSizeTest()
 {
-    BSPLib::Sync();
-    BSPLib::Classic::Abort( "" );
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    uint32_t packets[tPacketSize];
+
+    size_t packetCount;
+    size_t totalSize;
+
+    for ( uint32_t i = 0; i < tRounds; ++i )
+    {
+        for ( uint32_t j = 0; j < tPacketCount; ++j )
+        {
+            BSPLib::Classic::Send( sSend, NULL, packets, tPacketSize * sizeof( uint32_t ) );
+        }
+
+        BSPLib::Sync();
+
+        BSPLib::Classic::QSize( &packetCount, &totalSize );
+
+        EXPECT_EQ( tPacketCount, packetCount );
+        EXPECT_EQ( tPacketCount * tPacketSize * sizeof( uint32_t ), totalSize );
+    }
 }
 
-TEST( P( Classic ), AbortTest )
+template< uint32_t tRounds, uint32_t tMaxSize, int32_t tOffset, typename tPrimitive >
+void BruteForceTest()
 {
-    try
+    std::mt19937 engine;
+    std::uniform_int_distribution< tPrimitive > dist( 0, tMaxSize );
+
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sTarget = ( s + tOffset + nProc ) % nProc;
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    engine.seed( s );
+
+    std::vector< tPrimitive > putBuffer;
+    std::vector< tPrimitive > putTarget;
+
+    std::vector< tPrimitive > getBuffer;
+    std::vector< tPrimitive > getTarget;
+
+    std::vector< tPrimitive > sendBuffer;
+    std::vector< tPrimitive > sendTarget;
+
+    size_t putBufferSize = 0;
+    size_t putTargetSize = 0;
+
+    size_t getBufferSize = 0;
+    size_t getTargetSize = 0;
+
+    size_t sendBufferSize = 0;
+    size_t sendTargetSize = 0;
+
+    size_t status = 0;
+    size_t tagSize = sizeof( size_t );
+
+    BSPLib::Classic::SetTagSize( &tagSize );
+
+    // Register the location where the size of the put vector can be placed
+    BSPLib::Classic::PushReg( &putTargetSize, sizeof( size_t ) );
+
+
+    // Register the location where the size of the get vector can be retrieved
+    BSPLib::Classic::PushReg( &getTargetSize, sizeof( size_t ) );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tRounds; ++i )
     {
-        BspExecute( AbortTest, 32 );
-    }
-    catch ( std::exception &e )
-    {
-        ASSERT_STREQ( "Aborted", e.what() );
+        // Resize the vectors to a random size. Use the local random generator for thread-safety
+        putBufferSize = dist( engine );
+        getTargetSize = dist( engine );
+        sendBufferSize = dist( engine );
+
+        putBuffer.resize( putBufferSize, ( tPrimitive )( s + 1 ) );
+        getTarget.resize( getTargetSize, ( tPrimitive )( s + 1 ) );
+        sendBuffer.resize( sendBufferSize, ( tPrimitive )( s + 1 ) );
+
+        // Register where the other processor can get the data from
+        BSPLib::Classic::PushReg( getTarget.data(), getTarget.size() * sizeof( tPrimitive ) );
+
+        // Get the size the other processor has prepared
+        BSPLib::Classic::Get( sTarget, &getTargetSize, 0, &getBufferSize, sizeof( size_t ) );
+
+        // Put the size we want for the "Put" operation in the target process
+        BSPLib::Classic::Put( sTarget, &putBufferSize, &putTargetSize, 0, sizeof( size_t ) );
+
+        // Already send the data we want to send
+        BSPLib::Classic::Send( sTarget, &sendBufferSize, sendBuffer.data(), sendBufferSize * sizeof( tPrimitive ) );
+
+        BSPLib::Sync();
+
+        // Prepare the target for the "Put" operation for the other process
+        putTarget.resize( putTargetSize );
+
+        // Register the vector with the new size
+        BSPLib::Classic::PushReg( putTarget.data(), putTarget.size() * sizeof( tPrimitive ) );
+
+        // Resize our own get buffer so that we can get the data from the other process
+        getBuffer.resize( getBufferSize );
+
+        // Get the data from the other process
+        BSPLib::Classic::Get( sTarget, getTarget.data(), 0, getBuffer.data(), getBufferSize * sizeof( tPrimitive ) );
+
+        // We are now done with the "Get" operation, pop the vector at the end of this sync
+        BSPLib::Classic::PopReg( getTarget.data() );
+
+        // Retrieve the size of the "Send" operation of the other process
+        BSPLib::Classic::GetTag( &status, &sendTargetSize );
+
+        // Resize our target for the "Send" operation and move the data into it
+        sendTarget.resize( sendTargetSize );
+        BSPLib::Classic::Move( sendTarget.data(), sendTarget.size() * sizeof( tPrimitive ) );
+
+        BSPLib::Classic::Sync();
+
+        // Put the data in the other process
+        BSPLib::Classic::Put( sTarget, putBuffer.data(), putTarget.data(), 0, putBufferSize * sizeof( tPrimitive ) );
+
+        // Already pop our own target, so that it is popped at the end of the same sync
+        BSPLib::Classic::PopReg( putTarget.data() );
+
+        BSPLib::Classic::Sync();
+
+        for ( auto putVal : putTarget )
+        {
+            EXPECT_EQ( sSource + 1, putVal );
+        }
+
+        for ( auto getVal : getBuffer )
+        {
+            EXPECT_EQ( sTarget + 1, getVal );
+        }
+
+        for ( auto sendVal : sendTarget )
+        {
+            EXPECT_EQ( sSource + 1, sendVal );
+        }
     }
 }
 
@@ -383,5 +539,21 @@ BspTest3( Classic, 8, TagTest, 7, 3, uint64_t );
 BspTest3( Classic, 16, TagTest, 7, 3, uint64_t );
 BspTest3( Classic, 32, TagTest, 7, 3, uint64_t );
 BspTest3( Classic, 32, TagTest, 100, 41, uint64_t );
+
+BspTest4( Classic, 2, QSizeTest, 10, 10, 10, 1 );
+BspTest4( Classic, 4, QSizeTest, 10, 10, 10, 1 );
+BspTest4( Classic, 8, QSizeTest, 10, 10, 10, 1 );
+BspTest4( Classic, 16, QSizeTest, 10, 10, 10, 1 );
+BspTest4( Classic, 32, QSizeTest, 10, 10, 10, 1 );
+BspTest4( Classic, 2, QSizeTest, 10, 10, 10, 7 );
+BspTest4( Classic, 4, QSizeTest, 10, 10, 10, 7 );
+BspTest4( Classic, 8, QSizeTest, 10, 10, 10, 7 );
+BspTest4( Classic, 16, QSizeTest, 10, 10, 10, 7 );
+BspTest4( Classic, 32, QSizeTest, 10, 10, 10, 7 );
+BspTest4( Classic, 32, QSizeTest, 10, 100, 17, 41 );
+
+BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint16_t );
+BspTest4( Classic, 8, BruteForceTest, 500, 100, 5, uint32_t );
+BspTest4( Classic, 8, BruteForceTest, 500, 100, 5, uint64_t );
 
 #endif

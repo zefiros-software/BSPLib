@@ -202,7 +202,7 @@ public:
                 }
                 catch ( BspInternal::BspAbort &e )
                 {
-#ifndef BSP_NOTHROW
+#ifdef BSP_THROW
                     throw e;
 #endif
                 }

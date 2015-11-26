@@ -1,4 +1,5 @@
 #define BSP_SKIP_CHECKS
+#define BSP_THROW
 
 #include "bsp/bsp.h"
 #include "gtest/gtest.h"
