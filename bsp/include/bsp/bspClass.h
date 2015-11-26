@@ -29,18 +29,35 @@
 #include "bsp/requests.h"
 #include "bsp/barrier.h"
 
-#include <unordered_map>
 #include <assert.h>
 #include <iterator>
 #include <map>
 #include <stdarg.h>
 #include <future>
 
+// forward declaration of the main function
+// so we can start this if no other function is given.
+// E.G. Legacy behaviour of the MulticoreBSP library.
 extern int main( int argc, char **argv );
+
+/**
+ * The BSP implementation class. By using this class as singleton, we avoid global memory declarations, cross source
+ * problems with static variables and ensure proper usage from a header only library.
+ */
 
 class BSP
 {
 public:
+
+    /**
+     * Aborts the BSP program with the given error message. The formatting used is the same as in
+     * fprintf.
+     *
+     * @param   format Describes the message to format.
+     * @param   args   The formatting arguments.
+     *
+     * @see Abort( const char *format, ... )
+     */
 
     BSP_FORCEINLINE void VAbort( const char *format, va_list args )
     {
@@ -48,6 +65,14 @@ public:
         vfprintf( stderr, format, args );
         CheckAborted();
     }
+
+    /**
+     * Aborts the BSP program with the given error message. The formatting used is the same as in
+     * fprintf.
+     *
+     * @param   format Describes the message to format.
+     * @param   ...    Variable arguments providing message formatting.
+     */
 
     inline void Abort( const char *format, ... )
     {
@@ -61,28 +86,47 @@ public:
         va_end( args );
     }
 
+    /**
+     * Gets the the amount of processors used by the BSP library. When the BSP library is not
+     * initialised this returns the amount of processors available in hardware. After initalisation
+     * it returns the maximum amount of processors available as initialised.
+     *
+     * @return The amount of processors available.
+     */
+
     BSP_FORCEINLINE uint32_t NProcs() const
     {
         return mProcCount > 0 ? mProcCount : std::thread::hardware_concurrency();
     }
 
-    BSP_FORCEINLINE void QSize( size_t *packets, size_t *accumulated_size )
+    /**
+     * Get both the amount of messages, and the total size of the messages in bytes.
+     *
+     * @param [in,out]  packets         The packets count.
+     * @param [in,out]  accumulatedSize If non-null, size of the accumulated packets in bytes.
+     */
+
+    BSP_FORCEINLINE void QSize( size_t *packets, size_t *accumulatedSize )
     {
+#ifndef BSP_SKIP_CHECKS
+        assert( packets != nullptr );
+#endif
+
         *packets = 0;
 
-        if ( accumulated_size )
+        if ( accumulatedSize )
         {
-            *accumulated_size = 0;
+            *accumulatedSize = 0;
         }
 
         std::vector< BspInternal::SendRequest > &sendQueue = mSendRequests[ProcId()];
         *packets += sendQueue.size();
 
-        if ( accumulated_size )
+        if ( accumulatedSize )
         {
             for ( const auto &request : sendQueue )
             {
-                *accumulated_size += request.bufferSize;
+                *accumulatedSize += request.bufferSize;
             }
         }
     }
@@ -126,9 +170,15 @@ public:
         {
 
 #ifndef BSP_SKIP_CHECKS
+
+            if ( ProcId() == 0xdeadbeef )
+            {
+                fprintf( stderr, "A processor with ID `0xdeadbeef` is found, this can happen when you forget to call Init()." );
+            }
+
             assert( maxProcs == mProcCount );
             assert( ProcId() < maxProcs );
-#endif // SKIP_CHECKS
+#endif
 
             StartTiming();
             return;
@@ -519,7 +569,8 @@ private:
                 BspInternal::StackAllocator &tmpBuffer = mTmpSendBuffers.GetQueueToMe( owner, pid );
 
                 offset += tmpBuffer.Size();
-                sendBuffer.MoveBack( tmpBuffer );
+                sendBuffer.Merge( tmpBuffer );
+                sendBuffer.Clear();
             }
         }
     }

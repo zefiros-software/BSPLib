@@ -27,41 +27,74 @@
 
 namespace BspInternal
 {
+    /**
+     * A communication queue implementation. Allows easier
+     * implementation of communication queues of various types.
+     *
+     * @tparam  tQueue Type of the queue.
+     */
+
     template< typename tQueue >
     class CommunicationQueues
     {
     public:
 
-        CommunicationQueues( size_t nProcs )
+        CommunicationQueues()
+            : mProcCount( 0 )
+        {
+        }
+
+        /**
+         * Constructor.
+         *
+         * @param   nProcs The amount of processors that can use the queue.
+         */
+
+        explicit CommunicationQueues( size_t nProcs )
             : mQueues( 0 ),
               mProcCount( nProcs )
         {
             ResetResize( nProcs );
         }
 
-        CommunicationQueues()
-            : mProcCount( 0 )
-        {
-
-        }
+        /**
+         * Resets the queues, and set the maximum amount of threads that may
+         * use the communication queue.
+         *
+         * @param   maxProcs The maximum number of processors.
+         */
 
         void ResetResize( size_t maxProcs )
         {
+            size_t maxProcsSqr = maxProcs * maxProcs;
             mQueues.clear();
-            mQueues.resize( maxProcs );
-
-            for ( auto &queue : mQueues )
-            {
-                queue.resize( maxProcs );
-            }
+            mQueues.resize( maxProcsSqr );
 
             mProcCount = maxProcs;
         }
+
+        /**
+         * Gets queue to me.
+         *
+         * @param   source Source for the.
+         * @param   me     me.
+         *
+         * @return The queue to me.
+         */
 
         tQueue &GetQueueToMe( size_t source, size_t me )
         {
             return GetQueue( source, me );
         }
+
+        /**
+         * Gets queue from me.
+         *
+         * @param   target Target for the.
+         * @param   me     me.
+         *
+         * @return The queue from me.
+         */
 
         tQueue &GetQueueFromMe( size_t target, size_t me )
         {
@@ -70,13 +103,17 @@ namespace BspInternal
 
     private:
 
-        std::vector< std::vector< tQueue > > mQueues;
+        /// an obimination we have to live with,
+        /// a flattened std::vector< std::vector <> > but without
+        /// inneficient cache thrashing.
+        std::vector< tQueue > mQueues;
 
+        /// The amount of processors that may use the queue
         size_t mProcCount;
 
         tQueue &GetQueue( size_t owner, size_t target )
         {
-            return mQueues[owner][target];
+            return mQueues[owner * mProcCount + target];
         }
     };
 }

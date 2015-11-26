@@ -37,6 +37,8 @@
 
 #ifndef BSP_DISABLE_LEGACY
 
+/// Provides and overload to the old legacy interface
+
 #define bsp_init BSP_FULL_NAMESPACE::Init
 #define bsp_begin BSP_FULL_NAMESPACE::Begin
 #define bsp_end BSP_FULL_NAMESPACE::End

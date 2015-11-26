@@ -25,13 +25,27 @@
 
 #include "bsp/bspAbort.h"
 
+#include <atomic>
 #include <mutex>
 
 namespace BspInternal
 {
+    /**
+     * A condition variable barrier implementation. This barrier
+     * does not use busy waiting, but relies on events in stead.
+     * The advantage of this approach is that is more reliable,
+     * however there is a lot of overhead.
+     */
+
     class CondVarBarrier
     {
     public:
+
+        /**
+         * Constructor.
+         *
+         * @param   count Number of threads to wait for.
+         */
 
         explicit CondVarBarrier( std::size_t count )
             : mCurrentCon( &mConVar1 ),
@@ -41,11 +55,24 @@ namespace BspInternal
         {
         }
 
+        /**
+         * Sets the size of the barrier, thus the number of threads to wait for on a sync point.
+         *
+         * @param   count Number of threads to wait on.
+         */
+
         void SetSize( size_t count )
         {
             mCount = count;
             mMax = count;
         }
+
+        /**
+         * Waits for all the threads to reach the sync point, however the process can be aborted when `aborted` equals to
+         * true.
+         *
+         * @param [in,out]  aborted Check whether the process should be aborted.
+         */
 
         void Wait( std::atomic_bool &aborted )
         {
@@ -60,7 +87,6 @@ namespace BspInternal
             if ( --mCount == 0 )
             {
                 Reset();
-
             }
             else
             {
@@ -69,6 +95,7 @@ namespace BspInternal
         }
 
     private:
+
         std::mutex mMutex;
         std::condition_variable mConVar1;
         std::condition_variable mConVar2;
@@ -78,6 +105,10 @@ namespace BspInternal
 
         size_t mCount;
         size_t mMax;
+
+        /**
+         * Resets the barrier for reuse.
+         */
 
         void Reset()
         {

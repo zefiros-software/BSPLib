@@ -1,11 +1,10 @@
-#define BSP_SKIP_CHECKS
-
 #include "bsp/bsp.h"
+
 #include "gtest/gtest.h"
 
 #include "testClassic.h"
 
-int main( int argc, char **argv )
+int32_t main( int32_t argc, char **argv )
 {
     testing::InitGoogleTest( &argc, argv );
 
