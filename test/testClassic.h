@@ -224,7 +224,8 @@ inline void TimerTest()
 
 inline void AbortTest()
 {
-    BSPLib::Classic::Abort( "Testing" );
+    BSPLib::Sync();
+    BSPLib::Classic::Abort( "" );
 }
 
 TEST( P( Classic ), AbortTest )

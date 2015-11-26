@@ -202,7 +202,9 @@ public:
                 }
                 catch ( BspInternal::BspAbort &e )
                 {
+#ifndef BSP_NOTHROW
                     throw e;
+#endif
                 }
             }, i ) );
         }
@@ -394,7 +396,7 @@ public:
 
 private:
 
-    BspInternal::CondVarBarrier mThreadBarrier;
+    BspInternal::MixedBarrier mThreadBarrier;
     std::vector< BspInternal::StackAllocator > mPutBufferStacks;
 
     BspInternal::CommunicationQueues< std::vector< BspInternal::PutRequest > > mPutRequests;
