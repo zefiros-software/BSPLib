@@ -570,7 +570,7 @@ private:
 
                 offset += tmpBuffer.Size();
                 sendBuffer.Merge( tmpBuffer );
-                sendBuffer.Clear();
+                tmpBuffer.Clear();
             }
         }
     }
