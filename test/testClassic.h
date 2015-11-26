@@ -240,10 +240,10 @@ inline void TimerTest()
     BSPLib::Sync();
 
     double start = BSPLib::Time();
-    std::this_thread::sleep_for( std::chrono::milliseconds( 10000 ) );
+    std::this_thread::sleep_for( std::chrono::milliseconds( 5000 ) );
     double end = BSPLib::Time();
 
-    EXPECT_NEAR( end - start, 10.0, 0.1 );
+    EXPECT_NEAR( end - start, 5.0, 0.1 );
 }
 
 template< uint32_t tRounds, uint32_t tPacketCount, uint32_t tPacketSize, int32_t tOffset >
@@ -253,7 +253,6 @@ void QSizeTest()
     uint32_t nProc = BSPLib::NProcs();
 
     uint32_t sSend = ( s + tOffset + nProc ) % nProc;
-    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
 
     uint32_t packets[tPacketSize];
 
@@ -273,6 +272,56 @@ void QSizeTest()
 
         EXPECT_EQ( tPacketCount, packetCount );
         EXPECT_EQ( tPacketCount * tPacketSize * sizeof( uint32_t ), totalSize );
+    }
+}
+
+template< uint32_t tRounds >
+void MultiSendTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    size_t tagSize = sizeof( uint32_t );
+
+    BSPLib::Classic::SetTagSize( &tagSize );
+
+    uint32_t message = s + 1;
+
+    std::vector< bool > haveReceived( nProc, false );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tRounds; ++i )
+    {
+        for ( uint32_t sOther = 0; sOther < nProc; ++sOther )
+        {
+            BSPLib::Classic::Send( sOther, &s, &message, sizeof( uint32_t ) );
+        }
+
+        BSPLib::Sync();
+
+        size_t packets;
+        BSPLib::Classic::QSize( &packets, NULL );
+
+        size_t status;
+        uint32_t tag;
+        uint32_t mail;
+
+        for ( uint32_t j = 0; j < packets; ++j )
+        {
+            BSPLib::Classic::GetTag( &status, &tag );
+            haveReceived[tag] = true;
+            BSPLib::Classic::Move( &mail, sizeof( uint32_t ) );
+
+            EXPECT_EQ( tag + 1, mail );
+        }
+
+        for ( auto received : haveReceived )
+        {
+            EXPECT_TRUE( received );
+        }
+
+        std::fill( haveReceived.begin(), haveReceived.end(), false );
     }
 }
 
@@ -552,8 +601,14 @@ BspTest4( Classic, 16, QSizeTest, 10, 10, 10, 7 );
 BspTest4( Classic, 32, QSizeTest, 10, 10, 10, 7 );
 BspTest4( Classic, 32, QSizeTest, 10, 100, 17, 41 );
 
+BspTest1( Classic, 2, MultiSendTest, 50 );
+BspTest1( Classic, 4, MultiSendTest, 50 );
+BspTest1( Classic, 8, MultiSendTest, 50 );
+BspTest1( Classic, 16, MultiSendTest, 50 );
+BspTest1( Classic, 32, MultiSendTest, 50 );
+
 BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint16_t );
-BspTest4( Classic, 8, BruteForceTest, 500, 100, 5, uint32_t );
-BspTest4( Classic, 8, BruteForceTest, 500, 100, 5, uint64_t );
+BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint32_t );
+BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint64_t );
 
 #endif

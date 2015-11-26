@@ -5,6 +5,7 @@
 #include "gtest/gtest.h"
 
 #include "testClassic.h"
+#include "testPrimitive.h"
 
 int main( int argc, char **argv )
 {

@@ -13,31 +13,31 @@
 
 
 #define BspTest( suite, nProc, func )       \
-TEST( P( Classic ), func ## _ ## nProc )    \
+TEST( P( suite ), func ## _ ## nProc )      \
 {                                           \
     BspExecute( func, nProc );              \
 }
 
 #define BspTest1( suite, nProc, func, a )               \
-TEST( P( Classic ), func ## _ ## nProc ## _ ## a )      \
+TEST( P( suite ), func ## _ ## nProc ## _ ## a )        \
 {                                                       \
     BspExecute( func< a >, nProc );                     \
 }
 
 #define BspTest2( suite, nProc, func, a, b )                    \
-TEST( P( Classic ), func ## _ ## nProc ## _ ## a ## _ ## b )    \
+TEST( P( suite ), func ## _ ## nProc ## _ ## a ## _ ## b )      \
 {                                                               \
     BspExecute( func< a, b >, nProc );                          \
 }
 
 #define BspTest3( suite, nProc, func, a, b, c )                         \
-TEST( P( Classic ), func ## _ ## nProc ## _ ## a ## _ ## b ## _ ## c )  \
+TEST( P( suite ), func ## _ ## nProc ## _ ## a ## _ ## b ## _ ## c )    \
 {                                                                       \
     BspExecute( func< a, b, c >, nProc );                               \
 }
 
 #define BspTest4( suite, nProc, func, a, b, c, d )                                  \
-TEST( P( Classic ), func ## _ ## nProc ## _ ## a ## _ ## b ## _ ## c ## _ ## d )    \
+TEST( P( suite ), func ## _ ## nProc ## _ ## a ## _ ## b ## _ ## c ## _ ## d )      \
 {                                                                                   \
     BspExecute( func< a, b, c, d >, nProc );                                        \
 }
