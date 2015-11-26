@@ -12,11 +12,13 @@ void BspTest()
 
     size_t i = s;
 
+    uint32_t sOther = ( uint32_t )( s + 7 ) % nprocs;
+
     BSPLib::PushReg( i );
 
     bsp_sync();
 
-    BSPLib::Send( ( uint32_t )( ( s + 7 ) % nprocs ), NULL, i );
+    BSPLib::Send( sOther, NULL, i );
 
     bsp_sync();
 
@@ -37,19 +39,44 @@ void BspTest()
 
     ints[25] = ( uint32_t )s;
 
-    BSPLib::PushReg( ints.begin(), ints.end() );
+    BSPLib::PushRegContainer( ints );
+
+    if ( s == 0 )
+    {
+        std::cout << std::endl << "Iterators:" << std::endl;
+    }
 
     bsp_sync();
 
-    BSPLib::Put( ( uint32_t )( ( s + 7 ) % nprocs ), ints.begin() + 10, ints.begin() + 40, ints.begin(),
-                 ints.begin() + 10 );
-    //bsp_put( ( uint32_t )( ( s + 7 ) % nprocs ), ints[25], ints[25] );
+    BSPLib::PutIterator( sOther, ints.begin(), ints.begin() + 10, ints.begin() + 40 );
 
     bsp_sync();
 
     {
         std::stringstream ss;
         ss << s << " has " << ints[25] << "\n";
+
+        std::cout << ss.str();
+    }
+
+    bsp_sync();
+
+    if ( s == 0 )
+    {
+        std::cout << std::endl << "Containers:" << std::endl;
+    }
+
+    bsp_sync();
+
+    ints[95] = s;
+
+    BSPLib::PutContainer( sOther, ints );
+
+    bsp_sync();
+
+    {
+        std::stringstream ss;
+        ss << s << " has " << ints[95] << "\n";
 
         std::cout << ss.str();
     }

@@ -63,6 +63,42 @@ solution "bsp-library"
             root .. "bsp/include/**.cpp",
             }
             
+    project "bsptest"
+        location(  root .. "test/" )
+                
+        kind "ConsoleApp"
+        flags "WinMain"
+        defines "GTEST_HAS_TR1_TUPLE=0"
+        
+        includedirs {
+            root .. "extern/gtest/include/",
+            root .. "extern/gtest/",
+            
+            root .. "bsp/include/",
+            root .. "test/"
+            }   
+        
+        files { 
+            root .. "extern/gtest/src/gtest-all.cc",
+            root .. "test/**.h",
+            root .. "test/*.cpp"
+            }            
+			
+		configuration "gmake"
+			links "pthread"
+            
+        configuration { "Debug", "x32" }
+            defines "PREFIX=X32D_"
+        
+        configuration { "Debug", "x64" }
+            defines "PREFIX=X64D_"
+        
+        configuration { "Release", "x32" }
+            defines "PREFIX=X32R_"
+        
+        configuration { "Release", "x64" }
+            defines "PREFIX=X64R_"
+            
     project "bench"
         location(  root )
                 

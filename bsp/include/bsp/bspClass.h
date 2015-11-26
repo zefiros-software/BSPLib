@@ -157,6 +157,8 @@ public:
 
         mStartTimes.clear();
         mStartTimes.resize( maxProcs );
+
+        mThreads.clear();
         mThreads.reserve( maxProcs );
 
         for ( uint32_t i = 1; i < mProcCount; ++i )
@@ -371,7 +373,7 @@ public:
 
 private:
 
-    BspInternal::MixedBarrier mThreadBarrier;
+    BspInternal::CondVarBarrier mThreadBarrier;
     std::vector< BspInternal::StackAllocator > mPutBufferStacks;
 
     BspInternal::CommunicationQueues< std::vector< BspInternal::PutRequest > > mPutRequests;
@@ -413,6 +415,7 @@ private:
 
     void StartTiming()
     {
+        assert( ProcId() != 0xdeadbeef );
         mStartTimes[ProcId()] = std::chrono::high_resolution_clock::now();
     }
 
