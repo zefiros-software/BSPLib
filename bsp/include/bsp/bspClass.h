@@ -61,7 +61,7 @@ public:
         va_end( args );
     }
 
-    BSP_FORCEINLINE size_t NProcs() const
+    BSP_FORCEINLINE uint32_t NProcs() const
     {
         return mProcCount > 0 ? mProcCount : std::thread::hardware_concurrency();
     }
@@ -87,9 +87,9 @@ public:
         }
     }
 
-    BSP_FORCEINLINE size_t &ProcId()
+    BSP_FORCEINLINE uint32_t &ProcId()
     {
-        static thread_local size_t gPID = 0xdeadbeef;
+        static thread_local uint32_t gPID = 0xdeadbeef;
 
         return gPID;
     }
@@ -200,9 +200,9 @@ public:
                     }
 
                 }
-                catch ( BspInternal::BspAbort & )
+                catch ( BspInternal::BspAbort &e )
                 {
-                    // pass
+                    throw e;
                 }
             }, i ) );
         }
@@ -224,7 +224,7 @@ public:
 
     BSP_FORCEINLINE void Sync()
     {
-        size_t &pid = ProcId();
+        uint32_t &pid = ProcId();
 
         SyncPoint();
 
@@ -254,7 +254,7 @@ public:
 
     BSP_FORCEINLINE void PushReg( const void *ident, size_t size )
     {
-        size_t &pid = ProcId();
+        uint32_t &pid = ProcId();
 
 #ifndef BSP_SKIP_CHECKS
         assert( pid < mProcCount );
@@ -268,7 +268,7 @@ public:
 
     void PopReg( const void *ident )
     {
-        size_t &pid = ProcId();
+        uint32_t &pid = ProcId();
 
 #ifndef BSP_SKIP_CHECKS
         assert( pid < mProcCount );
@@ -282,7 +282,7 @@ public:
 
     BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
     {
-        size_t &tpid = ProcId();
+        uint32_t &tpid = ProcId();
 
 #ifndef BSP_SKIP_CHECKS
         assert( tpid < mProcCount );
@@ -305,7 +305,7 @@ public:
 
     BSP_FORCEINLINE void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
     {
-        size_t &tpid = ProcId();
+        uint32_t &tpid = ProcId();
 
         assert( pid < mProcCount );
         assert( tpid < mProcCount );
@@ -321,7 +321,7 @@ public:
 
     BSP_FORCEINLINE void Send( uint32_t pid, const void *tag, const void *payload, const size_t size )
     {
-        size_t &tpid = ProcId();
+        uint32_t &tpid = ProcId();
 
         assert( pid < mProcCount );
         assert( tpid < mProcCount );
@@ -340,7 +340,7 @@ public:
 
     BSP_FORCEINLINE void Move( void *payload, size_t max_copy_size_in )
     {
-        size_t &pid = ProcId();
+        uint32_t &pid = ProcId();
 
         if ( mSendRequests[pid].empty() )
         {
@@ -362,7 +362,7 @@ public:
 
     BSP_FORCEINLINE void GetTag( size_t *status, void *tag )
     {
-        size_t &pid = ProcId();
+        uint32_t &pid = ProcId();
         *status = ( size_t ) - 1;
 
         size_t index = mSendReceivedIndex[pid];
@@ -417,7 +417,7 @@ private:
     std::vector< std::future< void > > mThreads;
     std::function< void() > mEntry;
     std::vector< std::chrono::time_point< std::chrono::high_resolution_clock > > mStartTimes;
-    size_t mProcCount;
+    uint32_t mProcCount;
     std::vector<size_t> mNewTagSize;
     std::atomic_size_t mTagSize;
 
@@ -449,7 +449,7 @@ private:
     {
         if ( mAbort )
         {
-            std::terminate();
+            throw BspInternal::BspAbort( "Aborted" );
         }
     }
 

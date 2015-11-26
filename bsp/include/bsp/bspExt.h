@@ -53,12 +53,12 @@ namespace BSPLib
             BSP::GetInstance().End();
         }
 
-        BSP_FORCEINLINE size_t ProcId()
+        BSP_FORCEINLINE uint32_t ProcId()
         {
             return BSP::GetInstance().ProcId();
         }
 
-        BSP_FORCEINLINE size_t NProcs()
+        BSP_FORCEINLINE uint32_t NProcs()
         {
             return BSP::GetInstance().NProcs();
         }
@@ -176,6 +176,11 @@ namespace BSPLib
     BSP_FORCEINLINE uint32_t ProcId()
     {
         return Classic::ProcId();
+    }
+
+    BSP_FORCEINLINE uint32_t NProcs()
+    {
+        return Classic::NProcs();
     }
 
     BSP_FORCEINLINE double Time()

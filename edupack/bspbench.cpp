@@ -9,7 +9,7 @@
 #define MAXH 256       /* maximum h in h-relation */
 #define MEGA 1000000.0
 
-int P; /* number of processors requested */
+uint32_t P; /* number of processors requested */
 
 void leastsquares( int h0, int h1, double *t, double *g, double *l )
 {
@@ -233,7 +233,7 @@ int main( int argc, char **argv )
     bsp_init( bspbench, argc, argv );
     printf( "How many processors do you want to use?\n" );
     fflush( stdout );
-    //scanf( "%d", &P );
+    //scanf_s( "%d", &P );
     P = 4;
 
     if ( P > bsp_nprocs() )

@@ -18,7 +18,7 @@
 #define NPRINT 10  /* Print NPRINT values per processor */
 #define MEGA 1000000.0
 
-int P;
+uint32_t P;
 
 void bspfft_test()
 {
@@ -45,7 +45,7 @@ void bspfft_test()
     if ( s == 0 )
     {
         printf( "Please enter length n: \n" );
-        scanf( "%d", &n );
+        scanf_s( "%d", &n );
 
         if ( n < 2 * p )
         {
@@ -185,7 +185,7 @@ int main( int argc, char **argv )
 
     printf( "How many processors do you want to use?\n" );
     fflush( stdout );
-    scanf( "%d", &P );
+    scanf_s( "%d", &P );
 
     if ( P > bsp_nprocs() )
     {
