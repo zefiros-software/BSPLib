@@ -74,12 +74,12 @@ namespace BspInternal
         }
 
         /**
-         * Gets queue to me.
+         * Gets the queues of the source processor communicating to the current processor.
          *
-         * @param   source Source for the.
-         * @param   me     me.
+         * @param   source Source to get the queues from.
+         * @param   me     Processors to get the queues to.
          *
-         * @return The queue to me.
+         * @return The queue.
          */
 
         tQueue &GetQueueToMe( size_t source, size_t me )
@@ -88,12 +88,12 @@ namespace BspInternal
         }
 
         /**
-         * Gets queue from me.
+         * Gets the queues of the current processor communicating to the source processor.
          *
-         * @param   target Target for the.
-         * @param   me     me.
+         * @param   target The processor to get the queues for.
+         * @param   me     The processor to get the queues from.
          *
-         * @return The queue from me.
+         * @return The queue.
          */
 
         tQueue &GetQueueFromMe( size_t target, size_t me )

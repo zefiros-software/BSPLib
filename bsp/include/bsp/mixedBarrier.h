@@ -26,15 +26,26 @@
 #define  SPIN_ITERATIONS 2500
 
 #include "bsp/bspAbort.h"
-#include "bsp/spinLock.h"
 
 #include <mutex>
 
 namespace BspInternal
 {
+    /**
+     * A mixed barrier implementation. Since the lock free barrier is instable, and the condition variable barrier is
+     * slow but stable. This barrier implements a combination of both combining the speed of the lockfree barrier, with
+     * the stability of the condvar barrier.
+     */
+
     class MixedBarrier
     {
     public:
+
+        /**
+         * Constructor.
+         *
+         * @param   count Number of threads to wait for.
+         */
 
         explicit MixedBarrier( uint32_t count )
             : mCurrentCon( &mConVar1 ),
@@ -45,12 +56,25 @@ namespace BspInternal
         {
         }
 
+        /**
+         * Sets the size of the barrier, thus the number of threads to wait for on a sync point.
+         *
+         * @param   count Number of threads to wait on.
+         */
+
         void SetSize( uint32_t count )
         {
             mCount = count;
             mMax = count;
             mSpaces = count;
         }
+
+        /**
+         * Waits for all the threads to reach the sync point, however the process can be aborted when `aborted` equals to
+         * true.
+         *
+         * @param [in,out]  aborted Check whether the process should be aborted.
+         */
 
         void Wait( std::atomic_bool &aborted )
         {
