@@ -131,12 +131,25 @@ public:
         }
     }
 
+    /**
+     * Gets the current processor id, which lies between 0 and NProcs() - 1.
+     *
+     * @return The current processor id.
+     */
+
     BSP_FORCEINLINE uint32_t &ProcId()
     {
         static thread_local uint32_t gPID = 0xdeadbeef;
 
         return gPID;
     }
+
+    /**
+     * Gets the time in seconds since for this thread since starting calculations by
+     * calling Begin().
+     *
+     * @return The amount of time since calling Begin().
+     */
 
     BSP_FORCEINLINE double Time()
     {
@@ -147,6 +160,13 @@ public:
         std::chrono::duration<double> diff = now - mStartTimes[ProcId()];
         return diff.count();
     }
+
+    /**
+     * Initialises the BSP computation process. Please note that
+     * the main thread should also call the entry function.
+     *
+     * @param   entry              The entry function to execute.
+     */
 
     BSP_FORCEINLINE void Init( std::function< void() > entry, uint32_t, char *[] )
     {
@@ -161,6 +181,14 @@ public:
 
         ProcId() = 0;
     }
+
+    /**
+     * Begins the computations with the maximum given processors.
+     *
+     * @exception   e Thrown when an abort error condition occurs, if enabled with symbol BSP_THROW.
+     *
+     * @param   maxProcs The maximum processors to use in computation.
+     */
 
     void Begin( uint32_t maxProcs )
     {
