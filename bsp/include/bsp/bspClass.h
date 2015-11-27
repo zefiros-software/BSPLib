@@ -278,12 +278,20 @@ public:
                     }
 
                 }
+
+#ifdef BSP_THROW
                 catch ( BspInternal::BspAbort &e )
                 {
-#ifdef BSP_THROW
                     throw e;
-#endif
                 }
+
+#else
+                catch ( BspInternal::BspAbort & )
+                {
+
+                }
+
+#endif
             }, i ) );
         }
 
@@ -374,7 +382,7 @@ public:
 
 #ifndef BSP_SKIP_CHECKS
         assert( mThreadRegisterLocation[pid].size() > globalId );
-        assert( mRegisters[pid][mThreadRegisterLocation[tpid][globalId]].size >= nbytes );
+        assert( mRegisters[pid][mThreadRegisterLocation[pid][globalId]].size >= nbytes );
 #endif
 
         const char *dstBuff = reinterpret_cast<const char *>( mThreadRegisterLocation[pid][globalId] );
@@ -557,9 +565,6 @@ private:
             {
                 for ( auto putRequest = putQueue.rbegin(), end = putQueue.rend(); putRequest != end; ++putRequest )
                 {
-#ifndef BSP_SKIP_CHECKS
-                    assert( putRequest->size > 0 );
-#endif
                     mPutBufferStacks[owner].Extract( putRequest->bufferLocation, putRequest->size, ( char * )putRequest->destination );
                 }
 
