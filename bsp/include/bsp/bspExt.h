@@ -485,7 +485,7 @@ namespace BSPLib
     template< typename tPrimitive >
     void SetTagsize( uint32_t count )
     {
-        SetTagsize( count * sizeof( tPrimitive ) );
+        Classic::SetTagsize( count * sizeof( tPrimitive ) );
     }
 
     template< typename tPrimitive >
