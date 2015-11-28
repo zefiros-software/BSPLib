@@ -26,7 +26,7 @@
 #include "bsp/bspClass.h"
 #include "bsp/util.h"
 
-#include <type_traits>
+#include <cstdint>
 
 #ifndef BSP_DISABLE_NAMESPACE
 namespace BSPLib
