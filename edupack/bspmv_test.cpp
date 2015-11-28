@@ -573,7 +573,11 @@ void bspinputvec( int p, int s, const char *filename,
                at a time to save memory  */
             for ( k = q * b; k < ( q + 1 )*b && k < n; k++ )
             {
+#ifdef _WIN32
                 fscanf_s( fp, "%d %d\n", &i, &proc );
+#else
+                fscanf( fp, "%d %d\n", &i, &proc );
+#endif
                 /* Convert index and processor number to ranges
                    0..n-1 and 0..p-1, assuming they were
                    1..n and 1..p */
@@ -783,7 +787,12 @@ int main( int argc, char **argv )
 
     bsp_init( bspmv_test, argc, argv );
     printf( "How many processors do you want to use?\n" );
+
+#ifdef _WIN32
     scanf_s( "%d", &P );
+#else
+    scanf( "%d", &P );
+#endif
 
     if ( P > bsp_nprocs() )
     {
