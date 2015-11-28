@@ -523,7 +523,7 @@ void bspinputvec( int p, int s, const char *filename,
         fscanf_s( fp, "%d %d\n", &n, &pv );
 #else
         fopen( filename, "r" );
-        fscanf( "%s", filename );
+        fscanf( fp, "%d %d\n", &n, &pv );
 #endif
 
         if ( pv != p )
@@ -678,7 +678,7 @@ void bspmv_test()
 #ifdef _WIN32
         scanf_s( "%s", vfilename, STRLEN );
 #else
-        scanf( "%s", vfilename, STRLEN );
+        scanf( "%s", vfilename );
 #endif
     }
 
@@ -691,7 +691,7 @@ void bspmv_test()
 #ifdef _WIN32
         scanf_s( "%s", ufilename, STRLEN );
 #else
-        scanf( "%s", ufilename, STRLEN );
+        scanf( "%s", ufilename );
 #endif
     }
 
