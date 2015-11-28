@@ -24,6 +24,7 @@
 #define __BSPABORT_H__
 
 #include <exception>
+#include <string>
 
 namespace BspInternal
 {
