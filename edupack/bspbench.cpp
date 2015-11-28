@@ -56,7 +56,7 @@ void leastsquares( int h0, int h1, double *t, double *g, double *l )
 
 } /* end leastsquares */
 
-__declspec( noinline ) void bspbench()
+void bspbench()
 {
     void leastsquares( int h0, int h1, double * t, double * g, double * l );
     int p, s, s1, iter, i, n, h, destproc[MAXH], destindex[MAXH];
