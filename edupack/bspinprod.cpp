@@ -128,7 +128,12 @@ int main( int argc, char **argv )
     /* sequential part */
     printf( "How many processors do you want to use?\n" );
     fflush( stdout );
+
+#ifdef _WIN32
     scanf_s( "%d", &P );
+#else
+    scanf( "%d", &P );
+#endif
 
     if ( P > bsp_nprocs() )
     {

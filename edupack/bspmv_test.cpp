@@ -84,12 +84,21 @@ void bspinput2triple( int p, int s, int *pnA, int *pnz,
     {
         /* Open the matrix file and read the header */
         printf( "Please enter the filename of the matrix distribution\n" );
+#ifdef _WIN32
         scanf_s( "%s", filename, STRLEN );
         fopen_s( &fp, filename, "r" );
+#else
+        scanf( "%s", filename, STRLEN );
+        fopen( &fp, filename, "r" );
+#endif
 
         /* A is an mA by nA matrix with nzA nonzeros
            distributed over pA processors. */
+#ifdef _WIN32
         fscanf_s( fp, "%d %d %d %d\n", &mA, &nA, &nzA, &pA );
+#else
+        fscanf( fp, "%d %d %d %d\n", &mA, &nA, &nzA, &pA );
+#endif
 
         if ( pA != p )
         {
@@ -103,7 +112,11 @@ void bspinput2triple( int p, int s, int *pnA, int *pnz,
 
         for ( q = 0; q <= p; q++ )
         {
+#ifdef _WIN32
             fscanf_s( fp, "%d\n", &Pstart[q] );
+#else
+            fscanf( fp, "%d\n", &Pstart[q] );
+#endif
         }
 
         for ( q = 0; q < p; q++ )
@@ -134,7 +147,11 @@ void bspinput2triple( int p, int s, int *pnA, int *pnz,
                send them to their destination */
             for ( k = Pstart[q]; k < Pstart[q + 1]; k++ )
             {
+#ifdef _WIN32
                 fscanf_s( fp, "%d %d %lf\n", &t.i, &t.j, &value );
+#else
+                fscanf( fp, "%d %d %lf\n", &t.i, &t.j, &value );
+#endif
                 /* Convert indices to range 0..n-1,
                    assuming it was 1..n */
                 t.i--;
