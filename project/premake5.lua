@@ -44,7 +44,13 @@ solution "bsp-library"
             "-std=c++11",
             "-pthread"
             }   
-                
+        
+    configuration "Coverage"
+        targetsuffix "cd"
+        flags "Symbols"
+        links "gcov"
+        buildoptions "-coverage"
+                             
     configuration {}
             
     project "bsp"
