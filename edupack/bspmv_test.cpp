@@ -518,8 +518,13 @@ void bspinputvec( int p, int s, const char *filename,
     {
         /* Open the file and read the header */
 
+#ifdef _WIN32
         fopen_s( &fp, filename, "r" );
         fscanf_s( fp, "%d %d\n", &n, &pv );
+#else
+        fopen( filename, "r" );
+        fscanf( "%s", filename );
+#endif
 
         if ( pv != p )
         {
@@ -669,7 +674,12 @@ void bspmv_test()
     if ( s == 0 )
     {
         printf( "Please enter the filename of the v-vector distribution\n" );
+
+#ifdef _WIN32
         scanf_s( "%s", vfilename, STRLEN );
+#else
+        scanf( "%s", vfilename, STRLEN );
+#endif
     }
 
     bspinputvec( p, s, vfilename, &n, &nv, &vindex );
@@ -677,7 +687,12 @@ void bspmv_test()
     if ( s == 0 )
     {
         printf( "Please enter the filename of the u-vector distribution\n" );
+
+#ifdef _WIN32
         scanf_s( "%s", ufilename, STRLEN );
+#else
+        scanf( "%s", ufilename, STRLEN );
+#endif
     }
 
     bspinputvec( p, s, ufilename, &n, &nu, &uindex );
