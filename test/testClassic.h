@@ -44,6 +44,28 @@ TEST( P( Classic ), AbortTest )
     }
 }
 
+inline void AbortTestMain()
+{
+    BSPLib::Sync();
+
+    if ( !BSPLib::ProcId() )
+    {
+        BSPLib::Classic::Abort( "" );
+    }
+}
+
+TEST( P( Classic ), AbortTestMain )
+{
+    try
+    {
+        BspExecute( AbortTest, 32 );
+    }
+    catch ( std::exception &e )
+    {
+        ASSERT_STREQ( "Aborted", e.what() );
+    }
+}
+
 inline void EmptyTest()
 {
 }

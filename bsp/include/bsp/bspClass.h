@@ -173,7 +173,7 @@ public:
         mEntry = entry;
         mTagSize = 0;
 
-        if ( !mEnded )
+        if ( !mEnded && !mAbort )
         {
             fprintf( stderr, "Warning: initialisation data corresponding to another BSP run found;\n" );
             fprintf( stderr, "         and this other run did not terminate (gracefully).\n" );
