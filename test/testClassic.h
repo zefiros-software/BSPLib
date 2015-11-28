@@ -627,4 +627,24 @@ BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint16_t );
 BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint32_t );
 BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint64_t );
 
+BspTest4( Classic, 8, BruteForceTest, 1000, 1800, 3, uint16_t );
+BspTest4( Classic, 8, BruteForceTest, 1000, 1800, 3, uint32_t );
+BspTest4( Classic, 8, BruteForceTest, 1000, 1800, 3, uint64_t );
+
+BspTest4( Classic, 3, BruteForceTest, 500, 800, 2, uint16_t );
+BspTest4( Classic, 3, BruteForceTest, 500, 800, 2, uint32_t );
+BspTest4( Classic, 3, BruteForceTest, 500, 800, 2, uint64_t );
+
+BspTest4( Classic, 3, BruteForceTest, 1000, 1800, 1, uint16_t );
+BspTest4( Classic, 3, BruteForceTest, 1000, 1800, 1, uint32_t );
+BspTest4( Classic, 3, BruteForceTest, 1000, 1800, 1, uint64_t );
+
+BspTest4( Classic, 16, BruteForceTest, 500, 800, 5, uint16_t );
+BspTest4( Classic, 16, BruteForceTest, 500, 800, 5, uint32_t );
+BspTest4( Classic, 16, BruteForceTest, 500, 800, 5, uint64_t );
+
+BspTest4( Classic, 16, BruteForceTest, 1000, 1800, 3, uint16_t );
+BspTest4( Classic, 16, BruteForceTest, 1000, 1800, 3, uint32_t );
+BspTest4( Classic, 16, BruteForceTest, 1000, 1800, 3, uint64_t );
+
 #endif
