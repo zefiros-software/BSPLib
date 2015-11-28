@@ -322,7 +322,7 @@ namespace BSPLib
         PushRegPtrs( &*begin, &*end );
     }
 
-    template < typename tIterator, typename = std::enable_if< IsIterator< tIterator >::value > >
+    template < typename tIterator>
     void PopRegIterator( tIterator begin )
     {
         PopRegPtrs( &*begin );
