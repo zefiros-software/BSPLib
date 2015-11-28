@@ -26,6 +26,7 @@
 #include "util.h"
 
 #include <cstring>
+#include <cstddef>
 #include <vector>
 
 namespace BspInternal
