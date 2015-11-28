@@ -88,8 +88,8 @@ void bspinput2triple( int p, int s, int *pnA, int *pnz,
         scanf_s( "%s", filename, STRLEN );
         fopen_s( &fp, filename, "r" );
 #else
-        scanf( "%s", filename, STRLEN );
-        fopen( &fp, filename, "r" );
+        scanf( "%s", filename );
+        fopen( filename, "r" );
 #endif
 
         /* A is an mA by nA matrix with nzA nonzeros
