@@ -6,7 +6,7 @@ solution "bsp-library"
     objdir( root .. "bin/obj/" )
 	debugdir( root .. "bin/" )
     
-    configurations { "Debug", "Release" }
+    configurations { "Debug", "Release", "Coverage" }
 
     platforms { "x64", "x32" }
 
