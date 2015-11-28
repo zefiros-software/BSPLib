@@ -88,7 +88,7 @@ namespace BspInternal
             if ( aborted )
             {
                 mCurrentCon->notify_all();
-                throw BspAbort( "Thread Exited" );
+                throw BspAbort( "Aborted" );
             }
 
             if ( --mCount == 0 )

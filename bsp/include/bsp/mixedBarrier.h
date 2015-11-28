@@ -89,7 +89,7 @@ namespace BspInternal
             if ( aborted )
             {
                 mCurrentCon->notify_all();
-                throw BspAbort( "Thread Exited" );
+                throw BspAbort( "Aborted" );
             }
 
             if ( !--mSpaces )
@@ -108,7 +108,7 @@ namespace BspInternal
                 {
                     if ( aborted )
                     {
-                        throw BspAbort( "Thread Exited" );
+                        throw BspAbort( "Aborted" );
                     }
                 }
 

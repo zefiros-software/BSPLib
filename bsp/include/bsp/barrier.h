@@ -90,7 +90,7 @@ namespace BspInternal
                 {
                     if ( aborted )
                     {
-                        throw BspAbort( "Thread Exited" );
+                        throw BspAbort( "Aborted" );
                     }
                 }
             }
