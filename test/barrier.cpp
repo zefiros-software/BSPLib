@@ -19,24 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#define BSP_THROW
-#include "bsp/bsp.h"
+#include "helper.h"
 
-#include "gtest/gtest.h"
-
-#include "testClassic.h"
-#include "testPrimitive.h"
-
-int32_t main( int32_t argc, char **argv )
+TEST( P( Barrier ), Simple )
 {
-    testing::InitGoogleTest( &argc, argv );
 
-    int result = RUN_ALL_TESTS();
-
-#ifdef _WIN32
-    system( "pause" );
-#endif // _WIN32
-
-
-    return result;
 }

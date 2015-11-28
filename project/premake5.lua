@@ -2,8 +2,9 @@ local root      = "../"
 
 solution "bsp-library"
 
-    location( root )
+    location( root .. "bsp/" )
     objdir( root .. "bin/obj/" )
+	debugdir( root .. "bin/" )
     
     configurations { "Debug", "Release" }
 
@@ -17,12 +18,10 @@ solution "bsp-library"
 
     configuration "x32"
         targetdir( root .. "bin/x32/" )
-        debugdir( root .. "bin/x32/" )
         architecture "x32"
 
     configuration "x64"
         targetdir( root .. "bin/x64/" )
-        debugdir( root .. "bin/x64/" )
         architecture "x64"
         
     configuration "Debug"
@@ -48,11 +47,8 @@ solution "bsp-library"
                 
     configuration {}
             
-    project "bsplib"
-        location( root )
-                
-        kind "ConsoleApp"
-        flags "WinMain"
+    project "bsp"
+        kind "StaticLib"
 
         includedirs {
             root .. "bsp/include/",
@@ -63,7 +59,7 @@ solution "bsp-library"
             root .. "bsp/include/**.cpp",
             }
             
-    project "bsptest"
+    project "bsp-test"
         location(  root .. "test/" )
                 
         kind "ConsoleApp"
@@ -99,9 +95,7 @@ solution "bsp-library"
         configuration { "Release", "x64" }
             defines "PREFIX=X64R_"
             
-    project "bench"
-        location(  root )
-                
+    project "bsp-bench"                
         kind "ConsoleApp"
         flags "WinMain"
 
@@ -116,9 +110,7 @@ solution "bsp-library"
             root .. "edupack/bspbench.cpp",
             }
             
-    project "fft"
-        location(  root )
-                
+    project "fft"                
         kind "ConsoleApp"
         flags "WinMain"
         
@@ -136,9 +128,7 @@ solution "bsp-library"
             root .. "edupack/bspfft_test.cpp",
             }
             
-    project "lu"
-        location(  root )
-                
+    project "lu"                
         kind "ConsoleApp"
         flags "WinMain"
         
@@ -156,9 +146,7 @@ solution "bsp-library"
             root .. "edupack/bsplu_test.cpp",
             }
             
-    project "ip"
-        location(  root )
-                
+    project "ip"                
         kind "ConsoleApp"
         flags "WinMain"
 
@@ -173,9 +161,7 @@ solution "bsp-library"
             root .. "edupack/bspinprod.cpp",
             }
             
-    project "matvec"
-        location(  root )
-                
+    project "matvec"                
         kind "ConsoleApp"
         flags "WinMain"
 
@@ -191,9 +177,7 @@ solution "bsp-library"
             root .. "edupack/bspmv_test.cpp",
             }
             
-    project "fft"
-        location(  root )
-                
+    project "fft"                
         kind "ConsoleApp"
         flags "WinMain"
         
@@ -211,9 +195,7 @@ solution "bsp-library"
             root .. "edupack/bspfft_test.cpp",
             }
             
-    project "lu"
-        location(  root )
-                
+    project "lu"                
         kind "ConsoleApp"
         flags "WinMain"
         

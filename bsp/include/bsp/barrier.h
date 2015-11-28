@@ -53,6 +53,8 @@ namespace BspInternal
          * Sets the size of the barrier, thus the number of threads to wait for on a sync point.
          *
          * @param   count Number of threads to wait on.
+         *
+         * @post The amount of threads the barriers waits on equals count.
          */
 
         void SetSize( uint32_t count )
@@ -67,6 +69,10 @@ namespace BspInternal
          * true.
          *
          * @param [in,out]  aborted Check whether the process should be aborted.
+         *
+         * @pre if aborted == true, all threads quit computations.
+         *
+         * @post all threads have waited for each other to reach the barrier.
          */
 
         void Wait( std::atomic_bool &aborted )
