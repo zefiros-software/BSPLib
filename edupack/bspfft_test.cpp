@@ -45,7 +45,12 @@ void bspfft_test()
     if ( s == 0 )
     {
         printf( "Please enter length n: \n" );
+
+#ifdef _WIN32
         scanf_s( "%d", &n );
+#else
+        scanf( "%d", &n );
+#endif
 
         if ( n < 2 * p )
         {
@@ -180,12 +185,16 @@ void bspfft_test()
 
 int main( int argc, char **argv )
 {
-
     bsp_init( bspfft_test, argc, argv );
 
     printf( "How many processors do you want to use?\n" );
     fflush( stdout );
+
+#ifdef _WIN32
     scanf_s( "%d", &P );
+#else
+    scanf( "%d", &P );
+#endif
 
     if ( P > bsp_nprocs() )
     {
