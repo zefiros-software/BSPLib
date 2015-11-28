@@ -74,7 +74,12 @@ void bspinprod()
     {
         printf( "Please enter n:\n" );
         fflush( stdout );
+
+#ifdef _WIN32
         scanf_s( "%d", &n );
+#else
+        scanf( "%d", &n );
+#endif
 
         if ( n < 0 )
         {
