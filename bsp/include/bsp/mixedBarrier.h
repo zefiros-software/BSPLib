@@ -23,7 +23,7 @@
 #ifndef __MIXEDBARRIER_H__
 #define __MIXEDBARRIER_H__
 
-#define  SPIN_ITERATIONS 2500
+#define BSP_SPIN_ITERATIONS 5000
 
 #include "bsp/bspAbort.h"
 
@@ -102,9 +102,9 @@ namespace BspInternal
             }
             else
             {
-                volatile size_t i = 0;
+                size_t i = 0;
 
-                while ( mGeneration == myGeneration && ++i < SPIN_ITERATIONS )
+                while ( mGeneration == myGeneration && ++i < BSP_SPIN_ITERATIONS )
                 {
                     if ( aborted )
                     {
@@ -114,7 +114,7 @@ namespace BspInternal
 
 
 
-                if ( i >= SPIN_ITERATIONS )
+                if ( i >= BSP_SPIN_ITERATIONS )
                 {
                     std::unique_lock< std::mutex > condVarLoc( mCondVarMutex );
 

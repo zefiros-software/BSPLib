@@ -21,7 +21,196 @@
  */
 #include "helper.h"
 
-TEST( P( Barrier ), Simple )
+template< typename tBarrier >
+void TestBarrierImpl( tBarrier &barrier, std::vector< bool > &checks, std::atomic_bool &abort,
+                      size_t id )
 {
-
+    barrier.Wait( abort );
+    checks[id] = true;
+    barrier.Wait( abort );
 }
+
+template< typename tBarrier >
+void TestBarrier( size_t threads, std::atomic_bool abort )
+{
+    std::vector< std::future< void > > futures;
+    std::vector< bool > check( threads );
+    tBarrier barrier( threads );
+
+    for ( size_t i = 0; i < threads - 1; ++i )
+    {
+        futures.emplace_back( std::async( std::launch::async, [&barrier, &check, &threads, &abort, i]()
+        {
+            TestBarrierImpl< tBarrier >( barrier, check, abort, i );
+        } ) );
+
+        EXPECT_EQ( 0, std::count_if( check.begin(), check.end(), []( bool b )
+        {
+            return b;
+        } ) );
+    }
+
+    TestBarrierImpl< tBarrier >( barrier, check, abort, threads - 1 );
+
+    EXPECT_EQ( threads, std::count_if( check.begin(), check.end(), []( bool b )
+    {
+        return b;
+    } ) );
+}
+
+/*
+TEST( P( Barrier ), Simple2 )
+{
+    TestBarrier< BspInternal::Barrier >( 2, false );
+}
+
+TEST( P( Barrier ), Simple4 )
+{
+    TestBarrier< BspInternal::Barrier >( 4, false );
+}
+
+TEST( P( Barrier ), Simple8 )
+{
+    TestBarrier< BspInternal::Barrier >( 8, false );
+}
+
+TEST( P( Barrier ), Simple16 )
+{
+    TestBarrier< BspInternal::Barrier >( 16, false );
+}
+
+TEST( P( Barrier ), Simple32 )
+{
+    TestBarrier< BspInternal::Barrier >( 32, false );
+}
+
+TEST( P( CondVarBarrier ), Simple )
+{
+    TestBarrier< BspInternal::CondVarBarrier >( 1, false );
+}
+
+TEST( P( CondVarBarrier ), Simple2 )
+{
+    TestBarrier< BspInternal::CondVarBarrier >( 2, false );
+}
+
+TEST( P( CondVarBarrier ), Simple4 )
+{
+    TestBarrier< BspInternal::CondVarBarrier >( 4, false );
+}
+
+TEST( P( CondVarBarrier ), Simple8 )
+{
+    TestBarrier< BspInternal::CondVarBarrier >( 8, false );
+}
+
+TEST( P( CondVarBarrier ), Simple16 )
+{
+    TestBarrier< BspInternal::CondVarBarrier >( 16, false );
+}
+
+TEST( P( CondVarBarrier ), Simple32 )
+{
+    TestBarrier< BspInternal::CondVarBarrier >( 32, false );
+}
+
+TEST( P( MixedBarrier ), Simple2 )
+{
+    TestBarrier< BspInternal::CondVarBarrier >( 2, false );
+}
+
+TEST( P( MixedBarrier ), Simple4 )
+{
+    TestBarrier< BspInternal::CondVarBarrier >( 4, false );
+}
+
+TEST( P( MixedBarrier ), Simple8 )
+{
+    TestBarrier< BspInternal::CondVarBarrier >( 8, false );
+}
+
+TEST( P( MixedBarrier ), Simple16 )
+{
+    TestBarrier< BspInternal::CondVarBarrier >( 16, false );
+}
+
+TEST( P( MixedBarrier ), Simple32 )
+{
+    TestBarrier< BspInternal::CondVarBarrier >( 32, false );
+}
+
+TEST( P( Barrier ), Abort2 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::Barrier >( 2, true ), BspInternal::BspAbort );
+}
+
+TEST( P( Barrier ), Abort4 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::Barrier >( 4, true ), BspInternal::BspAbort );
+}
+
+TEST( P( Barrier ), Abort8 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::Barrier >( 8, true ), BspInternal::BspAbort );
+}
+
+TEST( P( Barrier ), Abort16 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::Barrier >( 16, true ), BspInternal::BspAbort );
+}
+
+TEST( P( Barrier ), Abort32 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::Barrier >( 32, true ), BspInternal::BspAbort );
+}
+
+TEST( P( CondVarBarrier ), Abort2 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::CondVarBarrier >( 2, true ), BspInternal::BspAbort );
+}
+
+TEST( P( CondVarBarrier ), Abort4 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::CondVarBarrier >( 4, true ), BspInternal::BspAbort );
+}
+
+TEST( P( CondVarBarrier ), Abort8 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::CondVarBarrier >( 8, true ), BspInternal::BspAbort );
+}
+
+TEST( P( CondVarBarrier ), Abort16 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::CondVarBarrier >( 16, true ), BspInternal::BspAbort );
+}
+
+TEST( P( CondVarBarrier ), Abort32 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::CondVarBarrier >( 32, true ), BspInternal::BspAbort );
+}
+
+TEST( P( MixedBarrier ), Abort2 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::MixedBarrier >( 2, true ), BspInternal::BspAbort );
+}
+
+TEST( P( MixedBarrier ), Abort4 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::MixedBarrier >( 4, true ), BspInternal::BspAbort );
+}
+
+TEST( P( MixedBarrier ), Abort8 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::MixedBarrier >( 8, true ), BspInternal::BspAbort );
+}
+
+TEST( P( MixedBarrier ), Abort16 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::MixedBarrier >( 16, true ), BspInternal::BspAbort );
+}
+
+TEST( P( MixedBarrier ), Abort32 )
+{
+    ASSERT_THROW( TestBarrier< BspInternal::MixedBarrier >( 32, true ), BspInternal::BspAbort );
+}
+*/
