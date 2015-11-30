@@ -4,3 +4,16 @@ repo_url: https://github.com/Zefiros-Software/BSPLib
 site_description: BSPLib a fast and easy to use parallel computation libary.
 theme: readthedocs
 copyright: Copyright (c) 2015 Mick van Duijn, Koen Visscher and Paul Visscher
+
+pages:
+- BSP: index.md
+- Program Logic: logic.md
+- Utilities: utility.md
+- Halting: halting.md
+- Synchronisation Point: sync.md
+- Registration & Deregistration: regdereg.md
+- Communication: communication.md
+- Messaging: messaging.md
+- Messaging Utilities: messagingutil.md
+- High Performance: hp.md
+- Classic: classic.md
