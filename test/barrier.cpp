@@ -21,6 +21,8 @@
  */
 #include "helper.h"
 
+#include <algorithm>
+
 template< typename tBarrier >
 void TestBarrierImpl( tBarrier &barrier, std::vector< uint8_t > &checks, std::atomic_bool &abort,
                       size_t id )
