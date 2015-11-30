@@ -23,18 +23,29 @@
 #ifndef __MIXEDBARRIER_H__
 #define __MIXEDBARRIER_H__
 
-#define  SPIN_ITERATIONS 2500
+#define BSP_SPIN_ITERATIONS 5000
 
 #include "bsp/bspAbort.h"
-#include "bsp/spinLock.h"
 
 #include <mutex>
 
 namespace BspInternal
 {
+    /**
+     * A mixed barrier implementation. Since the lock free barrier is instable, and the condition variable barrier is
+     * slow but stable. This barrier implements a combination of both combining the speed of the lockfree barrier, with
+     * the stability of the condvar barrier.
+     */
+
     class MixedBarrier
     {
     public:
+
+        /**
+         * Constructor.
+         *
+         * @param   count Number of threads to wait for.
+         */
 
         explicit MixedBarrier( uint32_t count )
             : mCurrentCon( &mConVar1 ),
@@ -45,12 +56,31 @@ namespace BspInternal
         {
         }
 
+        /**
+         * Sets the size of the barrier, thus the number of threads to wait for on a sync point.
+         *
+         * @param   count Number of threads to wait on.
+         *
+         * @post The amount of threads the barriers waits on equals count.
+         */
+
         void SetSize( uint32_t count )
         {
             mCount = count;
             mMax = count;
             mSpaces = count;
         }
+
+        /**
+         * Waits for all the threads to reach the sync point, however the process can be aborted when `aborted` equals to
+         * true.
+         *
+         * @param [in,out]  aborted Check whether the process should be aborted.
+         *
+         * @pre if aborted == true, all threads quit computations.
+         *
+         * @post all threads have waited for each other to reach the barrier.
+         */
 
         void Wait( std::atomic_bool &aborted )
         {
@@ -59,7 +89,7 @@ namespace BspInternal
             if ( aborted )
             {
                 mCurrentCon->notify_all();
-                throw BspAbort( "Thread Exited" );
+                throw BspAbort( "Aborted" );
             }
 
             if ( !--mSpaces )
@@ -72,19 +102,19 @@ namespace BspInternal
             }
             else
             {
-                volatile size_t i = 0;
+                size_t i = 0;
 
-                while ( mGeneration == myGeneration && ++i < SPIN_ITERATIONS )
+                while ( mGeneration == myGeneration && ++i < BSP_SPIN_ITERATIONS )
                 {
                     if ( aborted )
                     {
-                        throw BspAbort( "Thread Exited" );
+                        throw BspAbort( "Aborted" );
                     }
                 }
 
 
 
-                if ( i >= SPIN_ITERATIONS )
+                if ( i >= BSP_SPIN_ITERATIONS )
                 {
                     std::unique_lock< std::mutex > condVarLoc( mCondVarMutex );
 

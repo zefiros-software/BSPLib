@@ -23,7 +23,7 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
-// From boost
+// From boost. Forces inlining on multiple compilers for extra perfomance.
 #if !defined(BSP_FORCEINLINE)
 #  if defined(_MSC_VER)
 #    define BSP_FORCEINLINE __forceinline

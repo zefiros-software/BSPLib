@@ -26,348 +26,490 @@
 #include "bsp/bspClass.h"
 #include "bsp/util.h"
 
-#include <type_traits>
+#include <cstdint>
 
 #ifndef BSP_DISABLE_NAMESPACE
 namespace BSPLib
 {
-#   define BSP_NAMESPACE BSPLib
+#   define BSP_NAMESPACE ::BSPLib
 #else
 #   define BSP_NAMESPACE
 #endif
-    BSP_FORCEINLINE void Init( std::function< void() >spmd, int argc, char **argv )
+
+    namespace Classic
     {
-        BSP::GetInstance().Init( spmd, argc, argv );
+        BSP_FORCEINLINE void Init( std::function< void() >spmd, int argc, char **argv )
+        {
+            BSP::GetInstance().Init( spmd, argc, argv );
+        }
+
+        BSP_FORCEINLINE void Begin( uint32_t p )
+        {
+            BSP::GetInstance().Begin( p );
+        }
+
+        BSP_FORCEINLINE void End()
+        {
+            BSP::GetInstance().End();
+        }
+
+        BSP_FORCEINLINE uint32_t ProcId()
+        {
+            return BSP::GetInstance().ProcId();
+        }
+
+        BSP_FORCEINLINE uint32_t NProcs()
+        {
+            return BSP::GetInstance().NProcs();
+        }
+
+        inline void Abort( const char *errorMessage, ... )
+        {
+            BSP::GetInstance().Abort( errorMessage );
+        }
+
+        BSP_FORCEINLINE void VAbort( const char *errorMessage, va_list args )
+        {
+            BSP::GetInstance().VAbort( errorMessage, args );
+        }
+
+        BSP_FORCEINLINE void Sync()
+        {
+            BSP::GetInstance().Sync();
+        }
+
+        BSP_FORCEINLINE double Time()
+        {
+            return BSP::GetInstance().Time();
+        }
+
+        BSP_FORCEINLINE void PushReg( const void *ident, size_t size )
+        {
+            BSP::GetInstance().PushReg( ident, size );
+        }
+
+        BSP_FORCEINLINE void PopReg( const void *ident )
+        {
+            BSP::GetInstance().PopReg( ident );
+        }
+
+        BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
+        {
+            BSP::GetInstance().Put( pid, src, dst, offset, nbytes );
+        }
+
+        BSP_FORCEINLINE void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
+        {
+            BSP::GetInstance().Get( pid, src, offset, dst, nbytes );
+        }
+
+        BSP_FORCEINLINE void SetTagSize( size_t *size )
+        {
+            BSP::GetInstance().SetTagsize( size );
+        }
+
+        BSP_FORCEINLINE void Send( uint32_t pid, const void *tag, const void *payload, size_t size )
+        {
+            BSP::GetInstance().Send( pid, tag, payload, size );
+        }
+
+        BSP_FORCEINLINE void HPSend( uint32_t pid, const void *tag, const void *payload, size_t size )
+        {
+            BSP::GetInstance().Send( pid, tag, payload, size );
+        }
+
+        BSP_FORCEINLINE void QSize( size_t *packets, size_t *accumulatedSize )
+        {
+            BSP::GetInstance().QSize( packets, accumulatedSize );
+        }
+
+        BSP_FORCEINLINE void GetTag( size_t *status, void *tag )
+        {
+            BSP::GetInstance().GetTag( status, tag );
+        }
+
+        BSP_FORCEINLINE void Move( void *payload, size_t maxCopySize )
+        {
+            BSP::GetInstance().Move( payload, maxCopySize );
+        }
+
+        BSP_FORCEINLINE size_t HPMove( void **tagPtr, void **payloadPtr )
+        {
+            BSP &bsp = BSP::GetInstance();
+            size_t status;
+            bsp.GetTag( &status, *tagPtr );
+            bsp.Move( *payloadPtr, status );
+            return status;
+        }
+
+        BSP_FORCEINLINE void HPPut( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
+        {
+            BSP::GetInstance().Put( pid, src, dst, offset, nbytes );
+        }
+
+        BSP_FORCEINLINE void HPGet( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
+        {
+            BSP::GetInstance().Get( pid, src, offset, dst, nbytes );
+        }
     }
 
-    BSP_FORCEINLINE void Begin( uint32_t P )
+    BSP_FORCEINLINE void Init( std::function< void() >spmd, int argc, char **argv )
     {
-        BSP::GetInstance().Begin( P );
+        Classic::Init( spmd, argc, argv );
+    }
+
+    BSP_FORCEINLINE void Begin( uint32_t p )
+    {
+        Classic::Begin( p );
     }
 
     BSP_FORCEINLINE void End()
     {
-        BSP::GetInstance().End();
-    }
-
-    BSP_FORCEINLINE size_t ProcId()
-    {
-        return BSP::GetInstance().ProcId();
-    }
-
-    BSP_FORCEINLINE size_t NProcs()
-    {
-        return BSP::GetInstance().NProcs();
-    }
-
-    inline void Abort( const char *error_message, ... )
-    {
-        BSP::GetInstance().Abort( error_message );
-    }
-
-    BSP_FORCEINLINE void VAbort( const char *error_message, va_list args )
-    {
-        BSP::GetInstance().VAbort( error_message, args );
+        Classic::End();
     }
 
     BSP_FORCEINLINE void Sync()
     {
-        BSP::GetInstance().Sync();
+        Classic::Sync();
+    }
+
+    BSP_FORCEINLINE uint32_t ProcId()
+    {
+        return Classic::ProcId();
+    }
+
+    BSP_FORCEINLINE uint32_t NProcs()
+    {
+        return Classic::NProcs();
     }
 
     BSP_FORCEINLINE double Time()
     {
-        return BSP::GetInstance().Time();
+        return Classic::Time();
     }
 
-    BSP_FORCEINLINE void PushReg( const void *ident, size_t size )
+    template< typename tPrimitive >
+    void PushReg( tPrimitive &ident )
     {
-        BSP::GetInstance().PushReg( ident, size );
+        Classic::PushReg( &ident, sizeof( tPrimitive ) );
     }
 
-    BSP_FORCEINLINE void PopReg( const void *ident )
+    inline void PushReg()
     {
-        BSP::GetInstance().PopReg( ident );
+        Classic::PushReg( nullptr, 0 );
     }
 
-    BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
+    template< typename tPrimitive >
+    void PopReg( tPrimitive &ident )
     {
-        BSP::GetInstance().Put( pid, src, dst, offset, nbytes );
+        Classic::PopReg( &ident );
     }
 
-    BSP_FORCEINLINE void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
+    inline void PopReg()
     {
-        BSP::GetInstance().Get( pid, src, offset, dst, nbytes );
+        Classic::PopReg( nullptr );
     }
 
-    BSP_FORCEINLINE void SetTagSize( size_t *size )
+    template<>
+    inline void PushReg( std::string &string )
     {
-        BSP::GetInstance().SetTagsize( size );
+        Classic::PushReg( string.data(), string.size() );
     }
 
-    BSP_FORCEINLINE void Send( uint32_t pid, const void *tag, const void *payload, const size_t size )
+    template<>
+    inline void PopReg( std::string &string )
     {
-        BSP::GetInstance().Send( pid, tag, payload, size );
+        Classic::PopReg( string.data() );
     }
 
-    BSP_FORCEINLINE void HPSend( uint32_t pid, const void *tag, const void *payload, const size_t size )
+    template< typename tPrimitive >
+    void Put( uint32_t pid, tPrimitive &src, tPrimitive &dst )
     {
-        BSP::GetInstance().Send( pid, tag, payload, size );
+        Classic::Put( pid, &src, &dst, 0, sizeof( tPrimitive ) );
     }
 
-    BSP_FORCEINLINE void QSize( size_t *packets, size_t *accumulated_size )
+    template< typename tPrimitive >
+    void Put( uint32_t pid, tPrimitive &var )
     {
-        BSP::GetInstance().QSize( packets, accumulated_size );
+        Put( pid, var, var );
     }
 
-    BSP_FORCEINLINE void GetTag( size_t *status, void *tag )
+    template< typename tPrimitive >
+    void Get( uint32_t pid, tPrimitive &src, tPrimitive &dst )
     {
-        BSP::GetInstance().GetTag( status, tag );
+        Classic::Get( pid, &src, 0, &dst, sizeof( tPrimitive ) );
     }
 
-    BSP_FORCEINLINE void Move( void *payload, const size_t max_copy_size )
+    template< typename tPrimitive >
+    void Get( uint32_t pid, tPrimitive &var )
     {
-        BSP::GetInstance().Move( payload, max_copy_size );
+        Get( pid, var, var );
     }
 
-    BSP_FORCEINLINE size_t HPMove( void **tag_ptr, void **payload_ptr )
+    template< typename tPrimitive, typename tTag >
+    void Send( uint32_t pid, const tTag &tag, const tPrimitive &payload )
     {
-        BSP &bsp = BSP::GetInstance();
-        size_t status;
-        bsp.GetTag( &status, *tag_ptr );
-        bsp.Move( *payload_ptr, status );
-        return status;
+        Classic::Send( pid, &tag, &payload, sizeof( tPrimitive ) );
     }
 
-    BSP_FORCEINLINE void HPPut( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
+    template< typename tPrimitive >
+    void Move( tPrimitive &payload )
     {
-        BSP::GetInstance().Put( pid, src, dst, offset, nbytes );
+        Classic::Move( &payload, sizeof( tPrimitive ) );
     }
 
-    BSP_FORCEINLINE void HPGet( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
+    template< typename tPrimitive >
+    void PushRegPtrs( tPrimitive *begin, tPrimitive *end )
     {
-        BSP::GetInstance().Get( pid, src, offset, dst, nbytes );
+        Classic::PushReg( begin, ( end - begin ) * sizeof( tPrimitive ) );
     }
 
-    namespace Ext
+    template< typename tPrimitive >
+    void PopRegPtrs( tPrimitive *begin )
     {
-        template< typename tPrimitive >
-        void PushReg( tPrimitive &ident )
-        {
-            ::PushReg( &ident, sizeof( tPrimitive ) );
-        }
+        Classic::PopReg( begin );
+    }
 
-        template< typename tPrimitive >
-        void PopReg( tPrimitive &ident )
-        {
-            ::PopReg( &ident );
-        }
+    template< typename tPrimitive >
+    void PutPtrs( uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcEnd, tPrimitive *resultBegin, tPrimitive *resultDst )
+    {
+        Classic::Put( pid, srcBegin, resultBegin, ( resultDst - resultBegin ) * sizeof( tPrimitive ),
+                      ( srcEnd - srcBegin ) * sizeof( tPrimitive ) );
+    }
 
-        template<>
-        inline void PushReg( std::string &string )
-        {
-            BSP_NAMESPACE::PushReg( string.data(), string.size() );
-        }
+    template< typename tPrimitive >
+    void PutPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *end )
+    {
+        PutPtrs( pid, begin, end, begin, begin );
+    }
 
-        template<>
-        inline void PopReg( std::string &string )
-        {
-            BSP_NAMESPACE::PopReg( string.data() );
-        }
-
-        template< typename tPrimitive >
-        void Put( uint32_t pid, tPrimitive &src, tPrimitive &dst )
-        {
-            ::Put( pid, &src, &dst, 0, sizeof( tPrimitive ) );
-        }
-
-        template< typename tPrimitive >
-        void Get( uint32_t pid, tPrimitive &src, tPrimitive &dst )
-        {
-            ::Get( pid, &src, 0, &dst, sizeof( tPrimitive ) );
-        }
-
-        template< typename tPrimitive, typename tTag >
-        void Send( uint32_t pid, const tTag &tag, const tPrimitive &payload )
-        {
-            Send( pid, &tag, &payload, sizeof( tPrimitive ) );
-        }
-
-        template< typename tPrimitive >
-        void Move( tPrimitive &payload )
-        {
-            Move( &payload, sizeof( tPrimitive ) );
-        }
-
-        template< typename tPrimitive >
-        void PushReg( tPrimitive *begin, tPrimitive *end )
-        {
-            PushReg( begin, ( end - begin ) * sizeof( tPrimitive ) );
-        }
-
-        template< typename tPrimitive >
-        void PopReg( tPrimitive *begin )
-        {
-            PopReg( begin );
-        }
-
-        template< typename tPrimitive >
-        void Put( uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcEnd, tPrimitive *resultBegin, tPrimitive *resultDst )
-        {
-            Put( pid, srcBegin, resultBegin, ( resultDst - resultBegin ) * sizeof( tPrimitive ),
-                 ( srcEnd - srcBegin ) * sizeof( tPrimitive ) );
-        }
-
-        template< typename tPrimitive >
-        void Get( uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcCursor, tPrimitive *resultBegin,
+    template< typename tPrimitive >
+    void GetPtrs( uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcCursor, tPrimitive *resultBegin,
                   tPrimitive *resultEnd )
-        {
-            Get( pid, srcBegin, ( srcCursor - srcBegin ) * sizeof( tPrimitive ), resultBegin,
-                 ( resultEnd - resultBegin ) * sizeof( tPrimitive ) );
-        }
+    {
+        Classic::Get( pid, srcBegin, ( srcCursor - srcBegin ) * sizeof( tPrimitive ), resultBegin,
+                      ( resultEnd - resultBegin ) * sizeof( tPrimitive ) );
+    }
 
-        template< typename tPrimitive, typename tTag >
-        void Send( uint32_t pid, tTag *tag, tPrimitive *begin, tPrimitive *end )
-        {
-            Send( pid, tag, begin, ( end - begin )*sizeof( tPrimitive ) );
-        }
+    template< typename tPrimitive >
+    void GetPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *cursor, tPrimitive *end )
+    {
+        GetPtrs( pid, begin, cursor, cursor, end );
+    }
 
-        template< typename tPrimitive >
-        void Move( tPrimitive *payload, uint32_t maxCopySize )
-        {
-            Move( payload, maxCopySize );
-        }
+    template< typename tPrimitive >
+    void GetPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *end )
+    {
+        GetPtrs( pid, begin, begin, end );
+    }
 
-        template< typename tIterator >
-        void PushReg( tIterator begin, tIterator end )
-        {
-            assert( &*( end - 1 ) - &*begin == end - begin - 1 );
-            PushReg( &*begin, ( end - begin ) * sizeof( tIterator::value_type ) );
-        }
+    template< typename tPrimitive, typename tTag >
+    void SendPtrs( uint32_t pid, tTag *tag, tPrimitive *begin, tPrimitive *end )
+    {
+        Classic::Send( pid, tag, begin, ( end - begin )*sizeof( tPrimitive ) );
+    }
 
-        template< typename tIterator>
-        using IsIterator = std::integral_constant < bool,
-              !std::is_same<typename std::iterator_traits<tIterator>::value_type, void>::value >;
+    template< typename tPrimitive >
+    void MovePtrs( tPrimitive *payload, uint32_t maxCopySize )
+    {
+        Classic::Move( payload, maxCopySize );
+    }
 
-        template < typename tIterator, typename = std::enable_if< IsIterator< tIterator >::value > >
-        void PopReg( tIterator begin )
-        {
-            PopReg( &*begin );
-        }
+    template< typename tIterator >
+    void PushRegIterator( tIterator begin, tIterator end )
+    {
+        assert( &*( end - 1 ) - &*begin == end - begin - 1 );
+        PushRegPtrs( &*begin, &*end );
+    }
 
-        template< typename tIterator, typename tOutputIterator >
-        void Put( uint32_t pid, tIterator srcBegin, tIterator srcEnd, tOutputIterator resultBegin,
-                  tOutputIterator resultDst )
-        {
-            assert( &*( srcEnd - 1 ) - &*srcBegin == srcEnd - srcBegin - 1 );
-            assert( &*( resultDst - 1 ) - &*resultBegin == resultDst - resultBegin - 1 );
-            Put( pid, &*srcBegin, &*srcEnd, &*resultBegin, &*resultDst );
-        }
+    template < typename tIterator>
+    void PopRegIterator( tIterator begin )
+    {
+        PopRegPtrs( &*begin );
+    }
 
-        template< typename tIterator, typename tOutputIterator >
-        void Get( uint32_t pid, tIterator srcBegin, tIterator srcCursor, tOutputIterator resultBegin,
-                  tOutputIterator resultEnd )
-        {
-            Get( pid, &*srcBegin, &*srcCursor, &*resultBegin, &*resultEnd );
-        }
+    template< typename tIterator, typename tOutputIterator >
+    void PutIterator( uint32_t pid, tIterator srcBegin, tIterator srcEnd, tOutputIterator resultBegin,
+                      tOutputIterator resultDst )
+    {
+        assert( &*( srcEnd - 1 ) - &*srcBegin == srcEnd - srcBegin - 1 );
+        assert( &*( resultDst - 1 ) - &*resultBegin == resultDst - resultBegin - 1 );
+        PutPtrs( pid, &*srcBegin, &*srcEnd, &*resultBegin, &*resultDst );
+    }
 
-        template< typename tIterator, typename tTag >
-        void Send( uint32_t pid, tTag *tag, tIterator begin, tIterator end )
-        {
-            Send( pid, tag, &*begin, &*end );
-        }
+    template< typename tIterator >
+    void PutIterator( uint32_t pid, tIterator begin, tIterator cursor, tIterator end )
+    {
+        PutIterator( pid, begin, end, begin, cursor );
+    }
 
-        template< typename tIterator >
-        void Move( tIterator begin, uint32_t maxCopySize )
-        {
-            Move( &begin, maxCopySize );
-        }
+    template< typename tIterator >
+    void PutIterator( uint32_t pid, tIterator begin, tIterator end )
+    {
+        PutIterator( pid, begin, begin, end );
+    }
 
-        template< typename tContainer >
-        using IsVector =
-            std::is_same< tContainer, std::vector< typename tContainer::value_type, typename tContainer::allocator_type > >;
+    template< typename tIterator, typename tOutputIterator >
+    void GetIterator( uint32_t pid, tIterator srcBegin, tIterator srcCursor, tOutputIterator resultBegin,
+                      tOutputIterator resultEnd )
+    {
+        GetPtrs( pid, &*srcBegin, &*srcCursor, &*resultBegin, &*resultEnd );
+    }
 
-        template< typename tContainer, size_t N >
-        using IsArray = std::is_same < tContainer, std::array< typename tContainer::value_type, N > >;
+    template< typename tIterator >
+    void GetIterator( uint32_t pid, tIterator begin, tIterator cursor, tIterator end )
+    {
+        GetIterator( pid, begin, cursor, begin, end );
+    }
 
-        template< typename tContainer, size_t N = 0 >
-        using IsContainer = std::integral_constant < bool, IsVector< tContainer >::value || IsArray< tContainer, N >::value >;
+    template< typename tIterator >
+    void GetIterator( uint32_t pid, tIterator begin, tIterator end )
+    {
+        GetIterator( pid, begin, begin, end );
+    }
 
-        template< typename tContainer, typename = std::enable_if< IsContainer< tContainer >::value > >
-        void PushReg( tContainer &container )
-        {
-            PushReg( pid, container.begin(), container.end() );
-        }
+    template< typename tIterator, typename tTag >
+    void SendIterator( uint32_t pid, tTag *tag, tIterator begin, tIterator end )
+    {
+        SendPtrs( pid, tag, &*begin, &*end );
+    }
 
-        template< typename tContainer, typename = std::enable_if< IsContainer< tContainer >::value > >
-        void PopReg( tContainer &container )
-        {
-            PopReg( container.begin() );
-        }
+    template< typename tIterator >
+    void MoveIterator( tIterator begin, uint32_t maxCopySize )
+    {
+        MovePtrs( &begin, maxCopySize );
+    }
 
-        template < typename tContainerIn, typename tContainerOut,
-                   typename = std::enable_if < IsContainer< tContainerIn >::value &&
-                                               IsContainer< tContainerOut >::value > >
-        void Put( uint32_t pid, tContainerIn &src, tContainerOut &dst )
-        {
-            Put( pid, src.begin(), src.end(), dst.begin(), dst.begin() );
-        }
+    template< typename tContainer >
+    void PushRegContainer( tContainer &container )
+    {
+        PushRegIterator( container.begin(), container.end() );
+    }
 
-        template < typename tContainerIn, typename tContainerOut,
-                   typename = std::enable_if < IsContainer< tContainerIn >::value &&
-                                               IsContainer< tContainerOut >::value > >
-        void Get( uint32_t pid, tContainerIn &src, tContainerOut &dst )
-        {
-            Get( pid, src.begin(), src.begin(), dst.begin(), dst.end() );
-        }
+    template< typename tContainer >
+    void PopRegContainer( tContainer &container )
+    {
+        PopRegIterator( container.begin() );
+    }
 
-        template< typename tTag, typename tContainer, typename = std::enable_if< IsContainer< tContainer >::value > >
-        void Send( uint32_t pid, tTag *tag, tContainer &payload )
-        {
-            Send( pid, tag, payload.begin(), payload.end() );
-        }
+    template < typename tContainerIn, typename tContainerOut >
+    void PutContainer( uint32_t pid, tContainerIn &src, tContainerOut &dst )
+    {
+        PutIterator( pid, src.begin(), src.end(), dst.begin(), dst.begin() );
+    }
 
-        template< typename tContainer, typename = std::enable_if< IsContainer< tContainer >::value > >
-        void Move( tContainer &payload, uint32_t maxCopyIn )
-        {
-            Move( payload.begin(), payload.size() );
-        }
+    template< typename tContainer >
+    void PutContainer( uint32_t pid, tContainer &container )
+    {
+        PutContainer( pid, container, container );
+    }
 
-        template< typename tPrimitive >
-        void SetTagsize()
-        {
-            SetTagsize( sizeof( tPrimitive ) );
-        }
+    template < typename tContainerIn, typename tContainerOut >
+    void GetContainer( uint32_t pid, tContainerIn &src, tContainerOut &dst )
+    {
+        GetIterator( pid, src.begin(), src.begin(), dst.begin(), dst.end() );
+    }
 
-        template< typename tPrimitive >
-        void SetTagsize( uint32_t count )
-        {
-            SetTagsize( count * sizeof( tPrimitive ) );
-        }
+    template< typename tContainer >
+    void GetContainer( uint32_t pid, tContainer &container )
+    {
+        GetContainer( pid, container, container );
+    }
 
-        template< typename tPrimitive >
-        void GetTag( size_t &status, tPrimitive &tag )
-        {
-            GetTag( &status, &tag );
-        }
+    template< typename tTag, typename tContainer >
+    void SendContainer( uint32_t pid, tTag *tag, tContainer &payload )
+    {
+        SendIterator( pid, tag, payload.begin(), payload.end() );
+    }
 
-        template< typename tPrimitive >
-        void GetTag( size_t &status, tPrimitive *tag )
-        {
-            GetTag( &status, tag );
-        }
+    template< typename tContainer >
+    void MoveContainer( tContainer &payload, uint32_t maxCopyIn )
+    {
+        MoveIterator( payload.begin(), payload.size() );
+    }
 
-        template< typename tIterator >
-        void GetTag( size_t &status, tIterator tagBegin )
-        {
-            GetTag( status, &*tagBegin );
-        }
+    template< typename tPrimitive, size_t tSize >
+    void PushRegContainer( tPrimitive container[tSize] )
+    {
+        PushRegPtrs( container, container + tSize );
+    }
 
-        template< typename tContainer, typename = std::enable_if< IsContainer< tContainer > > >
-        void GetTag( size_t &status, tContainer &tag )
-        {
-            GetTag( status, tag.begin() );
-        }
+    template< typename tPrimitive, size_t tSize >
+    void PopRegContainer( tPrimitive container[tSize] )
+    {
+        PopRegPtrs( container );
+    }
+
+    template< typename tPrimitive, size_t tSizeIn, size_t tSizeOut  >
+    void PutContainer( uint32_t pid, tPrimitive src[tSizeIn], tPrimitive dst[tSizeOut] )
+    {
+        PutPtrs( pid, src, src + tSizeIn, dst, dst );
+    }
+
+    template< typename tPrimitive, size_t tSize >
+    void PutContainer( uint32_t pid, tPrimitive container[tSize] )
+    {
+        PutContainer( pid, container, container );
+    }
+
+    template< typename tPrimitive, size_t tSizeIn, size_t tSizeOut >
+    void GetContainer( uint32_t pid, tPrimitive src[tSizeIn], tPrimitive dst[tSizeOut] )
+    {
+        GetPtrs( pid, src, src, dst, dst + tSizeOut );
+    }
+
+    template< typename tPrimitive, size_t tSize >
+    void GetContainer( uint32_t pid, tPrimitive container[tSize] )
+    {
+        GetContainer( pid, container, container );
+    }
+
+    template< typename tPrimitive, typename tTag, size_t tSize >
+    void SendContainer( uint32_t pid, tTag *tag, tPrimitive payload[tSize] )
+    {
+        SendPtrs( pid, tag, payload, payload + tSize );
+    }
+
+    template< typename tPrimitive, size_t tSize >
+    void MoveContainer( tPrimitive payload[tSize], uint32_t maxCopyIn )
+    {
+        MovePtrs( payload, maxCopyIn );
+    }
+
+    template< typename tPrimitive >
+    void SetTagsize()
+    {
+        Classic::SetTagSize( sizeof( tPrimitive ) );
+    }
+
+    template< typename tPrimitive >
+    void SetTagsize( uint32_t count )
+    {
+        Classic::SetTagSize( count * sizeof( tPrimitive ) );
+    }
+
+    template< typename tPrimitive >
+    void GetTag( size_t &status, tPrimitive &tag )
+    {
+        GetTag( &status, &tag );
+    }
+
+    template< typename tPrimitive >
+    void GetTagPtr( size_t &status, tPrimitive *tag )
+    {
+        GetTag( &status, tag );
+    }
+
+    template< typename tIterator >
+    void GetTagIterator( size_t &status, tIterator tagBegin )
+    {
+        GetTag( status, &*tagBegin );
+    }
+
+    template< typename tContainer >
+    void GetTagContainer( size_t &status, tContainer &tag )
+    {
+        GetTag( status, tag.begin() );
     }
 #ifndef BSP_DISABLE_NAMESPACE
 }

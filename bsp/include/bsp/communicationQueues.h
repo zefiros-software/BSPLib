@@ -25,58 +25,96 @@
 
 #include <vector>
 
+
 namespace BspInternal
 {
+    /**
+     * A communication queue implementation. Allows easier
+     * implementation of communication queues of various types.
+     *
+     * @tparam  tQueue Type of the queue.
+     */
+
     template< typename tQueue >
     class CommunicationQueues
     {
     public:
 
-        CommunicationQueues( size_t nProcs )
+        CommunicationQueues()
+            : mProcCount( 0 )
+        {
+        }
+
+        /**
+         * Constructor.
+         *
+         * @param   nProcs The amount of processors that can use the queue.
+         */
+
+        explicit CommunicationQueues( std::size_t nProcs )
             : mQueues( 0 ),
               mProcCount( nProcs )
         {
             ResetResize( nProcs );
         }
 
-        CommunicationQueues()
-            : mProcCount( 0 )
-        {
+        /**
+         * Resets the queues, and set the maximum amount of threads that may
+         * use the communication queue.
+         *
+         * @param   maxProcs The maximum number of processors.
+         */
 
-        }
-
-        void ResetResize( size_t maxProcs )
+        void ResetResize( std::size_t maxProcs )
         {
+            std::size_t maxProcsSqr = maxProcs * maxProcs;
             mQueues.clear();
-            mQueues.resize( maxProcs );
-
-            for ( auto &queue : mQueues )
-            {
-                queue.resize( maxProcs );
-            }
+            mQueues.resize( maxProcsSqr );
 
             mProcCount = maxProcs;
         }
 
-        tQueue &GetQueueToMe( size_t source, size_t me )
+        /**
+         * Gets the queues of the source processor communicating to the current processor.
+         *
+         * @param   source Source to get the queues from.
+         * @param   me     Processors to get the queues to.
+         *
+         * @return The queue.
+         */
+
+        tQueue &GetQueueToMe( std::size_t source, std::size_t me )
         {
             return GetQueue( source, me );
         }
 
-        tQueue &GetQueueFromMe( size_t target, size_t me )
+        /**
+         * Gets the queues of the current processor communicating to the source processor.
+         *
+         * @param   target The processor to get the queues for.
+         * @param   me     The processor to get the queues from.
+         *
+         * @return The queue.
+         */
+
+        tQueue &GetQueueFromMe( std::size_t target, std::size_t me )
         {
             return GetQueue( me, target );
         }
 
     private:
 
-        std::vector< std::vector< tQueue > > mQueues;
+        /// an obimination we have to live with,
+        /// a flattened std::vector< std::vector <> > but without
+        /// inneficient cache thrashing.
+        std::vector< tQueue > mQueues;
 
-        size_t mProcCount;
+        /// The amount of processors that may use the queue
+        std::size_t mProcCount;
 
-        tQueue &GetQueue( size_t owner, size_t target )
+        tQueue &GetQueue( std::size_t owner, std::size_t target )
         {
-            return mQueues[owner][target];
+            return mQueues[owner * mProcCount + target];
         }
     };
 }

@@ -23,19 +23,30 @@
 #ifndef __BSPABORT_H__
 #define __BSPABORT_H__
 
-#include <atomic>
-#include <string>
-#include <stdint.h>
 #include <exception>
+#include <string>
 
 namespace BspInternal
 {
+    /**
+     * A bsp abort exception. By inherriting from std::exception we can throw
+     * this exception to abort all threads from continuing easily.
+     *
+     * @sa std::exception
+     */
+
     class BspAbort
         : public std::exception
     {
     public:
 
-        BspAbort( std::string m )
+        /**
+         * Constructor.
+         *
+         * @param   m The error message.
+         */
+
+        explicit BspAbort( std::string m )
             : msg( m )
         {
         }
@@ -50,8 +61,9 @@ namespace BspInternal
         }
 
     private:
+
         std::string msg;
     };
-}
+};
 
 #endif

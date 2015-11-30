@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "bsp/bspLib.h"
+#include "bsp/bsp.h"
 
 #define SZDBL (sizeof(double))
 #define SZINT (sizeof(int))

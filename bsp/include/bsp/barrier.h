@@ -27,16 +27,35 @@
 
 namespace BspInternal
 {
+    /**
+     * A lock free barrier implementation. It spins until all threads reach the barrier.
+     * This barrier uses busy waiting, and thus the performance is unstable, but fast.
+     */
+
     class Barrier
     {
     public:
 
-        Barrier( uint32_t count ) :
+        /**
+         * Constructor.
+         *
+         * @param   count Number of threads to wait for.
+         */
+
+        explicit Barrier( uint32_t count ) :
             mCount( count ),
             mSpaces( count ),
             mGeneration( 0 )
         {
         }
+
+        /**
+         * Sets the size of the barrier, thus the number of threads to wait for on a sync point.
+         *
+         * @param   count Number of threads to wait on.
+         *
+         * @post The amount of threads the barriers waits on equals count.
+         */
 
         void SetSize( uint32_t count )
         {
@@ -44,6 +63,17 @@ namespace BspInternal
             mSpaces = count;
             mGeneration = 0;
         }
+
+        /**
+         * Waits for all the threads to reach the sync point, however the process can be aborted when `aborted` equals to
+         * true.
+         *
+         * @param [in,out]  aborted Check whether the process should be aborted.
+         *
+         * @pre if aborted == true, all threads quit computations.
+         *
+         * @post all threads have waited for each other to reach the barrier.
+         */
 
         void Wait( std::atomic_bool &aborted )
         {
@@ -60,7 +90,7 @@ namespace BspInternal
                 {
                     if ( aborted )
                     {
-                        throw BspAbort( "Thread Exited" );
+                        throw BspAbort( "Aborted" );
                     }
                 }
             }
@@ -68,8 +98,13 @@ namespace BspInternal
 
     private:
 
+        /// The amount of threads to wait for in total
         uint32_t mCount;
+
+        /// The amount of threads filling the barrier currently
         std::atomic_uint_fast32_t mSpaces;
+
+        /// The current waiting generation, so we can reuse the barrier
         std::atomic_uint_fast32_t mGeneration;
     };
 }

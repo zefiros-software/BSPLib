@@ -2,10 +2,11 @@ local root      = "../"
 
 solution "bsp-library"
 
-    location( root )
+    location( root .. "bsp/" )
     objdir( root .. "bin/obj/" )
+	debugdir( root .. "bin/" )
     
-    configurations { "Debug", "Release" }
+    configurations { "Debug", "Release", "Coverage" }
 
     platforms { "x64", "x32" }
 
@@ -17,12 +18,10 @@ solution "bsp-library"
 
     configuration "x32"
         targetdir( root .. "bin/x32/" )
-        debugdir( root .. "bin/x32/" )
         architecture "x32"
 
     configuration "x64"
         targetdir( root .. "bin/x64/" )
-        debugdir( root .. "bin/x64/" )
         architecture "x64"
         
     configuration "Debug"
@@ -45,14 +44,17 @@ solution "bsp-library"
             "-std=c++11",
             "-pthread"
             }   
-                
+        
+    configuration "Coverage"
+        targetsuffix "cd"
+        flags "Symbols"
+        links "gcov"
+        buildoptions "-coverage"
+                             
     configuration {}
             
-    project "bsplib"
-        location( root )
-                
-        kind "ConsoleApp"
-        flags "WinMain"
+    project "bsp"
+        kind "StaticLib"
 
         includedirs {
             root .. "bsp/include/",
@@ -63,9 +65,43 @@ solution "bsp-library"
             root .. "bsp/include/**.cpp",
             }
             
-    project "bench"
-        location(  root )
+    project "bsp-test"
+        location(  root .. "test/" )
                 
+        kind "ConsoleApp"
+        flags "WinMain"
+        defines "GTEST_HAS_TR1_TUPLE=0"
+        
+        includedirs {
+            root .. "extern/gtest/include/",
+            root .. "extern/gtest/",
+            
+            root .. "bsp/include/",
+            root .. "test/"
+            }   
+        
+        files { 
+            root .. "extern/gtest/src/gtest-all.cc",
+            root .. "test/**.h",
+            root .. "test/*.cpp"
+            }            
+			
+		configuration "gmake"
+			links "pthread"
+            
+        configuration { "Debug", "x32" }
+            defines "PREFIX=X32D_"
+        
+        configuration { "Debug", "x64" }
+            defines "PREFIX=X64D_"
+        
+        configuration { "Release", "x32" }
+            defines "PREFIX=X32R_"
+        
+        configuration { "Release", "x64" }
+            defines "PREFIX=X64R_"
+            
+    project "bsp-bench"                
         kind "ConsoleApp"
         flags "WinMain"
 
@@ -80,9 +116,7 @@ solution "bsp-library"
             root .. "edupack/bspbench.cpp",
             }
             
-    project "fft"
-        location(  root )
-                
+    project "fft"                
         kind "ConsoleApp"
         flags "WinMain"
         
@@ -100,9 +134,7 @@ solution "bsp-library"
             root .. "edupack/bspfft_test.cpp",
             }
             
-    project "lu"
-        location(  root )
-                
+    project "lu"                
         kind "ConsoleApp"
         flags "WinMain"
         
@@ -120,9 +152,7 @@ solution "bsp-library"
             root .. "edupack/bsplu_test.cpp",
             }
             
-    project "ip"
-        location(  root )
-                
+    project "ip"                
         kind "ConsoleApp"
         flags "WinMain"
 
@@ -137,9 +167,7 @@ solution "bsp-library"
             root .. "edupack/bspinprod.cpp",
             }
             
-    project "matvec"
-        location(  root )
-                
+    project "matvec"                
         kind "ConsoleApp"
         flags "WinMain"
 
@@ -155,9 +183,7 @@ solution "bsp-library"
             root .. "edupack/bspmv_test.cpp",
             }
             
-    project "fft"
-        location(  root )
-                
+    project "fft"                
         kind "ConsoleApp"
         flags "WinMain"
         
@@ -175,9 +201,7 @@ solution "bsp-library"
             root .. "edupack/bspfft_test.cpp",
             }
             
-    project "lu"
-        location(  root )
-                
+    project "lu"                
         kind "ConsoleApp"
         flags "WinMain"
         
