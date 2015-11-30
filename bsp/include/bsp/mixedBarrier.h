@@ -108,6 +108,7 @@ namespace BspInternal
                 {
                     if ( aborted )
                     {
+                        mCurrentCon->notify_all();
                         throw BspAbort( "Aborted" );
                     }
                 }
@@ -124,6 +125,18 @@ namespace BspInternal
                     }
                 }
             }
+
+            if ( aborted )
+            {
+                mCurrentCon->notify_all();
+                throw BspAbort( "Aborted" );
+            }
+        }
+
+        void NotifyAbort()
+        {
+            mCurrentCon->notify_all();
+            ++mGeneration;
         }
 
     private:

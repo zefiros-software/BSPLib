@@ -22,19 +22,19 @@
 #include "helper.h"
 
 template< typename tBarrier >
-void TestBarrierImpl( tBarrier &barrier, std::vector< bool > &checks, std::atomic_bool &abort,
+void TestBarrierImpl( tBarrier &barrier, std::vector< uint8_t > &checks, std::atomic_bool &abort,
                       size_t id )
 {
     barrier.Wait( abort );
-    checks[id] = true;
+    checks[id] = 1;
     barrier.Wait( abort );
 }
 
 template< typename tBarrier >
-void TestBarrier( size_t threads, std::atomic_bool abort )
+void TestBarrier( uint32_t threads, std::atomic_bool abort )
 {
     std::vector< std::future< void > > futures;
-    std::vector< bool > check( threads );
+    std::vector< uint8_t > check( threads );
     tBarrier barrier( threads );
 
     for ( size_t i = 0; i < threads - 1; ++i )
@@ -44,17 +44,17 @@ void TestBarrier( size_t threads, std::atomic_bool abort )
             TestBarrierImpl< tBarrier >( barrier, check, abort, i );
         } ) );
 
-        EXPECT_EQ( 0, std::count_if( check.begin(), check.end(), []( bool b )
+        EXPECT_EQ( 0, std::count_if( check.begin(), check.end(), []( uint8_t b )
         {
-            return b;
+            return b > 0;
         } ) );
     }
 
     TestBarrierImpl< tBarrier >( barrier, check, abort, threads - 1 );
 
-    EXPECT_EQ( threads, std::count_if( check.begin(), check.end(), []( bool b )
+    EXPECT_EQ( threads, std::count_if( check.begin(), check.end(), []( uint8_t b )
     {
-        return b;
+        return b > 0;
     } ) );
 }
 
@@ -82,8 +82,9 @@ TEST( P( Barrier ), Simple16 )
 TEST( P( Barrier ), Simple32 )
 {
     TestBarrier< BspInternal::Barrier >( 32, false );
-}
+}*/
 
+#ifndef DEBUG
 TEST( P( CondVarBarrier ), Simple )
 {
     TestBarrier< BspInternal::CondVarBarrier >( 1, false );
@@ -139,31 +140,6 @@ TEST( P( MixedBarrier ), Simple32 )
     TestBarrier< BspInternal::CondVarBarrier >( 32, false );
 }
 
-TEST( P( Barrier ), Abort2 )
-{
-    ASSERT_THROW( TestBarrier< BspInternal::Barrier >( 2, true ), BspInternal::BspAbort );
-}
-
-TEST( P( Barrier ), Abort4 )
-{
-    ASSERT_THROW( TestBarrier< BspInternal::Barrier >( 4, true ), BspInternal::BspAbort );
-}
-
-TEST( P( Barrier ), Abort8 )
-{
-    ASSERT_THROW( TestBarrier< BspInternal::Barrier >( 8, true ), BspInternal::BspAbort );
-}
-
-TEST( P( Barrier ), Abort16 )
-{
-    ASSERT_THROW( TestBarrier< BspInternal::Barrier >( 16, true ), BspInternal::BspAbort );
-}
-
-TEST( P( Barrier ), Abort32 )
-{
-    ASSERT_THROW( TestBarrier< BspInternal::Barrier >( 32, true ), BspInternal::BspAbort );
-}
-
 TEST( P( CondVarBarrier ), Abort2 )
 {
     ASSERT_THROW( TestBarrier< BspInternal::CondVarBarrier >( 2, true ), BspInternal::BspAbort );
@@ -213,4 +189,5 @@ TEST( P( MixedBarrier ), Abort32 )
 {
     ASSERT_THROW( TestBarrier< BspInternal::MixedBarrier >( 32, true ), BspInternal::BspAbort );
 }
-*/
+
+#endif // !DEBUG

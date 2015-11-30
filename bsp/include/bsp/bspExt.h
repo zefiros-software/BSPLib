@@ -153,21 +153,6 @@ namespace BSPLib
         }
     }
 
-    BSP_FORCEINLINE void Init( std::function< void() >spmd, int argc, char **argv )
-    {
-        Classic::Init( spmd, argc, argv );
-    }
-
-    BSP_FORCEINLINE void Begin( uint32_t p )
-    {
-        Classic::Begin( p );
-    }
-
-    BSP_FORCEINLINE void End()
-    {
-        Classic::End();
-    }
-
     BSP_FORCEINLINE void Sync()
     {
         Classic::Sync();
@@ -228,6 +213,12 @@ namespace BSPLib
         Classic::Put( pid, &src, &dst, 0, sizeof( tPrimitive ) );
     }
 
+    template <>
+    inline void Put( uint32_t pid, std::string &src, std::string &dst )
+    {
+        Classic::Put( pid, src.data(), &*dst.begin(), 0, src.size() );
+    }
+
     template< typename tPrimitive >
     void Put( uint32_t pid, tPrimitive &var )
     {
@@ -240,6 +231,12 @@ namespace BSPLib
         Classic::Get( pid, &src, 0, &dst, sizeof( tPrimitive ) );
     }
 
+    template<>
+    inline void Get( uint32_t pid, std::string &src, std::string &dst )
+    {
+        Classic::Get( pid, &*src.begin(), 0, &*dst.begin(), dst.size() );
+    }
+
     template< typename tPrimitive >
     void Get( uint32_t pid, tPrimitive &var )
     {
@@ -247,15 +244,45 @@ namespace BSPLib
     }
 
     template< typename tPrimitive, typename tTag >
+    void Send( uint32_t pid, tTag *tag, const tPrimitive *payloadBegin, size_t payloadSize )
+    {
+        Classic::Send( pid, tag, payloadBegin, payloadSize );
+    }
+
+    template< typename tPrimitive, typename tTag >
+    void Send( uint32_t pid, const tTag &tag, const tPrimitive *payloadBegin, size_t payloadSize )
+    {
+        Send( pid, &tag, payloadBegin, payloadSize );
+    }
+
+    template< typename tPrimitive >
+    void Send( uint32_t pid, const std::string &tag, const tPrimitive *payloadBegin, size_t payloadSize )
+    {
+        Send( pid, tag[0], payloadBegin, payloadSize );
+    }
+
+    template< typename tPrimitive, typename tTag >
     void Send( uint32_t pid, const tTag &tag, const tPrimitive &payload )
     {
-        Classic::Send( pid, &tag, &payload, sizeof( tPrimitive ) );
+        Send( pid, tag, &payload, sizeof( tPrimitive ) );
+    }
+
+    template< typename tTag >
+    void Send( uint32_t pid, const tTag &tag, const std::string &payload )
+    {
+        Send( pid, tag, payload.data(), payload.size() );
     }
 
     template< typename tPrimitive >
     void Move( tPrimitive &payload )
     {
         Classic::Move( &payload, sizeof( tPrimitive ) );
+    }
+
+    template<>
+    inline void Move( std::string &payload )
+    {
+        Classic::Move( &*payload.begin(), payload.size() );
     }
 
     template< typename tPrimitive >
@@ -304,9 +331,27 @@ namespace BSPLib
     }
 
     template< typename tPrimitive, typename tTag >
+    void SendPtrs( uint32_t pid, const tTag &tag, tPrimitive *begin, tPrimitive *end )
+    {
+        Send( pid, tag, begin, ( end - begin ) * sizeof( tPrimitive ) );
+    }
+
+    template< typename tPrimitive, typename tTag >
     void SendPtrs( uint32_t pid, tTag *tag, tPrimitive *begin, tPrimitive *end )
     {
-        Classic::Send( pid, tag, begin, ( end - begin )*sizeof( tPrimitive ) );
+        Send( pid, tag, begin, ( end - begin ) * sizeof( tPrimitive ) );
+    }
+
+    template< typename tPrimitive, typename tTag >
+    void SendPtrs( uint32_t pid, const tTag &tag, tPrimitive *begin, size_t count )
+    {
+        Send( pid, tag, begin, count * sizeof( tPrimitive ) );
+    }
+
+    template< typename tPrimitive, typename tTag >
+    void SendPtrs( uint32_t pid, tTag *tag, tPrimitive *begin, size_t count )
+    {
+        Send( pid, tag, begin, count * sizeof( tPrimitive ) );
     }
 
     template< typename tPrimitive >
@@ -369,15 +414,39 @@ namespace BSPLib
     }
 
     template< typename tIterator, typename tTag >
+    void SendIterator( uint32_t pid, const tTag &tag, tIterator begin, tIterator end )
+    {
+        SendPtrs( pid, tag, &*begin, &*end );
+    }
+
+    template< typename tIterator, typename tTag >
     void SendIterator( uint32_t pid, tTag *tag, tIterator begin, tIterator end )
     {
         SendPtrs( pid, tag, &*begin, &*end );
+    }
+
+    template< typename tIterator, typename tTag >
+    void SendIterator( uint32_t pid, const tTag &tag, tIterator begin, size_t count )
+    {
+        SendPtrs( pid, tag, &*begin, count );
+    }
+
+    template< typename tIterator, typename tTag >
+    void SendIterator( uint32_t pid, tTag *tag, tIterator begin, size_t count )
+    {
+        SendPtrs( pid, tag, &*begin, count );
     }
 
     template< typename tIterator >
     void MoveIterator( tIterator begin, uint32_t maxCopySize )
     {
         MovePtrs( &begin, maxCopySize );
+    }
+
+    template< typename tIterator >
+    void MoveIterator( tIterator begin, tIterator end )
+    {
+        MoveIterator( begin, end - begin );
     }
 
     template< typename tContainer >
@@ -417,7 +486,7 @@ namespace BSPLib
     }
 
     template< typename tTag, typename tContainer >
-    void SendContainer( uint32_t pid, tTag *tag, tContainer &payload )
+    void SendContainer( uint32_t pid, const tTag &tag, tContainer &payload )
     {
         SendIterator( pid, tag, payload.begin(), payload.end() );
     }
@@ -479,25 +548,33 @@ namespace BSPLib
     template< typename tPrimitive >
     void SetTagsize()
     {
-        Classic::SetTagSize( sizeof( tPrimitive ) );
+        size_t size = sizeof( tPrimitive );
+        Classic::SetTagSize( &size );
     }
 
     template< typename tPrimitive >
     void SetTagsize( uint32_t count )
     {
-        Classic::SetTagSize( count * sizeof( tPrimitive ) );
+        size_t size = count * sizeof( tPrimitive );
+        Classic::SetTagSize( &size );
     }
 
     template< typename tPrimitive >
     void GetTag( size_t &status, tPrimitive &tag )
     {
-        GetTag( &status, &tag );
+        Classic::GetTag( &status, &tag );
+    }
+
+    template<>
+    inline void GetTag( size_t &status, std::string &tag )
+    {
+        Classic::GetTag( &status, &*tag.begin() );
     }
 
     template< typename tPrimitive >
     void GetTagPtr( size_t &status, tPrimitive *tag )
     {
-        GetTag( &status, tag );
+        GetTag( &status, *tag );
     }
 
     template< typename tIterator >
@@ -510,6 +587,31 @@ namespace BSPLib
     void GetTagContainer( size_t &status, tContainer &tag )
     {
         GetTag( status, tag.begin() );
+    }
+
+    inline bool Execute( std::function< void() > func, uint32_t nProc )
+    {
+        std::function< void() > spmd = [func, nProc]
+        {
+            BSPLib::Classic::Begin( nProc );
+
+            func();
+
+            BSPLib::Classic::End();
+        };
+
+        BSPLib::Classic::Init( spmd, 0, NULL );
+
+        try
+        {
+            spmd();
+        }
+        catch ( BspInternal::BspAbort & )
+        {
+            return false;
+        }
+
+        return true;
     }
 #ifndef BSP_DISABLE_NAMESPACE
 }

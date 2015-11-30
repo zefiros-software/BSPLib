@@ -34,14 +34,8 @@ inline void AbortTest()
 
 TEST( P( Classic ), AbortTest )
 {
-    try
-    {
-        BspExecute( AbortTest, 32 );
-    }
-    catch ( std::exception &e )
-    {
-        ASSERT_STREQ( "Aborted", e.what() );
-    }
+    EXPECT_FALSE( BSPLib::Execute( AbortTest, 32 ) );
+
 }
 
 inline void AbortTestMain()
@@ -56,14 +50,60 @@ inline void AbortTestMain()
 
 TEST( P( Classic ), AbortTestMain )
 {
-    try
+    EXPECT_FALSE( BSPLib::Execute( AbortTestMain, 32 ) );
+}
+
+inline void AbortTestFirst()
+{
+    BSPLib::Sync();
+
+    if ( BSPLib::ProcId() == 1 )
     {
-        BspExecute( AbortTest, 32 );
+        BSPLib::Classic::Abort( "" );
     }
-    catch ( std::exception &e )
+
+    BSPLib::Sync();
+}
+
+TEST( P( Classic ), AbortTestFirst )
+{
+    EXPECT_FALSE( BSPLib::Execute( AbortTestFirst, 32 ) );
+}
+
+inline void AbortTestAllWaitExceptOne()
+{
+    BSPLib::Sync();
+
+    if ( BSPLib::ProcId() == 1 )
     {
-        ASSERT_STREQ( "Aborted", e.what() );
+        std::this_thread::sleep_for( std::chrono::milliseconds( 200 ) );
+        BSPLib::Classic::Abort( "" );
     }
+
+    BSPLib::Sync();
+}
+
+TEST( P( Classic ), AbortTestAllWaitExceptOne )
+{
+    EXPECT_FALSE( BSPLib::Execute( AbortTestAllWaitExceptOne, 32 ) );
+}
+
+inline void AbortTestAllWaitExceptMain()
+{
+    BSPLib::Sync();
+
+    if ( BSPLib::ProcId() == 0 )
+    {
+        std::this_thread::sleep_for( std::chrono::milliseconds( 200 ) );
+        BSPLib::Classic::Abort( "" );
+    }
+
+    BSPLib::Sync();
+}
+
+TEST( P( Classic ), AbortTestAllWaitExceptMain )
+{
+    EXPECT_FALSE( BSPLib::Execute( AbortTestAllWaitExceptMain, 32 ) );
 }
 
 inline void EmptyTest()
@@ -278,10 +318,10 @@ inline void TimerTest()
     BSPLib::Sync();
 
     double start = BSPLib::Time();
-    std::this_thread::sleep_for( std::chrono::milliseconds( 5000 ) );
+    std::this_thread::sleep_for( std::chrono::milliseconds( 50 ) );
     double end = BSPLib::Time();
 
-    EXPECT_NEAR( end - start, 5.0, 0.1 );
+    EXPECT_GT( end - start, 0.05 );
 }
 
 template< uint32_t tRounds, uint32_t tPacketCount, uint32_t tPacketSize, int32_t tOffset >
@@ -649,6 +689,8 @@ BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint16_t );
 BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint32_t );
 BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint64_t );
 
+#ifndef DEBUG
+
 BspTest4( Classic, 8, BruteForceTest, 1000, 1800, 3, uint16_t );
 BspTest4( Classic, 8, BruteForceTest, 1000, 1800, 3, uint32_t );
 BspTest4( Classic, 8, BruteForceTest, 1000, 1800, 3, uint64_t );
@@ -668,5 +710,7 @@ BspTest4( Classic, 16, BruteForceTest, 500, 800, 5, uint64_t );
 BspTest4( Classic, 16, BruteForceTest, 1000, 1800, 3, uint16_t );
 BspTest4( Classic, 16, BruteForceTest, 1000, 1800, 3, uint32_t );
 BspTest4( Classic, 16, BruteForceTest, 1000, 1800, 3, uint64_t );
+
+#endif // !DEBUG
 
 #endif
