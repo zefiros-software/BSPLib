@@ -83,12 +83,12 @@ namespace BSPLib
             return BSP::GetInstance().Time();
         }
 
-        BSP_FORCEINLINE void PushReg( const void *ident, size_t size )
+        BSP_FORCEINLINE void Push( const void *ident, size_t size )
         {
             BSP::GetInstance().PushReg( ident, size );
         }
 
-        BSP_FORCEINLINE void PopReg( const void *ident )
+        BSP_FORCEINLINE void Pop( const void *ident )
         {
             BSP::GetInstance().PopReg( ident );
         }
@@ -174,37 +174,47 @@ namespace BSPLib
     }
 
     template< typename tPrimitive >
-    void PushReg( tPrimitive &ident )
+    void Push( tPrimitive &ident )
     {
-        Classic::PushReg( &ident, sizeof( tPrimitive ) );
+        Classic::Push( &ident, sizeof( tPrimitive ) );
     }
 
-    inline void PushReg()
+    inline void Push( const void *ident, size_t size )
     {
-        Classic::PushReg( nullptr, 0 );
+        Classic::Push( ident, size );
+    }
+
+    inline void Push()
+    {
+        Classic::Push( nullptr, 0 );
     }
 
     template< typename tPrimitive >
-    void PopReg( tPrimitive &ident )
+    void Pop( tPrimitive &ident )
     {
-        Classic::PopReg( &ident );
+        Classic::Pop( &ident );
     }
 
-    inline void PopReg()
+    inline void Pop( const void *ident )
     {
-        Classic::PopReg( nullptr );
+        Classic::Pop( ident );
+    }
+
+    inline void Pop()
+    {
+        Classic::Pop( nullptr );
     }
 
     template<>
-    inline void PushReg( std::string &string )
+    inline void Push( std::string &string )
     {
-        Classic::PushReg( string.data(), string.size() );
+        Classic::Push( string.data(), string.size() );
     }
 
     template<>
-    inline void PopReg( std::string &string )
+    inline void Pop( std::string &string )
     {
-        Classic::PopReg( string.data() );
+        Classic::Pop( string.data() );
     }
 
     template< typename tPrimitive >
@@ -288,13 +298,13 @@ namespace BSPLib
     template< typename tPrimitive >
     void PushRegPtrs( tPrimitive *begin, tPrimitive *end )
     {
-        Classic::PushReg( begin, ( end - begin ) * sizeof( tPrimitive ) );
+        Classic::Push( begin, ( end - begin ) * sizeof( tPrimitive ) );
     }
 
     template< typename tPrimitive >
     void PopRegPtrs( tPrimitive *begin )
     {
-        Classic::PopReg( begin );
+        Classic::Pop( begin );
     }
 
     template< typename tPrimitive >

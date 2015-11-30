@@ -48,8 +48,8 @@
 #define bsp_vabort BSP_FULL_NAMESPACE::VAbort
 #define bsp_sync BSP_FULL_NAMESPACE::Sync
 #define bsp_time BSP_FULL_NAMESPACE::Time
-#define bsp_push_reg BSP_FULL_NAMESPACE::PushReg
-#define bsp_pop_reg BSP_FULL_NAMESPACE::PopReg
+#define bsp_push_reg BSP_FULL_NAMESPACE::Push
+#define bsp_pop_reg BSP_FULL_NAMESPACE::Pop
 #define bsp_put BSP_FULL_NAMESPACE::Put
 #define bsp_get BSP_FULL_NAMESPACE::Get
 #define bsp_set_tagsize BSP_FULL_NAMESPACE::SetTagSize

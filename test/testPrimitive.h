@@ -38,7 +38,7 @@ void PutPrimitiveTest()
 
     tPrimitive result = 0;
 
-    BSPLib::PushReg( result );
+    BSPLib::Push( result );
 
     BSPLib::Sync();
 
@@ -62,7 +62,7 @@ void PutPrimitiveFPTest()
 
     tPrimitive result = 0;
 
-    BSPLib::PushReg( result );
+    BSPLib::Push( result );
 
     BSPLib::Sync();
 
@@ -88,7 +88,7 @@ void PutPrimitiveStringTest()
 
     size_t resultSize = result.size();
 
-    BSPLib::PushReg( resultSize );
+    BSPLib::Push( resultSize );
 
     BSPLib::Sync();
 
@@ -99,7 +99,7 @@ void PutPrimitiveStringTest()
 
     result.resize( resultSize );
 
-    BSPLib::PushReg( result );
+    BSPLib::Push( result );
 
     BSPLib::Sync();
 
@@ -123,7 +123,7 @@ void PutSamePrimitiveTest()
 
     tPrimitive primitive = ( tPrimitive )s + 1;
 
-    BSPLib::PushReg( primitive );
+    BSPLib::Push( primitive );
 
     BSPLib::Sync();
 
@@ -145,7 +145,7 @@ void PutSamePrimitiveFPTest()
 
     tPrimitive primitive = ( tPrimitive )s + 1;
 
-    BSPLib::PushReg( primitive );
+    BSPLib::Push( primitive );
 
     BSPLib::Sync();
 
@@ -168,7 +168,7 @@ void GetPrimitiveTest()
 
     tPrimitive result = 0;
 
-    BSPLib::PushReg( primitive );
+    BSPLib::Push( primitive );
 
     BSPLib::Sync();
 
@@ -191,7 +191,7 @@ void GetPrimitiveFPTest()
 
     tPrimitive result = 0;
 
-    BSPLib::PushReg( primitive );
+    BSPLib::Push( primitive );
 
     BSPLib::Sync();
 
@@ -216,8 +216,8 @@ void GetPrimitiveStringTest()
 
     size_t primitiveSize = primitive.size();
 
-    BSPLib::PushReg( primitiveSize );
-    BSPLib::PushReg( primitive );
+    BSPLib::Push( primitiveSize );
+    BSPLib::Push( primitive );
 
     BSPLib::Sync();
 
@@ -246,7 +246,7 @@ void GetSamePrimitiveTest()
 
     tPrimitive primitive = ( tPrimitive )s + 1;
 
-    BSPLib::PushReg( primitive );
+    BSPLib::Push( primitive );
 
     BSPLib::Sync();
 
@@ -267,7 +267,7 @@ void GetSamePrimitiveFPTest()
 
     tPrimitive primitive = ( tPrimitive )s + 1;
 
-    BSPLib::PushReg( primitive );
+    BSPLib::Push( primitive );
 
     BSPLib::Sync();
 
