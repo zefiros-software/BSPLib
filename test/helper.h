@@ -36,47 +36,31 @@
 #define BspTest( suite, nProc, func )       \
 TEST( P( suite ), func ## _ ## nProc )      \
 {                                           \
-    BspExecute( func, nProc );              \
+    BSPLib::Execute( func, nProc );         \
 }
 
 #define BspTest1( suite, nProc, func, a )               \
 TEST( P( suite ), func ## _ ## nProc ## _ ## a )        \
 {                                                       \
-    BspExecute( func< a >, nProc );                     \
+    BSPLib::Execute( func< a >, nProc );                \
 }
 
 #define BspTest2( suite, nProc, func, a, b )                    \
 TEST( P( suite ), func ## _ ## nProc ## _ ## a ## _ ## b )      \
 {                                                               \
-    BspExecute( func< a, b >, nProc );                          \
+    BSPLib::Execute( func< a, b >, nProc );                     \
 }
 
 #define BspTest3( suite, nProc, func, a, b, c )                         \
 TEST( P( suite ), func ## _ ## nProc ## _ ## a ## _ ## b ## _ ## c )    \
 {                                                                       \
-    BspExecute( func< a, b, c >, nProc );                               \
+    BSPLib::Execute( func< a, b, c >, nProc );                          \
 }
 
 #define BspTest4( suite, nProc, func, a, b, c, d )                                  \
 TEST( P( suite ), func ## _ ## nProc ## _ ## a ## _ ## b ## _ ## c ## _ ## d )      \
 {                                                                                   \
-    BspExecute( func< a, b, c, d >, nProc );                                        \
-}
-
-inline void BspExecute( std::function< void() > func, uint32_t nProc )
-{
-    auto spmd = [func, nProc]
-    {
-        BSPLib::Begin( nProc );
-
-        func();
-
-        BSPLib::End();
-    };
-
-    BSPLib::Init( spmd, 0, NULL );
-
-    spmd();
+    BSPLib::Execute( func< a, b, c, d >, nProc );                                   \
 }
 
 #endif

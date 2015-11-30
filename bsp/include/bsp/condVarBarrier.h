@@ -81,7 +81,7 @@ namespace BspInternal
          * @post all threads have waited for each other to reach the barrier.
          */
 
-        void Wait( std::atomic_bool &aborted )
+        void Wait( const std::atomic_bool &aborted )
         {
             std::unique_lock<std::mutex> lock( mMutex );
 

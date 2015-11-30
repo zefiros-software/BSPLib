@@ -34,14 +34,8 @@ inline void AbortTest()
 
 TEST( P( Classic ), AbortTest )
 {
-    try
-    {
-        BspExecute( AbortTest, 32 );
-    }
-    catch ( std::exception &e )
-    {
-        ASSERT_STREQ( "Aborted", e.what() );
-    }
+    EXPECT_FALSE( BSPLib::Execute( AbortTest, 32 ) );
+
 }
 
 inline void AbortTestMain()
@@ -56,14 +50,60 @@ inline void AbortTestMain()
 
 TEST( P( Classic ), AbortTestMain )
 {
-    try
+    EXPECT_FALSE( BSPLib::Execute( AbortTestMain, 32 ) );
+}
+
+inline void AbortTestFirst()
+{
+    BSPLib::Sync();
+
+    if ( BSPLib::ProcId() == 1 )
     {
-        BspExecute( AbortTest, 32 );
+        BSPLib::Classic::Abort( "" );
     }
-    catch ( std::exception &e )
+
+    BSPLib::Sync();
+}
+
+TEST( P( Classic ), AbortTestFirst )
+{
+    EXPECT_FALSE( BSPLib::Execute( AbortTestFirst, 32 ) );
+}
+
+inline void AbortTestAllWaitExceptOne()
+{
+    BSPLib::Sync();
+
+    if ( BSPLib::ProcId() == 1 )
     {
-        ASSERT_STREQ( "Aborted", e.what() );
+        std::this_thread::sleep_for( std::chrono::milliseconds( 200 ) );
+        BSPLib::Classic::Abort( "" );
     }
+
+    BSPLib::Sync();
+}
+
+TEST( P( Classic ), AbortTestAllWaitExceptOne )
+{
+    EXPECT_FALSE( BSPLib::Execute( AbortTestAllWaitExceptOne, 32 ) );
+}
+
+inline void AbortTestAllWaitExceptMain()
+{
+    BSPLib::Sync();
+
+    if ( BSPLib::ProcId() == 0 )
+    {
+        std::this_thread::sleep_for( std::chrono::milliseconds( 200 ) );
+        BSPLib::Classic::Abort( "" );
+    }
+
+    BSPLib::Sync();
+}
+
+TEST( P( Classic ), AbortTestAllWaitExceptMain )
+{
+    EXPECT_FALSE( BSPLib::Execute( AbortTestAllWaitExceptMain, 32 ) );
 }
 
 inline void EmptyTest()
@@ -94,10 +134,10 @@ void PushPopTest()
 
     for ( uint32_t i = 0; i < tPopRegs; ++i )
     {
-        BSPLib::Classic::PushReg( &reg, sizeof( uint32_t ) );
+        BSPLib::Classic::Push( &reg, sizeof( uint32_t ) );
         BSPLib::Sync();
 
-        BSPLib::Classic::PopReg( &reg );
+        BSPLib::Classic::Pop( &reg );
     }
 }
 
@@ -116,7 +156,7 @@ void PutTest()
     uint32_t num = s + 1;
     uint32_t receive = 0;
 
-    BSPLib::Classic::PushReg( &receive, sizeof( uint32_t ) );
+    BSPLib::Classic::Push( &receive, sizeof( uint32_t ) );
 
     BSPLib::Sync();
 
@@ -131,7 +171,7 @@ void PutTest()
         receive = 0;
     }
 
-    BSPLib::Classic::PopReg( &receive );
+    BSPLib::Classic::Pop( &receive );
 }
 
 template< uint32_t tGets, int32_t tOffset >
@@ -146,7 +186,7 @@ void GetTest()
     uint32_t num = s + 1;
     uint32_t receive = 0;
 
-    BSPLib::Classic::PushReg( &num, sizeof( uint32_t ) );
+    BSPLib::Classic::Push( &num, sizeof( uint32_t ) );
 
     BSPLib::Sync();
 
@@ -161,7 +201,7 @@ void GetTest()
         receive = 0;
     }
 
-    BSPLib::Classic::PopReg( &num );
+    BSPLib::Classic::Pop( &num );
 }
 
 template< uint32_t tPutGets, int32_t tOffset >
@@ -181,8 +221,8 @@ void MixedPutGetTest()
     uint32_t received = 0;
 
 
-    BSPLib::Classic::PushReg( &num, sizeof( uint32_t ) );
-    BSPLib::Classic::PushReg( &received, sizeof( uint32_t ) );
+    BSPLib::Classic::Push( &num, sizeof( uint32_t ) );
+    BSPLib::Classic::Push( &received, sizeof( uint32_t ) );
 
     BSPLib::Sync();
 
@@ -200,8 +240,8 @@ void MixedPutGetTest()
         retrieved = 0;
     }
 
-    BSPLib::Classic::PopReg( &received );
-    BSPLib::Classic::PopReg( &num );
+    BSPLib::Classic::Pop( &received );
+    BSPLib::Classic::Pop( &num );
 }
 
 template< uint32_t tSends, int32_t tOffset >
@@ -278,10 +318,10 @@ inline void TimerTest()
     BSPLib::Sync();
 
     double start = BSPLib::Time();
-    std::this_thread::sleep_for( std::chrono::milliseconds( 5000 ) );
+    std::this_thread::sleep_for( std::chrono::milliseconds( 50 ) );
     double end = BSPLib::Time();
 
-    EXPECT_NEAR( end - start, 5.0, 0.1 );
+    EXPECT_GT( end - start, 0.05 );
 }
 
 template< uint32_t tRounds, uint32_t tPacketCount, uint32_t tPacketSize, int32_t tOffset >
@@ -401,11 +441,11 @@ void BruteForceTest()
     BSPLib::Classic::SetTagSize( &tagSize );
 
     // Register the location where the size of the put vector can be placed
-    BSPLib::Classic::PushReg( &putTargetSize, sizeof( size_t ) );
+    BSPLib::Classic::Push( &putTargetSize, sizeof( size_t ) );
 
 
     // Register the location where the size of the get vector can be retrieved
-    BSPLib::Classic::PushReg( &getTargetSize, sizeof( size_t ) );
+    BSPLib::Classic::Push( &getTargetSize, sizeof( size_t ) );
 
     BSPLib::Sync();
 
@@ -421,7 +461,7 @@ void BruteForceTest()
         sendBuffer.resize( sendBufferSize, ( tPrimitive )( s + 1 ) );
 
         // Register where the other processor can get the data from
-        BSPLib::Classic::PushReg( getTarget.data(), getTarget.size() * sizeof( tPrimitive ) );
+        BSPLib::Classic::Push( getTarget.data(), getTarget.size() * sizeof( tPrimitive ) );
 
         // Get the size the other processor has prepared
         BSPLib::Classic::Get( sTarget, &getTargetSize, 0, &getBufferSize, sizeof( size_t ) );
@@ -438,7 +478,7 @@ void BruteForceTest()
         putTarget.resize( putTargetSize );
 
         // Register the vector with the new size
-        BSPLib::Classic::PushReg( putTarget.data(), putTarget.size() * sizeof( tPrimitive ) );
+        BSPLib::Classic::Push( putTarget.data(), putTarget.size() * sizeof( tPrimitive ) );
 
         // Resize our own get buffer so that we can get the data from the other process
         getBuffer.resize( getBufferSize );
@@ -447,7 +487,7 @@ void BruteForceTest()
         BSPLib::Classic::Get( sTarget, getTarget.data(), 0, getBuffer.data(), getBufferSize * sizeof( tPrimitive ) );
 
         // We are now done with the "Get" operation, pop the vector at the end of this sync
-        BSPLib::Classic::PopReg( getTarget.data() );
+        BSPLib::Classic::Pop( getTarget.data() );
 
         // Retrieve the size of the "Send" operation of the other process
         BSPLib::Classic::GetTag( &status, &sendTargetSize );
@@ -462,7 +502,7 @@ void BruteForceTest()
         BSPLib::Classic::Put( sTarget, putBuffer.data(), putTarget.data(), 0, putBufferSize * sizeof( tPrimitive ) );
 
         // Already pop our own target, so that it is popped at the end of the same sync
-        BSPLib::Classic::PopReg( putTarget.data() );
+        BSPLib::Classic::Pop( putTarget.data() );
 
         BSPLib::Classic::Sync();
 
@@ -649,6 +689,8 @@ BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint16_t );
 BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint32_t );
 BspTest4( Classic, 8, BruteForceTest, 500, 800, 5, uint64_t );
 
+#ifndef DEBUG
+
 BspTest4( Classic, 8, BruteForceTest, 1000, 1800, 3, uint16_t );
 BspTest4( Classic, 8, BruteForceTest, 1000, 1800, 3, uint32_t );
 BspTest4( Classic, 8, BruteForceTest, 1000, 1800, 3, uint64_t );
@@ -668,5 +710,7 @@ BspTest4( Classic, 16, BruteForceTest, 500, 800, 5, uint64_t );
 BspTest4( Classic, 16, BruteForceTest, 1000, 1800, 3, uint16_t );
 BspTest4( Classic, 16, BruteForceTest, 1000, 1800, 3, uint32_t );
 BspTest4( Classic, 16, BruteForceTest, 1000, 1800, 3, uint64_t );
+
+#endif // !DEBUG
 
 #endif

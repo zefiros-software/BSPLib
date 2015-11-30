@@ -56,6 +56,10 @@ public:
      * @param   format Describes the message to format.
      * @param   args   The formatting arguments.
      *
+     * @post
+     * * All threads other than main thread will exit on a BSP call, unless the BSP process is restarted.
+     * * If main thread, a BSPAbort exception will be thrown.
+     *
      * @see Abort( const char *format, ... )
      */
 
@@ -63,7 +67,6 @@ public:
     {
         mAbort = true;
         vfprintf( stderr, format, args );
-        CheckAborted();
     }
 
     /**
@@ -72,6 +75,10 @@ public:
      *
      * @param   format Describes the message to format.
      * @param   ...    Variable arguments providing message formatting.
+     *
+     * @post
+     * * All threads other than main thread will exit on a BSP call, unless the BSP process is restarted.
+     * * If main thread, a BSPAbort exception will be thrown.
      */
 
     inline void Abort( const char *format, ... )
@@ -92,6 +99,12 @@ public:
      * it returns the maximum amount of processors available as initialised.
      *
      * @return The amount of processors available.
+     *
+     * @pre
+     *  If Begin has been called:
+     *      * Returns the number of started threads.
+     *  Else:
+     *      * Returns the number of physical threads available.
      */
 
     BSP_FORCEINLINE uint32_t NProcs() const
@@ -104,6 +117,16 @@ public:
      *
      * @param [in,out]  packets         The packets count.
      * @param [in,out]  accumulatedSize If non-null, size of the accumulated packets in bytes.
+     *
+     * @pre
+     *  * packets != nullptr.
+     *  * Begin has been called.
+     *
+     * @post
+     *  * If accumulatedSize != nullptr:
+     *      accumulatedSize will be the accumulated size of the packets in bytes.
+     *    Else:
+     *      The calculation of the accumulated size will be skipped.
      */
 
     BSP_FORCEINLINE void QSize( size_t *packets, size_t *accumulatedSize )
@@ -135,6 +158,8 @@ public:
      * Gets the current processor id, which lies between 0 and NProcs() - 1.
      *
      * @return The current processor id.
+     *
+     * @pre Begin has been called, otherwise, this will return 0xdeadbeef.
      */
 
     BSP_FORCEINLINE uint32_t &ProcId()
@@ -149,12 +174,12 @@ public:
      * calling Begin().
      *
      * @return The amount of time since calling Begin().
+     *
+     * @pre Begin has been called
      */
 
     BSP_FORCEINLINE double Time()
     {
-        CheckAborted();
-
         const std::chrono::time_point< std::chrono::high_resolution_clock > now =
             std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> diff = now - mStartTimes[ProcId()];
@@ -162,10 +187,14 @@ public:
     }
 
     /**
-     * Initialises the BSP computation process. Please note that
-     * the main thread should also call the entry function.
+     * Initialises the BSP computation process. Please note that the main thread should also call the entry function.
      *
-     * @param   entry              The entry function to execute.
+     * @param   entry The entry function to execute.
+     *
+     * @post
+     *  * Tag size is 0.
+     *  * Entry point is now entry.
+     *  * For the main thread, ProcId() == 0.
      */
 
     BSP_FORCEINLINE void Init( std::function< void() > entry, uint32_t, char *[] )
@@ -188,11 +217,28 @@ public:
      * @exception   e Thrown when an abort error condition occurs, if enabled with symbol BSP_THROW.
      *
      * @param   maxProcs The maximum processors to use in computation.
+     *
+     * @pre
+     *  * If Init has been called:
+     *      Will execute entry in parallel.
+     *    Else:
+     *      Will execute main in parallel. Also, a warning will be printed to stderr.
+     *  * If called from the main thread:
+     *      * Resets and initialises the communication queues and buffers.
+     *      * Calls the entry point for all other threads.
+     *      * Starts the timer for the main thread.
+     *    Else:
+     *      Starts the timer for the current thread.
      */
 
     void Begin( uint32_t maxProcs )
     {
         //fprintf( stderr, "Begin %ld-%ld\n", PID(), std::this_thread::get_id() );
+        if ( !mEntry )
+        {
+            mEntry = [] { main( 0, nullptr ); };
+            ProcId() = 0;
+        }
 
         if ( ProcId() )
         {
@@ -268,35 +314,28 @@ public:
 
                 try
                 {
-                    if ( mEntry )
-                    {
-                        mEntry();
-                    }
-                    else
-                    {
-                        main( 0, nullptr );
-                    }
-
+                    mEntry();
                 }
-
-#ifdef BSP_THROW
-                catch ( BspInternal::BspAbort &e )
-                {
-                    throw e;
-                }
-
-#else
                 catch ( BspInternal::BspAbort & )
                 {
 
                 }
-
-#endif
             }, i ) );
         }
 
         StartTiming();
     }
+
+    /**
+     * Ends the BSP computation.
+     *
+     * @pre Begin has been called
+     *
+     * @post
+     *  * mEnded is true
+     *  * All threads have synced and ended.
+     *  * The main thread releases all threads.
+     */
 
     void End()
     {
@@ -310,8 +349,25 @@ public:
         }
     }
 
+    /**
+     * Synchronises all threads and communications.
+     *
+     * @pre Begin has been called
+     *
+     * @post
+     *  * All threads have completed this superstep.
+     *  * Tagsize has been synchronized and is available in the next superstep.
+     *  * Get requests have been processed, updated data is available in the next superstep.
+     *  * Pop requests have been processed, registers will be unavailable in the next superstep.
+     *  * Put requests have been processed, updated data is available in the next superstep.
+     *  * Buffers for the put requests have been cleared.
+     *  * Push requests have been processed, registers will be available in the next superstep.
+     */
+
     BSP_FORCEINLINE void Sync()
     {
+        CheckAborted();
+
         uint32_t &pid = ProcId();
 
         SyncPoint();
@@ -340,6 +396,19 @@ public:
         SyncPoint();
     }
 
+    /**
+     * Pushes a register, with the given size.
+     *
+     * @param   ident The identifier.
+     * @param   size  The size.
+     *
+     * @pre Begin has been called.
+     *
+     * @post
+     *  * Push request has been queued.
+     *  * In the next superstep, this register will be available for Put/Get.
+     */
+
     BSP_FORCEINLINE void PushReg( const void *ident, size_t size )
     {
         uint32_t &pid = ProcId();
@@ -353,6 +422,18 @@ public:
 
         mPushRequests[pid].emplace_back( BspInternal::PushRequest{ ident, { size, mRegisterCount[pid]++ } } );
     }
+
+    /**
+     * Pops the register described by ident.
+     *
+     * @param   ident The identifier.
+     *
+     * @pre Begin has been called.
+     *
+     * @post
+     *  * Pop request has been queued.
+     *  * In the next superstep, this register will be unavailable for Put/Get.
+     */
 
     void PopReg( const void *ident )
     {
@@ -368,6 +449,22 @@ public:
         mPopRequests[pid].emplace_back( BspInternal::PopRequest{ ident } );
     }
 
+    /**
+     * Puts a buffer of size nbytes from source pointer src in the thread with ID pid at offset from destination pointer dst.
+     *
+     * @param   pid         The processor ID.
+     * @param   src         Source to read the buffer from.
+     * @param [in,out]  dst Destination to write the buffer to.
+     * @param   offset      The offset from the destination to start writing at.
+     * @param   nbytes      The size of the message to be written to the other processor.
+     *
+     * @pre
+     *  * Begin has been called.
+     *  * src != nullptr.
+     *  * dst != nullptr.
+     *  * PushReg has been called on dst with at least size offset + nbytes.
+     */
+
     BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
     {
         uint32_t &tpid = ProcId();
@@ -375,6 +472,7 @@ public:
 #ifndef BSP_SKIP_CHECKS
         assert( tpid < mProcCount );
         assert( pid < mProcCount );
+        assert( src && dst );
 #endif
 
         const char *srcBuff = reinterpret_cast<const char *>( src );
@@ -382,7 +480,8 @@ public:
 
 #ifndef BSP_SKIP_CHECKS
         assert( mThreadRegisterLocation[pid].size() > globalId );
-        assert( mRegisters[pid][mThreadRegisterLocation[pid][globalId]].size >= nbytes );
+        assert( mRegisters[pid].find( mThreadRegisterLocation[pid][globalId] ) != mRegisters[pid].end() );
+        assert( mRegisters[pid][mThreadRegisterLocation[pid][globalId]].size >= offset + nbytes );
 #endif
 
         const char *dstBuff = reinterpret_cast<const char *>( mThreadRegisterLocation[pid][globalId] );
@@ -533,10 +632,11 @@ private:
         mThreadBarrier.Wait( mAbort );
     }
 
-    void CheckAborted() const
+    void CheckAborted()
     {
         if ( mAbort )
         {
+            mThreadBarrier.NotifyAbort();
             throw BspInternal::BspAbort( "Aborted" );
         }
     }
