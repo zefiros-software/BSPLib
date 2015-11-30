@@ -19,10 +19,6 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
 */
-#pragma once
-#ifndef __TESTCONTAINER_H__
-#define __TESTCONTAINER_H__
-
 #include "helper.h"
 
 #include <array>
@@ -223,6 +219,196 @@ void PutFPCArrayTest()
     }
 }
 
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset >
+void GetVectorTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    std::vector< tPrimitive > container( tCount );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    std::vector< tPrimitive > result( tCount, ( tPrimitive )s );
+
+    BSPLib::PushRegContainer( container );
+
+    BSPLib::Sync();
+
+    BSPLib::GetContainer( sSource, container, result );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), result[i] );
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset >
+void GetFPVectorTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    std::vector< tPrimitive > container( tCount );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    std::vector< tPrimitive > result( tCount, ( tPrimitive )s );
+
+    BSPLib::PushRegContainer( container );
+
+    BSPLib::Sync();
+
+    BSPLib::GetContainer( sSource, container, result );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_DOUBLE_EQ( ( tPrimitive )( sSource + 1 + i ), result[i] );
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset >
+void GetStdArrayTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    std::array< tPrimitive, tCount > container;
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    std::array< tPrimitive, tCount > result;
+    std::fill_n( result.begin(), tCount, ( tPrimitive )s );
+
+    BSPLib::PushRegContainer( container );
+
+    BSPLib::Sync();
+
+    BSPLib::GetContainer( sSource, container, result );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), result[i] );
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset >
+void GetFPStdArrayTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    std::array< tPrimitive, tCount > container;
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    std::array< tPrimitive, tCount > result;
+    std::fill_n( result.begin(), tCount, ( tPrimitive )s );
+
+    BSPLib::PushRegContainer( container );
+
+    BSPLib::Sync();
+
+    BSPLib::GetContainer( sSource, container, result );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_DOUBLE_EQ( ( tPrimitive )( sSource + 1 + i ), result[i] );
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset >
+void GetCArrayTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    tPrimitive container[tCount];
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    tPrimitive result[tCount];
+    std::fill_n( result, tCount, ( tPrimitive )s );
+
+    BSPLib::PushRegCArray( container );
+
+    BSPLib::Sync();
+
+    BSPLib::GetCArray( sSource, container, result );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), result[i] );
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset >
+void GetFPCArrayTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    tPrimitive container[tCount];
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    tPrimitive result[tCount];
+    std::fill_n( result, tCount, ( tPrimitive )s );
+
+    BSPLib::PushRegCArray( container );
+
+    BSPLib::Sync();
+
+    BSPLib::GetCArray( sSource, container, result );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_DOUBLE_EQ( ( tPrimitive )( sSource + 1 + i ), result[i] );
+    }
+}
+
 BspTest3( Container, 2, PutVectorTest, uint8_t, 20, 1 );
 BspTest3( Container, 4, PutVectorTest, uint8_t, 20, 3 );
 BspTest3( Container, 8, PutVectorTest, uint8_t, 20, 7 );
@@ -367,4 +553,151 @@ BspTest3( Container, 8, PutFPCArrayTest, double, 50, 7 );
 BspTest3( Container, 16, PutFPCArrayTest, double, 50, 5 );
 BspTest3( Container, 32, PutFPCArrayTest, double, 50, 27 );
 
-#endif
+
+
+
+
+
+BspTest3( Container, 2, GetVectorTest, uint8_t, 20, 1 );
+BspTest3( Container, 4, GetVectorTest, uint8_t, 20, 3 );
+BspTest3( Container, 8, GetVectorTest, uint8_t, 20, 7 );
+BspTest3( Container, 16, GetVectorTest, uint8_t, 20, 5 );
+BspTest3( Container, 32, GetVectorTest, uint8_t, 20, 27 );
+BspTest3( Container, 2, GetVectorTest, uint8_t, 50, 1 );
+BspTest3( Container, 4, GetVectorTest, uint8_t, 50, 3 );
+BspTest3( Container, 8, GetVectorTest, uint8_t, 50, 7 );
+BspTest3( Container, 16, GetVectorTest, uint8_t, 50, 5 );
+BspTest3( Container, 32, GetVectorTest, uint8_t, 50, 27 );
+
+BspTest3( Container, 2, GetVectorTest, uint64_t, 20, 1 );
+BspTest3( Container, 4, GetVectorTest, uint64_t, 20, 3 );
+BspTest3( Container, 8, GetVectorTest, uint64_t, 20, 7 );
+BspTest3( Container, 16, GetVectorTest, uint64_t, 20, 5 );
+BspTest3( Container, 32, GetVectorTest, uint64_t, 20, 27 );
+BspTest3( Container, 2, GetVectorTest, uint64_t, 50, 1 );
+BspTest3( Container, 4, GetVectorTest, uint64_t, 50, 3 );
+BspTest3( Container, 8, GetVectorTest, uint64_t, 50, 7 );
+BspTest3( Container, 16, GetVectorTest, uint64_t, 50, 5 );
+BspTest3( Container, 32, GetVectorTest, uint64_t, 50, 27 );
+
+BspTest3( Container, 32, GetVectorTest, uint64_t, 1000, 27 );
+
+BspTest3( Container, 32, GetVectorTest, uint64_t, 100000, 27 );
+
+BspTest3( Container, 2, GetFPVectorTest, float, 20, 1 );
+BspTest3( Container, 4, GetFPVectorTest, float, 20, 3 );
+BspTest3( Container, 8, GetFPVectorTest, float, 20, 7 );
+BspTest3( Container, 16, GetFPVectorTest, float, 20, 5 );
+BspTest3( Container, 32, GetFPVectorTest, float, 20, 27 );
+BspTest3( Container, 2, GetFPVectorTest, float, 50, 1 );
+BspTest3( Container, 4, GetFPVectorTest, float, 50, 3 );
+BspTest3( Container, 8, GetFPVectorTest, float, 50, 7 );
+BspTest3( Container, 16, GetFPVectorTest, float, 50, 5 );
+BspTest3( Container, 32, GetFPVectorTest, float, 50, 27 );
+
+BspTest3( Container, 2, GetFPVectorTest, double, 20, 1 );
+BspTest3( Container, 4, GetFPVectorTest, double, 20, 3 );
+BspTest3( Container, 8, GetFPVectorTest, double, 20, 7 );
+BspTest3( Container, 16, GetFPVectorTest, double, 20, 5 );
+BspTest3( Container, 32, GetFPVectorTest, double, 20, 27 );
+BspTest3( Container, 2, GetFPVectorTest, double, 50, 1 );
+BspTest3( Container, 4, GetFPVectorTest, double, 50, 3 );
+BspTest3( Container, 8, GetFPVectorTest, double, 50, 7 );
+BspTest3( Container, 16, GetFPVectorTest, double, 50, 5 );
+BspTest3( Container, 32, GetFPVectorTest, double, 50, 27 );
+
+BspTest3( Container, 2, GetStdArrayTest, uint8_t, 20, 1 );
+BspTest3( Container, 4, GetStdArrayTest, uint8_t, 20, 3 );
+BspTest3( Container, 8, GetStdArrayTest, uint8_t, 20, 7 );
+BspTest3( Container, 16, GetStdArrayTest, uint8_t, 20, 5 );
+BspTest3( Container, 32, GetStdArrayTest, uint8_t, 20, 27 );
+BspTest3( Container, 2, GetStdArrayTest, uint8_t, 50, 1 );
+BspTest3( Container, 4, GetStdArrayTest, uint8_t, 50, 3 );
+BspTest3( Container, 8, GetStdArrayTest, uint8_t, 50, 7 );
+BspTest3( Container, 16, GetStdArrayTest, uint8_t, 50, 5 );
+BspTest3( Container, 32, GetStdArrayTest, uint8_t, 50, 27 );
+
+BspTest3( Container, 2, GetStdArrayTest, uint64_t, 20, 1 );
+BspTest3( Container, 4, GetStdArrayTest, uint64_t, 20, 3 );
+BspTest3( Container, 8, GetStdArrayTest, uint64_t, 20, 7 );
+BspTest3( Container, 16, GetStdArrayTest, uint64_t, 20, 5 );
+BspTest3( Container, 32, GetStdArrayTest, uint64_t, 20, 27 );
+BspTest3( Container, 2, GetStdArrayTest, uint64_t, 50, 1 );
+BspTest3( Container, 4, GetStdArrayTest, uint64_t, 50, 3 );
+BspTest3( Container, 8, GetStdArrayTest, uint64_t, 50, 7 );
+BspTest3( Container, 16, GetStdArrayTest, uint64_t, 50, 5 );
+BspTest3( Container, 32, GetStdArrayTest, uint64_t, 50, 27 );
+
+BspTest3( Container, 32, GetStdArrayTest, uint64_t, 1000, 27 );
+
+BspTest3( Container, 32, GetStdArrayTest, uint64_t, 10000, 27 );
+
+BspTest3( Container, 2, GetFPStdArrayTest, float, 20, 1 );
+BspTest3( Container, 4, GetFPStdArrayTest, float, 20, 3 );
+BspTest3( Container, 8, GetFPStdArrayTest, float, 20, 7 );
+BspTest3( Container, 16, GetFPStdArrayTest, float, 20, 5 );
+BspTest3( Container, 32, GetFPStdArrayTest, float, 20, 27 );
+BspTest3( Container, 2, GetFPStdArrayTest, float, 50, 1 );
+BspTest3( Container, 4, GetFPStdArrayTest, float, 50, 3 );
+BspTest3( Container, 8, GetFPStdArrayTest, float, 50, 7 );
+BspTest3( Container, 16, GetFPStdArrayTest, float, 50, 5 );
+BspTest3( Container, 32, GetFPStdArrayTest, float, 50, 27 );
+
+BspTest3( Container, 2, GetFPStdArrayTest, double, 20, 1 );
+BspTest3( Container, 4, GetFPStdArrayTest, double, 20, 3 );
+BspTest3( Container, 8, GetFPStdArrayTest, double, 20, 7 );
+BspTest3( Container, 16, GetFPStdArrayTest, double, 20, 5 );
+BspTest3( Container, 32, GetFPStdArrayTest, double, 20, 27 );
+BspTest3( Container, 2, GetFPStdArrayTest, double, 50, 1 );
+BspTest3( Container, 4, GetFPStdArrayTest, double, 50, 3 );
+BspTest3( Container, 8, GetFPStdArrayTest, double, 50, 7 );
+BspTest3( Container, 16, GetFPStdArrayTest, double, 50, 5 );
+BspTest3( Container, 32, GetFPStdArrayTest, double, 50, 27 );
+
+BspTest3( Container, 2, GetCArrayTest, uint8_t, 20, 1 );
+BspTest3( Container, 4, GetCArrayTest, uint8_t, 20, 3 );
+BspTest3( Container, 8, GetCArrayTest, uint8_t, 20, 7 );
+BspTest3( Container, 16, GetCArrayTest, uint8_t, 20, 5 );
+BspTest3( Container, 32, GetCArrayTest, uint8_t, 20, 27 );
+BspTest3( Container, 2, GetCArrayTest, uint8_t, 50, 1 );
+BspTest3( Container, 4, GetCArrayTest, uint8_t, 50, 3 );
+BspTest3( Container, 8, GetCArrayTest, uint8_t, 50, 7 );
+BspTest3( Container, 16, GetCArrayTest, uint8_t, 50, 5 );
+BspTest3( Container, 32, GetCArrayTest, uint8_t, 50, 27 );
+
+BspTest3( Container, 2, GetCArrayTest, uint64_t, 20, 1 );
+BspTest3( Container, 4, GetCArrayTest, uint64_t, 20, 3 );
+BspTest3( Container, 8, GetCArrayTest, uint64_t, 20, 7 );
+BspTest3( Container, 16, GetCArrayTest, uint64_t, 20, 5 );
+BspTest3( Container, 32, GetCArrayTest, uint64_t, 20, 27 );
+BspTest3( Container, 2, GetCArrayTest, uint64_t, 50, 1 );
+BspTest3( Container, 4, GetCArrayTest, uint64_t, 50, 3 );
+BspTest3( Container, 8, GetCArrayTest, uint64_t, 50, 7 );
+BspTest3( Container, 16, GetCArrayTest, uint64_t, 50, 5 );
+BspTest3( Container, 32, GetCArrayTest, uint64_t, 50, 27 );
+
+BspTest3( Container, 32, GetCArrayTest, uint64_t, 1000, 27 );
+
+BspTest3( Container, 32, GetCArrayTest, uint64_t, 10000, 27 );
+
+BspTest3( Container, 2, GetFPCArrayTest, float, 20, 1 );
+BspTest3( Container, 4, GetFPCArrayTest, float, 20, 3 );
+BspTest3( Container, 8, GetFPCArrayTest, float, 20, 7 );
+BspTest3( Container, 16, GetFPCArrayTest, float, 20, 5 );
+BspTest3( Container, 32, GetFPCArrayTest, float, 20, 27 );
+BspTest3( Container, 2, GetFPCArrayTest, float, 50, 1 );
+BspTest3( Container, 4, GetFPCArrayTest, float, 50, 3 );
+BspTest3( Container, 8, GetFPCArrayTest, float, 50, 7 );
+BspTest3( Container, 16, GetFPCArrayTest, float, 50, 5 );
+BspTest3( Container, 32, GetFPCArrayTest, float, 50, 27 );
+
+BspTest3( Container, 2, GetFPCArrayTest, double, 20, 1 );
+BspTest3( Container, 4, GetFPCArrayTest, double, 20, 3 );
+BspTest3( Container, 8, GetFPCArrayTest, double, 20, 7 );
+BspTest3( Container, 16, GetFPCArrayTest, double, 20, 5 );
+BspTest3( Container, 32, GetFPCArrayTest, double, 20, 27 );
+BspTest3( Container, 2, GetFPCArrayTest, double, 50, 1 );
+BspTest3( Container, 4, GetFPCArrayTest, double, 50, 3 );
+BspTest3( Container, 8, GetFPCArrayTest, double, 50, 7 );
+BspTest3( Container, 16, GetFPCArrayTest, double, 50, 5 );
+BspTest3( Container, 32, GetFPCArrayTest, double, 50, 27 );

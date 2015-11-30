@@ -494,12 +494,19 @@ public:
     {
         uint32_t &tpid = ProcId();
 
-        assert( pid < mProcCount );
+#ifndef BSP_SKIP_CHECKS
         assert( tpid < mProcCount );
+        assert( pid < mProcCount );
+        assert( src && dst );
+#endif
 
         const size_t globalId = mRegisters[tpid][src].registerCount;
 
-        assert( mRegisters[pid][mThreadRegisterLocation[pid][globalId]].size >= nbytes );
+#ifndef BSP_SKIP_CHECKS
+        assert( mThreadRegisterLocation[pid].size() > globalId );
+        assert( mRegisters[pid].find( mThreadRegisterLocation[pid][globalId] ) != mRegisters[pid].end() );
+        assert( mRegisters[pid][mThreadRegisterLocation[pid][globalId]].size >= offset + nbytes );
+#endif
 
         const char *srcBuff = reinterpret_cast<const char *>( mThreadRegisterLocation[pid][globalId] );
 
