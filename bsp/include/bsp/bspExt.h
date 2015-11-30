@@ -296,9 +296,15 @@ namespace BSPLib
     }
 
     template< typename tPrimitive >
+    void PushRegPtrs( tPrimitive *begin, size_t size )
+    {
+        Classic::Push( begin, size * sizeof( tPrimitive ) );
+    }
+
+    template< typename tPrimitive >
     void PushRegPtrs( tPrimitive *begin, tPrimitive *end )
     {
-        Classic::Push( begin, ( end - begin ) * sizeof( tPrimitive ) );
+        Classic::Push( begin, end - begin );
     }
 
     template< typename tPrimitive >
@@ -315,9 +321,21 @@ namespace BSPLib
     }
 
     template< typename tPrimitive >
+    void PutPtrs( uint32_t pid, tPrimitive *srcBegin, size_t count, tPrimitive *resultBegin, size_t offset )
+    {
+        PutPtrs( pid, srcBegin, srcBegin + count, resultBegin, resultBegin + offset );
+    }
+
+    template< typename tPrimitive >
     void PutPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *end )
     {
         PutPtrs( pid, begin, end, begin, begin );
+    }
+
+    template< typename tPrimitive >
+    void PutPtrs( uint32_t pid, tPrimitive *begin, size_t size )
+    {
+        PutPtrs( pid, begin, begin + size, begin, begin );
     }
 
     template< typename tPrimitive >
@@ -371,10 +389,16 @@ namespace BSPLib
     }
 
     template< typename tIterator >
+    void PushRegIterator( tIterator begin, size_t size )
+    {
+        PushRegPtrs( &*begin, size );
+    }
+
+    template< typename tIterator >
     void PushRegIterator( tIterator begin, tIterator end )
     {
-        assert( &*( end - 1 ) - &*begin == end - begin - 1 );
-        PushRegPtrs( &*begin, &*end );
+        assert( end == begin || &*( end - 1 ) - &*begin == end - begin - 1 );
+        PushRegIterator( begin, end - begin );
     }
 
     template < typename tIterator>
@@ -387,9 +411,9 @@ namespace BSPLib
     void PutIterator( uint32_t pid, tIterator srcBegin, tIterator srcEnd, tOutputIterator resultBegin,
                       tOutputIterator resultDst )
     {
-        assert( &*( srcEnd - 1 ) - &*srcBegin == srcEnd - srcBegin - 1 );
-        assert( &*( resultDst - 1 ) - &*resultBegin == resultDst - resultBegin - 1 );
-        PutPtrs( pid, &*srcBegin, &*srcEnd, &*resultBegin, &*resultDst );
+        assert( srcEnd == srcBegin || &*( srcEnd - 1 ) - &*srcBegin == srcEnd - srcBegin - 1 );
+        assert( resultDst == resultBegin || &*( resultDst - 1 ) - &*resultBegin == resultDst - resultBegin - 1 );
+        PutPtrs( pid, &*srcBegin, srcEnd - srcBegin, &*resultBegin, resultDst - resultBegin );
     }
 
     template< typename tIterator >
@@ -459,6 +483,54 @@ namespace BSPLib
         MoveIterator( begin, end - begin );
     }
 
+    template< typename tPrimitive, size_t tSize >
+    void PushRegCArray( tPrimitive( &container )[tSize] )
+    {
+        PushRegPtrs( container, container + tSize );
+    }
+
+    template< typename tPrimitive, size_t tSize >
+    void PopRegCArray( tPrimitive( &container )[tSize] )
+    {
+        PopRegPtrs( container );
+    }
+
+    template< typename tPrimitive, size_t tSizeIn, size_t tSizeOut  >
+    void PutCArray( uint32_t pid, tPrimitive( &src )[tSizeIn], tPrimitive( &dst )[tSizeOut] )
+    {
+        PutPtrs( pid, src, src + tSizeIn, dst, dst );
+    }
+
+    template< typename tPrimitive, size_t tSize >
+    void PutCArray( uint32_t pid, tPrimitive( &container )[tSize] )
+    {
+        PutCArray( pid, container, container );
+    }
+
+    template< typename tPrimitive, size_t tSizeIn, size_t tSizeOut >
+    void GetCArray( uint32_t pid, tPrimitive( &src )[tSizeIn], tPrimitive( &dst )[tSizeOut] )
+    {
+        GetPtrs( pid, src, src, dst, dst + tSizeOut );
+    }
+
+    template< typename tPrimitive, size_t tSize >
+    void GetCArray( uint32_t pid, tPrimitive( &container )[tSize] )
+    {
+        GetCArray( pid, container, container );
+    }
+
+    template< typename tPrimitive, typename tTag, size_t tSize >
+    void SendCArray( uint32_t pid, tTag *tag, tPrimitive( &payload )[tSize] )
+    {
+        SendPtrs( pid, tag, payload, payload + tSize );
+    }
+
+    template< typename tPrimitive, size_t tSize >
+    void MoveCArray( tPrimitive( &payload )[tSize], uint32_t maxCopyIn )
+    {
+        MovePtrs( payload, maxCopyIn );
+    }
+
     template< typename tContainer >
     void PushRegContainer( tContainer &container )
     {
@@ -505,54 +577,6 @@ namespace BSPLib
     void MoveContainer( tContainer &payload, uint32_t maxCopyIn )
     {
         MoveIterator( payload.begin(), payload.size() );
-    }
-
-    template< typename tPrimitive, size_t tSize >
-    void PushRegContainer( tPrimitive container[tSize] )
-    {
-        PushRegPtrs( container, container + tSize );
-    }
-
-    template< typename tPrimitive, size_t tSize >
-    void PopRegContainer( tPrimitive container[tSize] )
-    {
-        PopRegPtrs( container );
-    }
-
-    template< typename tPrimitive, size_t tSizeIn, size_t tSizeOut  >
-    void PutContainer( uint32_t pid, tPrimitive src[tSizeIn], tPrimitive dst[tSizeOut] )
-    {
-        PutPtrs( pid, src, src + tSizeIn, dst, dst );
-    }
-
-    template< typename tPrimitive, size_t tSize >
-    void PutContainer( uint32_t pid, tPrimitive container[tSize] )
-    {
-        PutContainer( pid, container, container );
-    }
-
-    template< typename tPrimitive, size_t tSizeIn, size_t tSizeOut >
-    void GetContainer( uint32_t pid, tPrimitive src[tSizeIn], tPrimitive dst[tSizeOut] )
-    {
-        GetPtrs( pid, src, src, dst, dst + tSizeOut );
-    }
-
-    template< typename tPrimitive, size_t tSize >
-    void GetContainer( uint32_t pid, tPrimitive container[tSize] )
-    {
-        GetContainer( pid, container, container );
-    }
-
-    template< typename tPrimitive, typename tTag, size_t tSize >
-    void SendContainer( uint32_t pid, tTag *tag, tPrimitive payload[tSize] )
-    {
-        SendPtrs( pid, tag, payload, payload + tSize );
-    }
-
-    template< typename tPrimitive, size_t tSize >
-    void MoveContainer( tPrimitive payload[tSize], uint32_t maxCopyIn )
-    {
-        MovePtrs( payload, maxCopyIn );
     }
 
     template< typename tPrimitive >
