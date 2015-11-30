@@ -197,7 +197,7 @@ public:
      *  * For the main thread, ProcId() == 0.
      */
 
-    BSP_FORCEINLINE void Init( std::function< void() > entry, uint32_t, char *[] )
+    BSP_FORCEINLINE void Init( std::function< void() > entry, int32_t, char *[] )
     {
         mEntry = entry;
         mTagSize = 0;
@@ -332,7 +332,7 @@ public:
      * @pre Begin has been called
      *
      * @post
-     *  * mEnded is true
+     *  * Ended is true
      *  * All threads have synced and ended.
      *  * The main thread releases all threads.
      */

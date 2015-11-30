@@ -38,7 +38,7 @@ namespace BSPLib
 
     namespace Classic
     {
-        BSP_FORCEINLINE void Init( std::function< void() >spmd, int argc, char **argv )
+        BSP_FORCEINLINE void Init( std::function< void() >spmd, int32_t argc, char **argv )
         {
             BSP::GetInstance().Init( spmd, argc, argv );
         }
@@ -610,7 +610,7 @@ namespace BSPLib
             BSPLib::Classic::End();
         };
 
-        BSPLib::Classic::Init( spmd, 0, NULL );
+        BSPLib::Classic::Init( spmd, 0, nullptr );
 
         try
         {
