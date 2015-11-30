@@ -24,11 +24,10 @@
 #include <algorithm>
 
 template< typename tBarrier >
-void TestBarrierImpl( tBarrier &barrier, std::vector< uint8_t > &checks, const std::atomic_bool &abort,
-                      size_t id )
+void TestBarrierImpl( tBarrier &barrier, bool *check, const std::atomic_bool &abort, size_t id )
 {
     barrier.Wait( abort );
-    checks[id] = 1;
+    check[id] = true;
     barrier.Wait( abort );
 }
 
@@ -36,7 +35,7 @@ template< typename tBarrier >
 void TestBarrier( uint32_t threads, const std::atomic_bool &abort )
 {
     std::vector< std::future< void > > futures;
-    std::vector< uint8_t > check( threads );
+    bool *check = new bool[threads] {0};
     tBarrier barrier( threads );
 
     for ( size_t i = 0; i < threads - 1; ++i )
@@ -46,7 +45,7 @@ void TestBarrier( uint32_t threads, const std::atomic_bool &abort )
             TestBarrierImpl< tBarrier >( barrier, check, abort, i );
         } ) );
 
-        EXPECT_EQ( 0, std::count_if( check.begin(), check.end(), []( uint8_t b )
+        EXPECT_EQ( 0, std::count_if( check, check + threads, []( bool b )
         {
             return b > 0;
         } ) );
@@ -54,13 +53,16 @@ void TestBarrier( uint32_t threads, const std::atomic_bool &abort )
 
     TestBarrierImpl< tBarrier >( barrier, check, abort, threads - 1 );
 
-    EXPECT_EQ( threads, std::count_if( check.begin(), check.end(), []( uint8_t b )
+    EXPECT_EQ( threads, std::count_if( check, check + threads, []( bool b )
     {
         return b > 0;
     } ) );
+
+    delete check;
 }
 
 /*
+///  Disabled since spinbarriers are not very cpu friendly
 TEST( P( Barrier ), Simple2 )
 {
     TestBarrier< BspInternal::Barrier >( 2, false );
