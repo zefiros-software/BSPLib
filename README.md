@@ -1,6 +1,9 @@
 # BSPLib
 [BSPLib](wwww.bsplib.eu) is a fast, and easy to use C++ implementation of the Bulk Synchronous Parallel (BSP) threading model.
 
+#Code
+The code can be found [here](https://github.com/Zefiros-Software/BSPLib).
+
 ## Features
 * Fast: All our code is hand optimised using profilers, to ensure maximum performance.
 * Reliable: We have an extensive testing suite, making sure we do not break forward and backward compatiblity.
@@ -82,6 +85,7 @@ just shoot us a mail. :)
 ## License
 This project is licensed under the MIT license.
 
+```
 Copyright (c) 2015 Mick van Duijn, Koen Visscher and Paul Visscher
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -101,3 +105,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+```
