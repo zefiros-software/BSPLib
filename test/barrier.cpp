@@ -22,11 +22,11 @@
 #include "helper.h"
 
 template< typename tBarrier >
-void TestBarrierImpl( tBarrier &barrier, std::vector< bool > &checks, std::atomic_bool &abort,
-                      size_t id )
+void TestBarrierImpl( tBarrier &barrier, bool *check,
+                      std::atomic_bool &abort, size_t id )
 {
     barrier.Wait( abort );
-    checks[id] = true;
+    check[id] = true;
     barrier.Wait( abort );
 }
 
@@ -34,7 +34,7 @@ template< typename tBarrier >
 void TestBarrier( size_t threads, std::atomic_bool abort )
 {
     std::vector< std::future< void > > futures;
-    std::vector< bool > check( threads );
+    bool *check = new bool[threads] {0};
     tBarrier barrier( threads );
 
     for ( size_t i = 0; i < threads - 1; ++i )
@@ -44,7 +44,7 @@ void TestBarrier( size_t threads, std::atomic_bool abort )
             TestBarrierImpl< tBarrier >( barrier, check, abort, i );
         } ) );
 
-        EXPECT_EQ( 0, std::count_if( check.begin(), check.end(), []( bool b )
+        EXPECT_EQ( 0, std::count_if( check, check + threads, []( bool b )
         {
             return b;
         } ) );
@@ -52,13 +52,14 @@ void TestBarrier( size_t threads, std::atomic_bool abort )
 
     TestBarrierImpl< tBarrier >( barrier, check, abort, threads - 1 );
 
-    EXPECT_EQ( threads, std::count_if( check.begin(), check.end(), []( bool b )
+    EXPECT_EQ( threads, std::count_if( check, check + threads, []( bool b )
     {
         return b;
     } ) );
+
+    delete check;
 }
 
-/*
 TEST( P( Barrier ), Simple2 )
 {
     TestBarrier< BspInternal::Barrier >( 2, false );
@@ -84,6 +85,7 @@ TEST( P( Barrier ), Simple32 )
     TestBarrier< BspInternal::Barrier >( 32, false );
 }
 
+/*
 TEST( P( CondVarBarrier ), Simple )
 {
     TestBarrier< BspInternal::CondVarBarrier >( 1, false );
