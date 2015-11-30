@@ -304,7 +304,7 @@ namespace BSPLib
     template< typename tPrimitive >
     void PushRegPtrs( tPrimitive *begin, tPrimitive *end )
     {
-        Classic::Push( begin, end - begin );
+        PushRegPtrs( begin, end - begin );
     }
 
     template< typename tPrimitive >
@@ -344,6 +344,12 @@ namespace BSPLib
     {
         Classic::Get( pid, srcBegin, ( srcCursor - srcBegin ) * sizeof( tPrimitive ), resultBegin,
                       ( resultEnd - resultBegin ) * sizeof( tPrimitive ) );
+    }
+
+    template< typename tPrimitive >
+    void GetPtrs( uint32_t pid, tPrimitive *srcBegin, size_t offset, tPrimitive *resultBegin, size_t count )
+    {
+        GetPtrs( pid, srcBegin, srcBegin + offset, resultBegin, resultBegin + count );
     }
 
     template< typename tPrimitive >
@@ -432,7 +438,7 @@ namespace BSPLib
     void GetIterator( uint32_t pid, tIterator srcBegin, tIterator srcCursor, tOutputIterator resultBegin,
                       tOutputIterator resultEnd )
     {
-        GetPtrs( pid, &*srcBegin, &*srcCursor, &*resultBegin, &*resultEnd );
+        GetPtrs( pid, &*srcBegin, srcCursor - srcBegin, &*resultBegin, resultEnd - resultBegin );
     }
 
     template< typename tIterator >
