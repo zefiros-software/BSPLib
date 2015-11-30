@@ -60,6 +60,8 @@ void TestBarrier( size_t threads, std::atomic_bool abort )
     delete check;
 }
 
+/*
+///  Disabled since spinbarriers are not very cpu friendly
 TEST( P( Barrier ), Simple2 )
 {
     TestBarrier< BspInternal::Barrier >( 2, false );
@@ -84,8 +86,8 @@ TEST( P( Barrier ), Simple32 )
 {
     TestBarrier< BspInternal::Barrier >( 32, false );
 }
+*/
 
-/*
 TEST( P( CondVarBarrier ), Simple )
 {
     TestBarrier< BspInternal::CondVarBarrier >( 1, false );
@@ -215,4 +217,3 @@ TEST( P( MixedBarrier ), Abort32 )
 {
     ASSERT_THROW( TestBarrier< BspInternal::MixedBarrier >( 32, true ), BspInternal::BspAbort );
 }
-*/
