@@ -24,8 +24,7 @@
 #include <algorithm>
 
 template< typename tBarrier >
-void TestBarrierImpl( tBarrier &barrier, bool *check,
-                      std::atomic_bool &abort, size_t id )
+void TestBarrierImpl( tBarrier &barrier, bool *check, const std::atomic_bool &abort, size_t id )
 {
     barrier.Wait( abort );
     check[id] = true;
@@ -88,7 +87,6 @@ TEST( P( Barrier ), Simple32 )
 {
     TestBarrier< BspInternal::Barrier >( 32, false );
 }*/
-*/
 
 #ifndef DEBUG
 TEST( P( CondVarBarrier ), Simple )
