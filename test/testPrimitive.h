@@ -292,7 +292,7 @@ void SendPrimitiveTest()
 
     tPrimitive expectedMail = ( tPrimitive )sReceive + 1;
 
-    BSPLib::Send( sSend, nullptr, message );
+    BSPLib::Send( sSend, message );
 
     BSPLib::Sync();
 
@@ -315,7 +315,7 @@ void SendPrimitiveFPTest()
 
     tPrimitive expectedMail = ( tPrimitive )sReceive + 1;
 
-    BSPLib::Send( sSend, nullptr, message );
+    BSPLib::Send( sSend, message );
 
     BSPLib::Sync();
 

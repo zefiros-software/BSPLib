@@ -254,33 +254,33 @@ namespace BSPLib
     }
 
     template< typename tPrimitive, typename tTag >
-    void Send( uint32_t pid, tTag *tag, const tPrimitive *payloadBegin, size_t payloadSize )
+    void Send( uint32_t pid, tTag &tag, const tPrimitive &payload )
     {
-        Classic::Send( pid, tag, payloadBegin, payloadSize );
-    }
-
-    template< typename tPrimitive, typename tTag >
-    void Send( uint32_t pid, const tTag &tag, const tPrimitive *payloadBegin, size_t payloadSize )
-    {
-        Send( pid, &tag, payloadBegin, payloadSize );
-    }
-
-    template< typename tPrimitive >
-    void Send( uint32_t pid, const std::string &tag, const tPrimitive *payloadBegin, size_t payloadSize )
-    {
-        Send( pid, tag[0], payloadBegin, payloadSize );
-    }
-
-    template< typename tPrimitive, typename tTag >
-    void Send( uint32_t pid, const tTag &tag, const tPrimitive &payload )
-    {
-        Send( pid, tag, &payload, sizeof( tPrimitive ) );
+        SendPtrs( pid, tag, &payload, 1 );
     }
 
     template< typename tTag >
-    void Send( uint32_t pid, const tTag &tag, const std::string &payload )
+    void Send( uint32_t pid, tTag &tag, const std::string &payload )
     {
-        Send( pid, tag, payload.data(), payload.size() );
+        SendPtrs( pid, tag, payload.data(), payload.size() );
+    }
+
+    template< typename tPrimitive, typename tTag >
+    void Send( uint32_t pid, tTag *tag, const tPrimitive &payload )
+    {
+        SendPtrs( pid, tag, &payload, 1 );
+    }
+
+    template< typename tTag >
+    void Send( uint32_t pid, tTag *tag, const std::string &payload )
+    {
+        SendPtrs( pid, tag, payload.data(), payload.size() );
+    }
+
+    template< typename tPrimitive >
+    void Send( uint32_t pid, const tPrimitive &payload )
+    {
+        SendPtrs( pid, &payload, 1 );
     }
 
     template< typename tPrimitive >
@@ -364,34 +364,105 @@ namespace BSPLib
         GetPtrs( pid, begin, begin, end );
     }
 
-    template< typename tPrimitive, typename tTag >
-    void SendPtrs( uint32_t pid, const tTag &tag, tPrimitive *begin, tPrimitive *end )
+    template< typename tPrimitive, typename tTagPrimitive >
+    void SendPtrs( uint32_t pid, tTagPrimitive *tag, tPrimitive *begin, size_t count )
     {
-        Send( pid, tag, begin, ( end - begin ) * sizeof( tPrimitive ) );
+        Classic::Send( pid, tag, begin, count * sizeof( tPrimitive ) );
+    }
+
+    template< typename tPrimitive, typename tTagPrimitive >
+    void SendPtrs( uint32_t pid, tTagPrimitive *tag, tPrimitive *begin, tPrimitive *end )
+    {
+        SendPtrs( pid, tag, begin, end - begin );
+    }
+
+    template< typename tPrimitive, typename tTagPrimitive >
+    void SendPtrs( uint32_t pid, std::vector< tTagPrimitive > &tagContainer, tPrimitive *begin, tPrimitive *end )
+    {
+        SendPtrs( pid, tagContainer.data(), begin, end );
+    }
+
+    template< typename tPrimitive, typename tTagPrimitive >
+    void SendPtrs( uint32_t pid, std::vector< tTagPrimitive > &tagContainer, tPrimitive *begin, size_t count )
+    {
+        SendPtrs( pid, tagContainer.data(), begin, count );
+    }
+
+    template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
+    void SendPtrs( uint32_t pid, std::array< tTagPrimitive, tTagSize > &tagContainer, tPrimitive *begin, tPrimitive *end )
+    {
+        SendPtrs( pid, tagContainer.data(), begin, end );
+    }
+
+    template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
+    void SendPtrs( uint32_t pid, std::array< tTagPrimitive, tTagSize > &tagContainer, tPrimitive *begin, size_t count )
+    {
+        SendPtrs( pid, tagContainer.data(), begin, count );
+    }
+
+    template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
+    void SendPtrs( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, tPrimitive *end )
+    {
+        SendPtrs( pid, tagContainer, begin, end );
+    }
+
+    template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
+    void SendPtrs( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, size_t count )
+    {
+        SendPtrs( pid, tagContainer, begin, count );
     }
 
     template< typename tPrimitive, typename tTag >
-    void SendPtrs( uint32_t pid, tTag *tag, tPrimitive *begin, tPrimitive *end )
+    void SendPtrs( uint32_t pid, const tTag &tag, tPrimitive *begin, tPrimitive *end )
     {
-        Send( pid, tag, begin, ( end - begin ) * sizeof( tPrimitive ) );
+        SendPtrs( pid, &tag, begin, end );
     }
 
     template< typename tPrimitive, typename tTag >
     void SendPtrs( uint32_t pid, const tTag &tag, tPrimitive *begin, size_t count )
     {
-        Send( pid, tag, begin, count * sizeof( tPrimitive ) );
+        SendPtrs( pid, &tag, begin, count );
     }
 
-    template< typename tPrimitive, typename tTag >
-    void SendPtrs( uint32_t pid, tTag *tag, tPrimitive *begin, size_t count )
+    template< typename tPrimitive >
+    void SendPtrs( uint32_t pid, const std::string &tag, tPrimitive *begin, tPrimitive *end )
     {
-        Send( pid, tag, begin, count * sizeof( tPrimitive ) );
+        SendPtrs( pid, tag.data(), begin, end );
     }
+
+    template< typename tPrimitive >
+    void SendPtrs( uint32_t pid, const std::string &tag, tPrimitive *begin, size_t count )
+    {
+        SendPtrs( pid, tag.data(), begin, count );
+    }
+
+
+
+
+    template< typename tPrimitive >
+    void SendPtrs( uint32_t pid, tPrimitive *begin, size_t count )
+    {
+        Classic::Send( pid, nullptr, begin, count * sizeof( tPrimitive ) );
+    }
+
+    template< typename tPrimitive >
+    void SendPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *end )
+    {
+        SendPtrs( pid, nullptr, begin, end - begin );
+    }
+
+
 
     template< typename tPrimitive >
     void MovePtrs( tPrimitive *payload, uint32_t maxCopySize )
     {
-        Classic::Move( payload, maxCopySize );
+        Classic::Move( payload, maxCopySize * sizeof( tPrimitive ) );
+    }
+
+    template< typename tPrimitive >
+    void MovePtrs( tPrimitive *begin, tPrimitive *end )
+    {
+        MovePtrs( begin, end - begin );
     }
 
     template< typename tIterator >
@@ -454,19 +525,7 @@ namespace BSPLib
     }
 
     template< typename tIterator, typename tTag >
-    void SendIterator( uint32_t pid, const tTag &tag, tIterator begin, tIterator end )
-    {
-        SendPtrs( pid, tag, &*begin, &*end );
-    }
-
-    template< typename tIterator, typename tTag >
-    void SendIterator( uint32_t pid, tTag *tag, tIterator begin, tIterator end )
-    {
-        SendPtrs( pid, tag, &*begin, &*end );
-    }
-
-    template< typename tIterator, typename tTag >
-    void SendIterator( uint32_t pid, const tTag &tag, tIterator begin, size_t count )
+    void SendIterator( uint32_t pid, tTag &tag, tIterator begin, size_t count )
     {
         SendPtrs( pid, tag, &*begin, count );
     }
@@ -477,10 +536,34 @@ namespace BSPLib
         SendPtrs( pid, tag, &*begin, count );
     }
 
+    template< typename tIterator, typename tTag >
+    void SendIterator( uint32_t pid, tTag &tag, tIterator begin, tIterator end )
+    {
+        SendIterator( pid, tag, begin, end - begin );
+    }
+
+    template< typename tIterator, typename tTag >
+    void SendIterator( uint32_t pid, tTag *tag, tIterator begin, tIterator end )
+    {
+        SendIterator( pid, tag, begin, end - begin );
+    }
+
+    template< typename tIterator >
+    void SendIterator( uint32_t pid, tIterator begin, size_t count )
+    {
+        SendPtrs( pid, &*begin, count );
+    }
+
+    template< typename tIterator >
+    void SendIterator( uint32_t pid, tIterator begin, tIterator end )
+    {
+        SendIterator( pid, begin, end - begin );
+    }
+
     template< typename tIterator >
     void MoveIterator( tIterator begin, uint32_t maxCopySize )
     {
-        MovePtrs( &begin, maxCopySize );
+        MovePtrs( &*begin, maxCopySize );
     }
 
     template< typename tIterator >
@@ -528,13 +611,25 @@ namespace BSPLib
     template< typename tPrimitive, typename tTag, size_t tSize >
     void SendCArray( uint32_t pid, tTag *tag, tPrimitive( &payload )[tSize] )
     {
-        SendPtrs( pid, tag, payload, payload + tSize );
+        SendPtrs( pid, tag, payload, tSize );
+    }
+
+    template< typename tPrimitive, typename tTag, size_t tSize >
+    void SendCArray( uint32_t pid, tTag &tag, tPrimitive( &payload )[tSize] )
+    {
+        SendPtrs( pid, tag, payload, tSize );
     }
 
     template< typename tPrimitive, size_t tSize >
-    void MoveCArray( tPrimitive( &payload )[tSize], uint32_t maxCopyIn )
+    void SendCArray( uint32_t pid, tPrimitive( &payload )[tSize] )
     {
-        MovePtrs( payload, maxCopyIn );
+        SendPtrs( pid, payload, tSize );
+    }
+
+    template< typename tPrimitive, size_t tSize >
+    void MoveCArray( tPrimitive( &payload )[tSize] )
+    {
+        MovePtrs( payload, tSize );
     }
 
     template< typename tContainer >
@@ -574,15 +669,27 @@ namespace BSPLib
     }
 
     template< typename tTag, typename tContainer >
-    void SendContainer( uint32_t pid, const tTag &tag, tContainer &payload )
+    void SendContainer( uint32_t pid, tTag *tag, tContainer &payload )
+    {
+        SendIterator( pid, tag, payload.begin(), payload.end() );
+    }
+
+    template< typename tTag, typename tContainer >
+    void SendContainer( uint32_t pid, tTag &tag, tContainer &payload )
     {
         SendIterator( pid, tag, payload.begin(), payload.end() );
     }
 
     template< typename tContainer >
-    void MoveContainer( tContainer &payload, uint32_t maxCopyIn )
+    void SendContainer( uint32_t pid, tContainer &payload )
     {
-        MoveIterator( payload.begin(), payload.size() );
+        SendIterator( pid, payload.begin(), payload.end() );
+    }
+
+    template< typename tContainer >
+    void MoveContainer( tContainer &payload )
+    {
+        MoveIterator( payload.begin(), ( uint32_t )payload.size() );
     }
 
     template< typename tPrimitive >
@@ -614,19 +721,25 @@ namespace BSPLib
     template< typename tPrimitive >
     void GetTagPtr( size_t &status, tPrimitive *tag )
     {
-        GetTag( &status, *tag );
+        GetTag( status, *tag );
     }
 
     template< typename tIterator >
     void GetTagIterator( size_t &status, tIterator tagBegin )
     {
-        GetTag( status, &*tagBegin );
+        GetTagPtr( status, &*tagBegin );
     }
 
     template< typename tContainer >
     void GetTagContainer( size_t &status, tContainer &tag )
     {
-        GetTag( status, tag.begin() );
+        GetTagIterator( status, tag.begin() );
+    }
+
+    template< typename tPrimitive, size_t tSize >
+    void GetTagCArray( size_t &status, tPrimitive( &tag )[tSize] )
+    {
+        GetTagPtr( status, tag );
     }
 
     inline bool Execute( std::function< void() > func, uint32_t nProc )
@@ -653,6 +766,18 @@ namespace BSPLib
 
         return true;
     }
+
+
+
+
+
+
+    template<>
+    inline void Send( uint32_t pid, const std::string &payload )
+    {
+        SendPtrs( pid, payload.data(), payload.size() );
+    }
+
 #ifndef BSP_DISABLE_NAMESPACE
 }
 #endif
