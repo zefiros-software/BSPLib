@@ -1,7 +1,8 @@
 #Interfaces
 
 ```cpp
-void BSPLib::Classic::Begin( uint32_t p )
+void BSPLib::Classic::Begin( uint32_t p ) // (1) Classic
+void bsp_begin( uint32_t p )              // (2) BSP
 ```
 
 Begins the computations with the maximum given processors. The BSP model in implemented around the 
@@ -59,6 +60,10 @@ This function has been depricated in favour of [`BSPLib::Execute()`](execute.md)
   
 #Examples
 
+###(1) Classic
+
+This is the interface one should prefer to use, over the old BSP interface.
+
 **SPMD Exectution**
 
 In SPMD mode, BSPLib regocnises no [`BSPLib::Classic::Init`](init.md) has been called,
@@ -67,8 +72,8 @@ and thus automatically recalls the `main()` function for the other threads.
 ```cpp
 void main( int32_t, const char ** )
 {
-	// No Init call, so other threads will call
-	// the main fuction
+	  // No Init call, so other threads will call
+	  // the main fuction
     BSPLib::Classic::Begin( BSPLib::NProcs() );
     
     std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
@@ -98,7 +103,7 @@ void Spmd()
 
 void main( int32_t argc, const char **argv )
 {
-	// Set the entry point for the other threads
+	  // Set the entry point for the other threads
     BSPLib::Classic::Init( Spmd, argc, argv );
 	
     // Main thread needs to call it also
@@ -106,31 +111,20 @@ void main( int32_t argc, const char **argv )
 }
 ```
 
-**Lambda Exectution**
+###(2) BSP
 
-A more advanced manner of execution is using lambda, giving our 
-more freedom over small BSP programs. Since we now use `std::function< void() >`
-as entry point, we are no longer bound by function pointers. [`BSPLib::Execute()`](execute.md)
-is a nice abstraction over this programming method, and should be used in favour of calling the
-program logic functions yourself.
+This interface is included for backwards compatibility with other BSP libraries.
 
 ```cpp
-void main( int32_t argc, const char **argv )
+void main( int32_t, const char ** )
 {
-	auto entry = []
-	{
-		BSPLib::Classic::Begin( BSPLib::NProcs() );
-		
-		std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
-				      << " of " << BSPLib::NProcs() << std::endl;
-				
-		BSPLib::Classic::End();
-	}
-	
-	// Set the entry point for the other threads
-    BSPLib::Classic::Init( entry, argc, argv );
-	
-    // Main thread needs to call it also
-    entry();
+  // No Init call, so other threads will call
+  // the main fuction
+  bsp_begin( bsp_nprocs() );
+  
+  std::cout << "Hello BSP Worldwide from process " << bsp_pid() 
+            << " of " << bsp_nprocs() << std::endl;
+  
+  bsp_end();
 }
 ```
