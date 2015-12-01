@@ -1,4 +1,4 @@
-local root      = "../"
+local root      = "../../"
 
 solution "bsp-library"
 
