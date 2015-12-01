@@ -12,13 +12,16 @@ the computations will start in SPMD mode, and the behaviour will be undefined.
 To solve this we introduce the [`BSPLib::Execute()`](execute.md) function makes the
 BSP interface easier to use.
 
+#Return Value
+True when the BSP program executed successfully, othwerise false.
+
 #Post-Conditions
 
  * The BSP program has been executed.
   
 #Examples
 
-**(1) Simple**
+###(1) Simple
 
 This is the most basic way of calling this function.
 
@@ -33,7 +36,7 @@ void main( int32_t, const char ** )
 }
 ```
 
-**(2) Arguments**
+###(2) Arguments
 
 When we need to pass the `main` arguments to the BSP program.
 

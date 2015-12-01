@@ -12,7 +12,10 @@ pages:
     - 'Init': 'logic/init.md'
     - 'Begin': 'logic/begin.md'
     - 'End': 'logic/end.md'
-- Utilities: 'utility.md'
+- Utilities:
+    - 'NProcs': 'util/nprocs.md'
+    - 'ProcId': 'util/procid.md'
+    - 'Time': 'util/time.md'
 - Halting: 'halting.md'
 - Synchronisation Point: 'sync.md'
 - Registration & Deregistration: 'regdereg.md'
