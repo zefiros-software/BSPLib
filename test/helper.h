@@ -23,6 +23,8 @@
 #ifndef __HELPER_H__
 #define __HELPER_H__
 
+#define BSP_SUPPRESS_ABORT_WARNING
+
 #include "bsp/bsp.h"
 
 #include "gtest/gtest.h"
