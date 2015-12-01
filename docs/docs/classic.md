@@ -81,6 +81,8 @@ double bsp_time()
 
 This is an alias of [`BSPLib::Classic::Time()`](utility.md#time). 
 
+---
+
 ##Halting
 
 ###bsp_abort
@@ -117,6 +119,8 @@ void bsp_vabort(const char *errorMessage, va_list args )
 
 This is an alias of `BSPLib::Classic::VAbort()`.
 
+---
+
 ##Synchronisation Point
 
 ###bsp_sync
@@ -131,6 +135,7 @@ void bsp_sync()
 
 This is an alias of `BSPLib::Classic::Sync()`.
 
+---
 
 ##Registration & Deregistration
 
@@ -166,6 +171,8 @@ void bsp_push_reg( const void *ident)
 **Details**
 
 This is an alias of `BSPLib::Classic::PopReg()`.
+
+---
 
 ##Communication
 
@@ -208,6 +215,8 @@ void bsp_get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t
 **Details**
 
 This is an alias of `BSPLib::Classic::Get()`.
+
+---
 
 ##Messaging
 
@@ -264,6 +273,8 @@ void bsp_move( void *payload, size_t maxCopySize )
 
 This is an alias of `BSPLib::Classic::Move()`.
 
+---
+
 ##Messaging Utilities
 
 ###bsp_set_tagsize
@@ -298,6 +309,8 @@ void bsp_get_tag( size_t *status, void *tag )
 **Details**
 
 This is an alias of `BSPLib::Classic::GetTag()`.
+
+---
 
 ## High Performance
 

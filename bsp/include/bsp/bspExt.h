@@ -629,7 +629,32 @@ namespace BSPLib
         GetTag( status, tag.begin() );
     }
 
+    /**
+     * Executes the by func given BSP program.
+     *
+     * @param   func  The function to execute BSP style.
+     * @param   nProc The number of processors to use.
+     *
+     * @return true if it succeeds, false if it fails.
+     */
+
     inline bool Execute( std::function< void() > func, uint32_t nProc )
+    {
+        return Execute( func, nProc, 0, nullptr );
+    }
+
+    /**
+     * Executes the by func given BSP program.
+     *
+     * @param   func  The function to execute BSP style.
+     * @param   nProc The number of processors to use
+     * @param   argc  The argc argument from the main loop.
+     * @param   argv  The argv argument from the main loop.
+     *
+     * @return true if it succeeds, false if it fails.
+     */
+
+    inline bool Execute( std::function< void() > func, uint32_t nProc, int32_t argc, const char **argv )
     {
         std::function< void() > spmd = [func, nProc]
         {
@@ -640,7 +665,7 @@ namespace BSPLib
             BSPLib::Classic::End();
         };
 
-        BSPLib::Classic::Init( spmd, 0, nullptr );
+        BSPLib::Classic::Init( spmd, argc, argv );
 
         try
         {
@@ -653,6 +678,7 @@ namespace BSPLib
 
         return true;
     }
+
 #ifndef BSP_DISABLE_NAMESPACE
 }
 #endif
