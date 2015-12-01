@@ -1,3 +1,3 @@
 @echo off
-cd project
+cd extern\project
 premake5 vs2015
