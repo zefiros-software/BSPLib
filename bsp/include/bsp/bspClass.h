@@ -191,7 +191,14 @@ public:
      *
      * @param   entry The entry function to execute.
      *
+     * @pre
+     *  * If the previous BSP program was terminated using Abort or VAbort:
+     *      * BSPLib will try to end the previous BSP program by notifying all threads that are stuck in a
+     *        synchronisation about the previous abort.
+     *      * After 100 failed tries, the entire program will be terminated by std::terminate().
+     *
      * @post
+     *  * The previous BSP program has successfully been ended or aborted.
      *  * Tag size is 0.
      *  * Entry point is now entry.
      *  * For the main thread, ProcId() == 0.
@@ -210,17 +217,21 @@ public:
 
         if ( mAbort )
         {
-#ifndef BSP_SUPPRESS_ABORT_INIT
+#ifndef BSP_SUPPRESS_ABORT_WARNING
             fprintf( stderr, "Warning: the previous BSP program ended using Abort or VAbort.\n" );
             fprintf( stderr, "         BSPLib will now try to determine whether all threads have stopped.\n\n" );
-#endif
 
+#   ifndef DEBUG
             uint32_t i = 0;
+#   endif
+#endif
 
             for ( auto &thr : mThreads )
             {
-#ifndef BSP_SUPPRESS_ABORT_INIT
+#ifndef BSP_SUPPRESS_ABORT_WARNING
+#   ifndef DEBUG
                 fprintf( stderr, "Determining the status of thread %d.\n", ++i );
+#   endif
 #endif
                 uint32_t count = 0;
 
@@ -236,8 +247,10 @@ public:
                 }
                 else
                 {
-#ifndef BSP_SUPPRESS_ABORT_INIT
+#ifndef BSP_SUPPRESS_ABORT_WARNING
+#   ifndef DEBUG
                     fprintf( stderr, "        %d has ended.\n\n", i );
+#   endif
 #endif
                 }
             }
