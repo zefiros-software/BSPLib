@@ -42,7 +42,14 @@ void TestBarrier( uint32_t threads, const std::atomic_bool &abort )
     {
         futures.emplace_back( std::async( std::launch::async, [&barrier, &check, &threads, &abort, i]()
         {
-            TestBarrierImpl< tBarrier >( barrier, check, abort, i );
+            try
+            {
+                TestBarrierImpl< tBarrier >( barrier, check, abort, i );
+            }
+            catch ( ... )
+            {
+                // Ignore other threads
+            }
         } ) );
 
         EXPECT_EQ( 0, std::count_if( check, check + threads, []( bool b )
@@ -51,12 +58,31 @@ void TestBarrier( uint32_t threads, const std::atomic_bool &abort )
         } ) );
     }
 
-    TestBarrierImpl< tBarrier >( barrier, check, abort, threads - 1 );
+    try
+    {
+        TestBarrierImpl< tBarrier >( barrier, check, abort, threads - 1 );
+    }
+    catch ( BspInternal::BspAbort &e )
+    {
+        // Make sure all threads are joined, even when an exeption is thrown (mimic the behaviour of Init after Abort)
+        for ( auto &thread : futures )
+        {
+            thread.wait_for( std::chrono::milliseconds( 200 ) );
+        }
+
+        throw e;
+    }
 
     EXPECT_EQ( threads, std::count_if( check, check + threads, []( bool b )
     {
         return b;
     } ) );
+
+    // Make sure all threads are joined
+    for ( auto &thread : futures )
+    {
+        thread.wait_for( std::chrono::milliseconds( 200 ) );
+    }
 
     delete check;
 }
