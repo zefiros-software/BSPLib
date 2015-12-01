@@ -253,36 +253,6 @@ namespace BSPLib
         Get( pid, var, var );
     }
 
-    template< typename tPrimitive, typename tTag >
-    void Send( uint32_t pid, tTag &tag, const tPrimitive &payload )
-    {
-        SendPtrs( pid, tag, &payload, 1 );
-    }
-
-    template< typename tTag >
-    void Send( uint32_t pid, tTag &tag, const std::string &payload )
-    {
-        SendPtrs( pid, tag, payload.data(), payload.size() );
-    }
-
-    template< typename tPrimitive, typename tTag >
-    void Send( uint32_t pid, tTag *tag, const tPrimitive &payload )
-    {
-        SendPtrs( pid, tag, &payload, 1 );
-    }
-
-    template< typename tTag >
-    void Send( uint32_t pid, tTag *tag, const std::string &payload )
-    {
-        SendPtrs( pid, tag, payload.data(), payload.size() );
-    }
-
-    template< typename tPrimitive >
-    void Send( uint32_t pid, const tPrimitive &payload )
-    {
-        SendPtrs( pid, &payload, 1 );
-    }
-
     template< typename tPrimitive >
     void Move( tPrimitive &payload )
     {
@@ -792,6 +762,36 @@ namespace BSPLib
         return Execute( func, nProc, 0, nullptr );
     }
 
+
+
+
+    template< typename tPrimitive, typename tTag >
+    void Send( uint32_t pid, tTag &tag, const tPrimitive &payload )
+    {
+        SendPtrs( pid, tag, &payload, 1 );
+    }
+
+    template< typename tTag >
+    void Send( uint32_t pid, tTag &tag, const std::string &payload )
+    {
+        SendPtrs( pid, tag, payload.data(), payload.size() );
+    }
+    template< typename tPrimitive, typename tTag >
+    void Send( uint32_t pid, tTag *tag, const tPrimitive &payload )
+    {
+        SendPtrs( pid, tag, &payload, 1 );
+    }
+    template< typename tTag >
+    void Send( uint32_t pid, tTag *tag, const std::string &payload )
+    {
+        SendPtrs( pid, tag, payload.data(), payload.size() );
+    }
+
+    template< typename tPrimitive >
+    void Send( uint32_t pid, const tPrimitive &payload )
+    {
+        SendPtrs( pid, &payload, 1 );
+    }
 
     template<>
     inline void Send( uint32_t pid, const std::string &payload )

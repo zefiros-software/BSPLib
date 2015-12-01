@@ -208,6 +208,41 @@ public:
             fprintf( stderr, "         and this other run did not terminate (gracefully).\n" );
         }
 
+        if ( mAbort )
+        {
+#ifndef BSP_SUPPRESS_ABORT_INIT
+            fprintf( stderr, "Warning: the previous BSP program ended using Abort or VAbort.\n" );
+            fprintf( stderr, "         BSPLib will now try to determine whether all threads have stopped.\n\n" );
+#endif
+
+            uint32_t i = 0;
+
+            for ( auto &thr : mThreads )
+            {
+#ifndef BSP_SUPPRESS_ABORT_INIT
+                fprintf( stderr, "Determining the status of thread %d.\n", ++i );
+#endif
+                uint32_t count = 0;
+
+                while ( thr.wait_for( std::chrono::milliseconds( 200 ) ) == std::future_status::timeout && count++ < 100 )
+                {
+                    mThreadBarrier.NotifyAbort();
+                }
+
+                if ( count >= 100 )
+                {
+                    fprintf( stderr, "Error: could not safely end the previous BSP program. Terminating now." );
+                    std::terminate();
+                }
+                else
+                {
+#ifndef BSP_SUPPRESS_ABORT_INIT
+                    fprintf( stderr, "        %d has ended.\n\n", i );
+#endif
+                }
+            }
+        }
+
         ProcId() = 0;
     }
 
