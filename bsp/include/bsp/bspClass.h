@@ -159,7 +159,7 @@ public:
      *
      * @return The current processor id.
      *
-     * @pre Begin has been called, otherwise, this will return 0xdeadbeef.
+     * @pre Begin has been called, otherwise this will return 0xdeadbeef.
      */
 
     BSP_FORCEINLINE uint32_t &ProcId()
@@ -381,6 +381,8 @@ public:
         if ( ProcId() == 0 )
         {
             mThreads.clear();
+
+            mProcCount = 0;
         }
     }
 

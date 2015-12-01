@@ -1,8 +1,38 @@
 #Interfaces
 
 ```cpp
-bool Execute( std::function< void() > func, uint32_t nProc ) 								  // (1) Simple
+bool Execute( std::function< void() > func, uint32_t nProc ) 						    // (1) Simple
 bool Execute( std::function< void() > func, uint32_t nProc, int32_t argc, char **argv ) // (2) Arguments
+```
+This function executes the given function according to the BSP model, with the
+given amount of processors. There is no need to seperate main thread and instanced threads from the library, 
+and also [`BSPLib::Classic::Begin()`](begin.md) and [`BSPLib::Classic::End()`](end.md) are not needed in 
+this function body. Everything is taken care off, and if the computations are abored prematurely the
+return value will be false in stead of true.
+ 
+This function is sematically equal to:
+```cpp
+std::function< void() > spmd = [func, nProc]
+{
+	BSPLib::Classic::Begin( nProc );
+
+	func();
+
+	BSPLib::Classic::End();
+};
+
+BSPLib::Classic::Init( spmd, argc, argv );
+
+try
+{
+	spmd();
+}
+catch ( BspInternal::BspAbort & )
+{
+	return false;
+}
+
+return true;
 ```
 
 A BSP program normally is paired by [`BSPLib::Classic::Begin()`](begin.md) 
