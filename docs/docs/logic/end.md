@@ -30,7 +30,7 @@ This is the interface one should prefer to use, over the old BSP interface.
 
 ```cpp
 void main( int32_t, const char ** )
-{
+{		
 	BSPLib::Classic::Begin( BSPLib::NProcs() );
 	
 	std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 

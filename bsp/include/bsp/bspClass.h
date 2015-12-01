@@ -159,7 +159,7 @@ public:
      *
      * @return The current processor id.
      *
-     * @pre Begin has been called, otherwise, this will return 0xdeadbeef.
+     * @pre Begin has been called, otherwise this will return 0xdeadbeef.
      */
 
     BSP_FORCEINLINE uint32_t &ProcId()
@@ -204,7 +204,7 @@ public:
      *  * For the main thread, ProcId() == 0.
      */
 
-    BSP_FORCEINLINE void Init( std::function< void() > entry, int32_t, char *[] )
+    BSP_FORCEINLINE void Init( std::function< void() > entry, int32_t, char ** )
     {
         mEntry = entry;
         mTagSize = 0;
@@ -394,6 +394,8 @@ public:
         if ( ProcId() == 0 )
         {
             mThreads.clear();
+
+            mProcCount = 0;
         }
     }
 
