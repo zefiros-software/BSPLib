@@ -13,6 +13,11 @@ Initialises the BSP computation process. Please note that the main thread should
 * `argc` *Currently not used, should be `argc` from `main` function.*
 * `argv` *Currently not used, should be `argv` from `main` function.*
 
+#Pre-Conditions
+ * If the previous BSP program was terminated using Abort or VAbort:
+    * BSPLib will try to end the previous BSP program by notifying all threads that are stuck in a synchronisation about the previous Abort.
+    * After 100 failed tries, the entire program will be terminated by `std::terminate()`.
+
 #Post-Conditions
 
  * Tag size is 0.
@@ -23,6 +28,10 @@ Initialises the BSP computation process. Please note that the main thread should
    
 #Deprication
 This function has been depricated in favour of [`BSPLib::Execute()`](execute.md).
+
+#Warnings
+ * By default, `BSPLib::Classic::Init` will print a warning to `stderr` in case an abort of the previous BSP program has been detected. This message can be suppressed by the symbol `BSP_SUPPRESS_ABORT_WARNING`.
+ * When `BSPLib::Classic::Init` failed to join all threads from the previous BSP program, an error will be printed to `stderr`, and the entire program will be terminated by `std::terminate()`. This behaviour cannot be disabled, as it will most certainly cause errors in the next BSP program.
  
 #Examples
 
