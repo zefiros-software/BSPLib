@@ -1,6 +1,10 @@
 # BSPLib
 [BSPLib](wwww.bsplib.eu) is a fast, and easy to use C++ implementation of the Bulk Synchronous Parallel (BSP) threading model.
 
+#BSP
+The BSP specification can be found [here](bsp.pdf) and is maintained by [bsp-worldwide.org](http://bsp-worldwide.org). Parts of the
+documentation and code are based off this specification, to ensure backward compatibility between BSP libraries.
+
 #Code
 The code can be found [here](https://github.com/Zefiros-Software/BSPLib).
 
@@ -17,19 +21,19 @@ The whole library is header only, so for usage in your own code you should clone
 After this you can use the include `#include "bsp/bsp.h"` in your code to start using the library.
 
 ## Usage
-For detailed usage, please visit [BSPLib](wwww.bsplib.eu).
+For detailed usage, please visit [BSPLib](www.bsplib.eu).
 
 ### Flexibility
 
 #### Don't like the classic interface?
 No worries! You can easily disable the macros by defining:
-```C++
+```cpp
 #define BSP_DISABLE_LEGACY
 ```
 
 #### Speeding up debugging
 When debug builds are too slow, you can remove the extra safety check by defining:
-```C++
+```cpp
 #define BSP_SKIP_CHECKS
 ```
 
