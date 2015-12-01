@@ -47,7 +47,7 @@ void TestBarrier( uint32_t threads, const std::atomic_bool &abort )
 
         EXPECT_EQ( 0, std::count_if( check, check + threads, []( bool b )
         {
-            return b > 0;
+            return b;
         } ) );
     }
 
@@ -55,7 +55,7 @@ void TestBarrier( uint32_t threads, const std::atomic_bool &abort )
 
     EXPECT_EQ( threads, std::count_if( check, check + threads, []( bool b )
     {
-        return b > 0;
+        return b;
     } ) );
 
     delete check;
