@@ -2,7 +2,7 @@
 
 ```cpp
 void BSPLib::Classic::Init( std::function< void() > spmd, int32_t argc, char **argv) // (1) Classic
-void bsp_init()                                                                      // (2) BSP
+void bsp_init( void(*spmd)(void), int32_t argc, char **argv)                         // (2) BSP
 ```
 
 Initialises the BSP computation process. Please note that the main thread should also call the entry function.

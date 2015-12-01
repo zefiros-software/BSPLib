@@ -23,10 +23,11 @@
 #ifndef __MIXEDBARRIER_H__
 #define __MIXEDBARRIER_H__
 
-#define BSP_SPIN_ITERATIONS 5000
+#define BSP_SPIN_ITERATIONS 10000
 
 #include "bsp/bspAbort.h"
 
+#include <atomic>
 #include <mutex>
 
 namespace BspInternal
@@ -88,8 +89,7 @@ namespace BspInternal
 
             if ( aborted )
             {
-                mCurrentCon->notify_all();
-                throw BspAbort( "Aborted" );
+                Abort();
             }
 
             if ( !--mSpaces )
@@ -106,14 +106,14 @@ namespace BspInternal
 
                 while ( mGeneration == myGeneration && ++i < BSP_SPIN_ITERATIONS )
                 {
-                    if ( aborted )
+                    if ( ( i & 127 ) == 0 )
                     {
-                        mCurrentCon->notify_all();
-                        throw BspAbort( "Aborted" );
+                        if ( aborted )
+                        {
+                            Abort();
+                        }
                     }
                 }
-
-
 
                 if ( i >= BSP_SPIN_ITERATIONS )
                 {
@@ -163,6 +163,13 @@ namespace BspInternal
 
             tmpCon->notify_all();
         }
+
+        void Abort()
+        {
+            mCurrentCon->notify_all();
+            throw BspAbort( "Aborted" );
+        }
+
     };
 }
 

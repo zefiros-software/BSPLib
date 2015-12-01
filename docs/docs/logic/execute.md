@@ -2,7 +2,7 @@
 
 ```cpp
 bool Execute( std::function< void() > func, uint32_t nProc ) 								  // (1) Simple
-bool Execute( std::function< void() > func, uint32_t nProc, int32_t argc, const char **argv ) // (2) Arguments
+bool Execute( std::function< void() > func, uint32_t nProc, int32_t argc, char **argv ) // (2) Arguments
 ```
 
 A BSP program normally is paired by [`BSPLib::Classic::Begin()`](begin.md) 
@@ -38,7 +38,7 @@ void main( int32_t, const char ** )
 
 ###(2) Arguments
 
-When we need to pass the `main` arguments to the BSP program.
+When we need to pass the `main()` arguments to the BSP program.
 
 ```cpp
 void main( int32_t argc, const char **argv )
