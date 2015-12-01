@@ -749,13 +749,13 @@ namespace BSPLib
     }
 
     /**
-    * Executes the by func given BSP program.
-    *
-    * @param   func  The function to execute BSP style.
-    * @param   nProc The number of processors to use.
-    *
-    * @return true if it succeeds, false if it fails.
-    */
+     * Executes the by func given BSP program.
+     *
+     * @param   func  The function to execute BSP style.
+     * @param   nProc The number of processors to use.
+     *
+     * @return true if it succeeds, false if it fails.
+     */
 
     inline bool Execute( std::function< void() > func, uint32_t nProc )
     {
@@ -776,13 +776,11 @@ namespace BSPLib
     {
         SendPtrs( pid, tag, payload.data(), payload.size() );
     }
-
     template< typename tPrimitive, typename tTag >
     void Send( uint32_t pid, tTag *tag, const tPrimitive &payload )
     {
         SendPtrs( pid, tag, &payload, 1 );
     }
-
     template< typename tTag >
     void Send( uint32_t pid, tTag *tag, const std::string &payload )
     {

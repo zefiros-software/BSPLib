@@ -55,7 +55,7 @@ namespace BspInternal
         {
         }
 
-        const char *what() const throw()
+        virtual const char *what() const throw() override
         {
             return msg.c_str();
         }
