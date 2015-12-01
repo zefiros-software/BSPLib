@@ -83,6 +83,24 @@ void main( int32_t, const char ** )
 }
 ```
 
+Of course namespaces may be ommited, so the interface gets even simpler.
+
+```cpp
+void main( int32_t, const char ** )
+{
+    using namespace BSPLib;
+    
+	  // No Init call, so other threads will call
+	  // the main fuction
+    Classic::Begin( NProcs() );
+    
+    std::cout << "Hello BSP Worldwide from process " << ProcId() 
+              << " of " << NProcs() << std::endl;
+    
+    Classic::End();
+}
+```
+
 **Normal Exectution**
 
 In the normal execution mode we need to initialise the BSPLibrary with a [`BSPLib::Classic::Init`](init.md) call.

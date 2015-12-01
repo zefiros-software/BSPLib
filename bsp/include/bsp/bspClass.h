@@ -197,7 +197,7 @@ public:
      *  * For the main thread, ProcId() == 0.
      */
 
-    BSP_FORCEINLINE void Init( std::function< void() > entry, int32_t, char *[] )
+    BSP_FORCEINLINE void Init( std::function< void() > entry, int32_t, char ** )
     {
         mEntry = entry;
         mTagSize = 0;
