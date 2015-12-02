@@ -5,8 +5,8 @@ void BSPLib::Classic::Begin( uint32_t p ) // (1) Classic
 void bsp_begin( uint32_t p )              // (2) BSP
 ```
 
-Begins the computations with the maximum given processors. The BSP model in implemented around the 
-Single Program Multiple Data (SPMD) programming model. Which means that we divide our datastructures 
+Begins the computations with the maximum given processors. The BSP model is implemented around the 
+Single Program Multiple Data (SPMD) programming model. This means that we divide our datastructures 
 over all threads, and try to evenly divide the work per processor. BSPLib will handle the required 
 communication, as implemented by the user. This means that the distribution of work
 is the users responsibility, whilst the communication is that of the library.

@@ -500,7 +500,8 @@ public:
     }
 
     /**
-     * Puts a buffer of size nbytes from source pointer src in the thread with ID pid at offset from destination pointer dst.
+     * Puts a buffer of size nbytes from source pointer src in the thread with ID pid at offset from destination pointer
+     * dst.
      *
      * @param   pid         The processor ID.
      * @param   src         Source to read the buffer from.
@@ -509,10 +510,11 @@ public:
      * @param   nbytes      The size of the message to be written to the other processor.
      *
      * @pre
-     *  * Begin has been called.
-     *  * src != nullptr.
-     *  * dst != nullptr.
-     *  * PushReg has been called on dst with at least size offset + nbytes.
+     * * Begin has been called.
+     * * src != nullptr.
+     * * dst != nullptr.
+     * * PushReg has been called on dst with at least size offset + nbytes in the processor with ID pid.
+     * * A Sync has happened between PushReg and this call.
      */
 
     BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
@@ -526,12 +528,14 @@ public:
 #endif
 
         const char *srcBuff = reinterpret_cast<const char *>( src );
-        const size_t globalId = mRegisters[tpid][dst].registerCount;
+        const size_t globalId = LocalToGlobal( tpid, dst ); //mRegisters[tpid][dst].registerCount;
 
 #ifndef BSP_SKIP_CHECKS
         assert( mThreadRegisterLocation[pid].size() > globalId );
-        assert( mRegisters[pid].find( mThreadRegisterLocation[pid][globalId] ) != mRegisters[pid].end() );
-        assert( mRegisters[pid][mThreadRegisterLocation[pid][globalId]].size >= offset + nbytes );
+
+        /*mThreadRegisterLocation[pid][globalId]*/
+        assert( mRegisters[pid].find( GlobalToLocal( pid, globalId ) ) != mRegisters[pid].end() );
+        assert( mRegisters[pid][GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
         const char *dstBuff = reinterpret_cast<const char *>( mThreadRegisterLocation[pid][globalId] );
@@ -539,6 +543,24 @@ public:
 
         mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::PutRequest{ bufferLocation, dstBuff + offset, nbytes } );
     }
+
+    /**
+     * Gets a buffer of size nbytes from source pointer src that is located in the thread with ID pid at offset from
+     * source pointer src and stores it at the location of.
+     *
+     * @param   pid         The processor ID.
+     * @param   src         Source to read the buffer from.
+     * @param   offset      The offset from the source to start reading from.
+     * @param [in,out]  dst Destination to write the buffer to.
+     * @param   nbytes      The size of the message to be written in bytes.
+     *
+     * @pre
+     * * Begin has been called.
+     * * src != nullptr.
+     * * dst != nullptr.
+     * * PushReg has been called on dst with at leas size offset + nbytes in the processor with ID pid.
+     * * A Sync has happened between PushReg and this call.
+     */
 
     BSP_FORCEINLINE void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
     {
@@ -550,12 +572,14 @@ public:
         assert( src && dst );
 #endif
 
-        const size_t globalId = mRegisters[tpid][src].registerCount;
+        const size_t globalId = LocalToGlobal( tpid, src ); //mRegisters[tpid][src].registerCount;
 
 #ifndef BSP_SKIP_CHECKS
         assert( mThreadRegisterLocation[pid].size() > globalId );
-        assert( mRegisters[pid].find( mThreadRegisterLocation[pid][globalId] ) != mRegisters[pid].end() );
-        assert( mRegisters[pid][mThreadRegisterLocation[pid][globalId]].size >= offset + nbytes );
+
+        // mThreadRegisterLocation[pid][globalId]
+        assert( mRegisters[pid].find( GlobalToLocal( pid, globalId ) ) != mRegisters[pid].end() );
+        assert( mRegisters[pid][GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
         const char *srcBuff = reinterpret_cast<const char *>( mThreadRegisterLocation[pid][globalId] );
@@ -563,13 +587,28 @@ public:
         mGetRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::GetRequest{ dst, srcBuff + offset, nbytes } );
     }
 
+    /**
+     * Send a buffered message to the processor with ID pid using a tag to identify the message.
+     *
+     * @param   pid     The processor ID to send the message to.
+     * @param   tag     The tag to identify the message with.
+     * @param   payload The payload of the message.
+     * @param   size    The size of the payload in bytes.
+     *
+     * @pre
+     * * Begin has been called.
+     * * Tagsize is equal on all threads.
+     */
+
     BSP_FORCEINLINE void Send( uint32_t pid, const void *tag, const void *payload, const size_t size )
     {
         uint32_t &tpid = ProcId();
 
+#ifndef BSP_SKIP_CHECKS
         assert( pid < mProcCount );
         assert( tpid < mProcCount );
         assert( mNewTagSize[tpid] == mTagSize );
+#endif // !BSP_SKIP_CHECKS
 
         const char *srcBuff = reinterpret_cast<const char *>( payload );
         const char *tagBuff = reinterpret_cast<const char *>( tag );
@@ -582,14 +621,33 @@ public:
         mTmpSendRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::SendRequest{ bufferLocation, size, tagLocation, mTagSize } );
     }
 
+    /**
+     * Moves the first message in the queue to the given payload destination.
+     *
+     * @param [in,out]  payload  The payload destination.
+     * @param   max_copy_size_in The maximum size of the payload to copy.
+     *
+     * @pre
+     * * Begin has been called.
+     * * If the send queue is empty or the cursor is at/behind the end:
+     *      Does nothing.
+     *   Else:
+     *      Moves the first message in the queue o the given payload destination.
+     * * payload != nullptr.
+     *
+     * @post The queue cursor for the send queue is moved to the next message.
+     */
+
     BSP_FORCEINLINE void Move( void *payload, size_t max_copy_size_in )
     {
         uint32_t &pid = ProcId();
 
-        if ( mSendRequests[pid].empty() )
+        if ( mSendRequests[pid].empty() || mSendReceivedIndex[pid] >= mSendRequests[pid].size() )
         {
             return;
         }
+
+        assert( payload );
 
         BspInternal::SendRequest &request = mSendRequests[pid][mSendReceivedIndex[pid]++];
 
@@ -597,12 +655,40 @@ public:
         mSendBuffers[pid].Extract( request.bufferLocation, copySize, ( char * )payload );
     }
 
+    /**
+     * Sets a tagsize for the next superstep.
+     *
+     * @param [in,out]  size The new size for the tags.
+     *
+     * @pre
+     * * Begin has been called.
+     * * size != nullptr.
+     */
+
     BSP_FORCEINLINE void SetTagsize( size_t *size )
     {
+        assert( size );
         const size_t newSize = *size;
         *size = mTagSize;
         mNewTagSize[ProcId()] = newSize;
     }
+
+    /**
+     * Gets the tag for the next message in the send queue.
+     *
+     * @param [in,out]  status The output destination for the status of the queue.
+     * @param [in,out]  tag    The output destination for the tag of the first message in the queue.
+     *
+     * @pre
+     * * Begin has been called.
+     * * If the send queue is empty or the cursor is at/behind the end of the queue:
+     *      Returns a status equal to -1.
+     *   Else:
+     *      * Returns the size of the buffer of the request as status.
+     *      * Writes the tag to the desired destination.
+     *
+     * @post The queue is in the same state as before.
+     */
 
     BSP_FORCEINLINE void GetTag( size_t *status, void *tag )
     {
@@ -619,16 +705,30 @@ public:
 
             char *tagBuff = reinterpret_cast<char *>( tag );
 
+#ifndef BSP_SKIP_CHECKS
             assert( sendQueue[index].tagSize == mTagSize );
+#endif // !BSP_SKIP_CHECKS
 
             mSendBuffers[pid].Extract( sendRequest.tagLocation, sendRequest.tagSize, tagBuff );
         }
     }
 
+    /**
+     * Query if this object is ended.
+     *
+     * @return true if ended, false if not.
+     */
+
     BSP_FORCEINLINE bool IsEnded() const
     {
         return mEnded;
     }
+
+    /**
+     * Gets the static instance of the BSP class to support static calls.
+     *
+     * @return The instance.
+     */
 
     static BSP_FORCEINLINE BSP &GetInstance()
     {
@@ -795,6 +895,16 @@ private:
 
             getQueue.clear();
         }
+    }
+
+    BSP_FORCEINLINE size_t LocalToGlobal( uint32_t pid, const void *reg )
+    {
+        return mRegisters[pid][reg].registerCount;
+    }
+
+    BSP_FORCEINLINE const void *GlobalToLocal( uint32_t pid, size_t globalId )
+    {
+        return mThreadRegisterLocation[pid][globalId];
     }
 
 };
