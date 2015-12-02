@@ -104,8 +104,8 @@ solution "bsp-library"
         configuration { "Coverage", "x32" }
             defines "PREFIX=X32C_"
         
-        configuration { "Release", "x64" }
-            defines "Coverage=X64C_"
+        configuration { "Coverage", "x64" }
+            defines "PREFIX=X64C_"
             
     project "bsp-bench"                
         kind "ConsoleApp"
