@@ -49,7 +49,7 @@ solution "bsp-library"
         targetsuffix "cd"
         flags "Symbols"
         links "gcov"
-        buildoptions "-coverage"
+        buildoptions "-coverage -fno-inline"
                              
     configuration {}
             
@@ -100,6 +100,12 @@ solution "bsp-library"
         
         configuration { "Release", "x64" }
             defines "PREFIX=X64R_"
+        
+        configuration { "Coverage", "x32" }
+            defines "PREFIX=X32C_"
+        
+        configuration { "Coverage", "x64" }
+            defines "PREFIX=X64C_"
             
     project "bsp-bench"                
         kind "ConsoleApp"
