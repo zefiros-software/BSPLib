@@ -106,12 +106,9 @@ namespace BspInternal
 
                 while ( mGeneration == myGeneration && ++i < BSP_SPIN_ITERATIONS )
                 {
-                    if ( ( i & 127 ) == 0 )
+                    if ( ( i & 127 ) == 0 && aborted )
                     {
-                        if ( aborted )
-                        {
-                            Abort();
-                        }
+                        Abort();
                     }
                 }
 
