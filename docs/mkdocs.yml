@@ -16,7 +16,8 @@ pages:
     - 'NProcs': 'util/nprocs.md'
     - 'ProcId': 'util/procid.md'
     - 'Time': 'util/time.md'
-- Halting: 'halting.md'
+- Halting:
+    - 'Abort': 'halting/abort.md'
 - Synchronisation Point: 'sync.md'
 - Registration & Deregistration: 'regdereg.md'
 - Communication: 'communication.md'
