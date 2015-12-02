@@ -42,6 +42,13 @@ the computations will start in SPMD mode, and the behaviour will be undefined.
 To solve this we introduce the [`BSPLib::Execute()`](execute.md) function makes the
 BSP interface easier to use.
 
+#Parameters
+
+* `func`   The entry function to execute over all processors.
+* `nProcs` The amount of processors to use in the executions.
+* `argc`   *Currently not used, should be `argc` from `main` function.*
+* `argv`   *Currently not used, should be `argv` from `main` function.*
+
 #Return Value
 True when the BSP program executed successfully, othwerise false.
 
