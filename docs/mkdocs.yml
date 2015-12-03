@@ -7,24 +7,45 @@ copyright: Copyright (c) 2015 Mick van Duijn, Koen Visscher and Paul Visscher
 
 pages:
 - BSP: 'index.md'
-- Program Logic: 
-    - 'Execute': 'logic/execute.md'
-    - 'Init': 'logic/init.md'
-    - 'Begin': 'logic/begin.md'
-    - 'End': 'logic/end.md'
+
+- Program Logic:
+    - 'Execute BSP Program': 'logic/execute.md'
+    - 'Init BSP Program': 'logic/init.md'
+    - 'Begin BSP Program': 'logic/begin.md'
+    - 'End BSP Program': 'logic/end.md'
+
 - Utilities:
-    - 'NProcs': 'util/nprocs.md'
-    - 'ProcId': 'util/procid.md'
-    - 'Time': 'util/time.md'
+    - 'Get Processor Count': 'util/nprocs.md'
+    - 'Get Processor Identifier': 'util/procid.md'
+    - 'Get Wall Time': 'util/time.md'
+
 - Halting:
-    - 'Abort': 'halting/abort.md'
+    - 'Abort Program': 'halting/abort.md'
+
 - Synchronisation Point:
-    - 'Sync': 'sync/sync.md'
+    - 'Synchronising': 'sync/sync.md'
+
 - Registration & Deregistration:
-    - 'Put': 'regdereg/push.md'
-    - 'Pop': 'regdereg/pop.md'
-- Communication: 'communication.md'
-- Messaging: 'messaging.md'
-- Messaging Utilities: 'messagingutil.md'
-- High Performance: 'hp.md'
+    - 'Push Register': 'regdereg/push.md'
+    - 'Pop Register': 'regdereg/pop.md'
+
+- Communication:
+    - 'Get Register': 'com/get.md'
+    - 'Put Register': 'com/put.md'
+
+- Messaging:
+
+    - 'Move': 'messaging/move.md'
+    - 'Send': 'messaging/send.md'
+    - 'Get Queue Size': 'messaging/qsize.md'
+
+- Messaging Utilities:
+    - 'Get Tag': 'messagingutil/gettag.md'
+    - 'Set Tag Size': 'messagingutil/settagsize.md'
+
+- High Performance:
+    - 'Get Register': 'hp/hpget.md'
+    - 'Put Register': 'hp/hpput.md'
+    - 'HPSend': 'hp/hpsend.md'
+
 - Classic: 'classic.md'
