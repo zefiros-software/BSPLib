@@ -266,19 +266,19 @@ namespace BSPLib
     }
 
     template< typename tPrimitive >
-    void PushRegPtrs( tPrimitive *begin, size_t size )
+    void PushPtrs( tPrimitive *begin, size_t size )
     {
         Classic::Push( begin, size * sizeof( tPrimitive ) );
     }
 
     template< typename tPrimitive >
-    void PushRegPtrs( tPrimitive *begin, tPrimitive *end )
+    void PushPtrs( tPrimitive *begin, tPrimitive *end )
     {
-        PushRegPtrs( begin, end - begin );
+        PushPtrs( begin, end - begin );
     }
 
     template< typename tPrimitive >
-    void PopRegPtrs( tPrimitive *begin )
+    void PopPtrs( tPrimitive *begin )
     {
         Classic::Pop( begin );
     }
@@ -436,22 +436,22 @@ namespace BSPLib
     }
 
     template< typename tIterator >
-    void PushRegIterator( tIterator begin, size_t size )
+    void PushIterator( tIterator begin, size_t size )
     {
-        PushRegPtrs( &*begin, size );
+        PushPtrs( &*begin, size );
     }
 
     template< typename tIterator >
-    void PushRegIterator( tIterator begin, tIterator end )
+    void PushIterator( tIterator begin, tIterator end )
     {
         assert( end == begin || &*( end - 1 ) - &*begin == end - begin - 1 );
-        PushRegIterator( begin, end - begin );
+        PushIterator( begin, end - begin );
     }
 
     template < typename tIterator>
-    void PopRegIterator( tIterator begin )
+    void PopIterator( tIterator begin )
     {
-        PopRegPtrs( &*begin );
+        PopPtrs( &*begin );
     }
 
     template< typename tIterator, typename tOutputIterator >
@@ -543,15 +543,15 @@ namespace BSPLib
     }
 
     template< typename tPrimitive, size_t tSize >
-    void PushRegCArray( tPrimitive( &container )[tSize] )
+    void PushCArray( tPrimitive( &container )[tSize] )
     {
-        PushRegPtrs( container, container + tSize );
+        PushPtrs( container, container + tSize );
     }
 
     template< typename tPrimitive, size_t tSize >
-    void PopRegCArray( tPrimitive( &container )[tSize] )
+    void PopCArray( tPrimitive( &container )[tSize] )
     {
-        PopRegPtrs( container );
+        PopPtrs( container );
     }
 
     template< typename tPrimitive, size_t tSizeIn, size_t tSizeOut  >
@@ -603,15 +603,15 @@ namespace BSPLib
     }
 
     template< typename tContainer >
-    void PushRegContainer( tContainer &container )
+    void PushContainer( tContainer &container )
     {
-        PushRegIterator( container.begin(), container.end() );
+        PushIterator( container.begin(), container.end() );
     }
 
     template< typename tContainer >
-    void PopRegContainer( tContainer &container )
+    void PopContainer( tContainer &container )
     {
-        PopRegIterator( container.begin() );
+        PopIterator( container.begin() );
     }
 
     template < typename tContainerIn, typename tContainerOut >

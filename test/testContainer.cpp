@@ -41,7 +41,7 @@ void PutVectorTest()
 
     std::vector< tPrimitive > result( tCount, ( tPrimitive )s );
 
-    BSPLib::PushRegContainer( result );
+    BSPLib::PushContainer( result );
 
     BSPLib::Sync();
 
@@ -73,7 +73,7 @@ void PutFPVectorTest()
 
     std::vector< tPrimitive > result( tCount, ( tPrimitive )s );
 
-    BSPLib::PushRegContainer( result );
+    BSPLib::PushContainer( result );
 
     BSPLib::Sync();
 
@@ -106,7 +106,7 @@ void PutStdArrayTest()
     std::array< tPrimitive, tCount > result;
     std::fill_n( result.begin(), tCount, ( tPrimitive )s );
 
-    BSPLib::PushRegContainer( result );
+    BSPLib::PushContainer( result );
 
     BSPLib::Sync();
 
@@ -139,7 +139,7 @@ void PutFPStdArrayTest()
     std::array< tPrimitive, tCount > result;
     std::fill_n( result.begin(), tCount, ( tPrimitive )s );
 
-    BSPLib::PushRegContainer( result );
+    BSPLib::PushContainer( result );
 
     BSPLib::Sync();
 
@@ -172,7 +172,7 @@ void PutCArrayTest()
     tPrimitive result[tCount];
     std::fill_n( result, tCount, ( tPrimitive )s );
 
-    BSPLib::PushRegCArray( result );
+    BSPLib::PushCArray( result );
 
     BSPLib::Sync();
 
@@ -205,7 +205,7 @@ void PutFPCArrayTest()
     tPrimitive result[tCount];
     std::fill_n( result, tCount, ( tPrimitive )s );
 
-    BSPLib::PushRegCArray( result );
+    BSPLib::PushCArray( result );
 
     BSPLib::Sync();
 
@@ -236,7 +236,7 @@ void GetVectorTest()
 
     std::vector< tPrimitive > result( tCount, ( tPrimitive )s );
 
-    BSPLib::PushRegContainer( container );
+    BSPLib::PushContainer( container );
 
     BSPLib::Sync();
 
@@ -267,7 +267,7 @@ void GetFPVectorTest()
 
     std::vector< tPrimitive > result( tCount, ( tPrimitive )s );
 
-    BSPLib::PushRegContainer( container );
+    BSPLib::PushContainer( container );
 
     BSPLib::Sync();
 
@@ -299,7 +299,7 @@ void GetStdArrayTest()
     std::array< tPrimitive, tCount > result;
     std::fill_n( result.begin(), tCount, ( tPrimitive )s );
 
-    BSPLib::PushRegContainer( container );
+    BSPLib::PushContainer( container );
 
     BSPLib::Sync();
 
@@ -331,7 +331,7 @@ void GetFPStdArrayTest()
     std::array< tPrimitive, tCount > result;
     std::fill_n( result.begin(), tCount, ( tPrimitive )s );
 
-    BSPLib::PushRegContainer( container );
+    BSPLib::PushContainer( container );
 
     BSPLib::Sync();
 
@@ -363,7 +363,7 @@ void GetCArrayTest()
     tPrimitive result[tCount];
     std::fill_n( result, tCount, ( tPrimitive )s );
 
-    BSPLib::PushRegCArray( container );
+    BSPLib::PushCArray( container );
 
     BSPLib::Sync();
 
@@ -395,7 +395,7 @@ void GetFPCArrayTest()
     tPrimitive result[tCount];
     std::fill_n( result, tCount, ( tPrimitive )s );
 
-    BSPLib::PushRegCArray( container );
+    BSPLib::PushCArray( container );
 
     BSPLib::Sync();
 
