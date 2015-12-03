@@ -97,7 +97,6 @@ namespace BspInternal
                 mSpaces = mMax;
                 std::lock_guard< std::mutex > condVarLoc( mCondVarMutex );
                 ++mGeneration;
-
                 Reset();
             }
             else
@@ -115,11 +114,7 @@ namespace BspInternal
                 if ( i >= BSP_SPIN_ITERATIONS )
                 {
                     std::unique_lock< std::mutex > condVarLoc( mCondVarMutex );
-
-                    if ( mGeneration == myGeneration )
-                    {
-                        mCurrentCon->wait( condVarLoc );
-                    }
+                    mCurrentCon->wait( condVarLoc, [&] {return mGeneration != myGeneration;} );
                 }
             }
 
