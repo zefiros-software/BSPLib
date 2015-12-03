@@ -1,9 +1,29 @@
 #Interfaces
 
 ```cpp
-void BSPLib::Pop()			  // (1) Modern
-void BSPLib::Classic::Pop()   // (2) Classic
-void bsp_popreg()			  // (3) BSP
+void BSPLib::Pop( const void *ident )			            // (1) Modern
+void BSPLib::Pop()			                                // (1) Modern
+
+template< typename tPrimitive >
+void BSPLib::Pop( tPrimitive &ident )                       // 
+
+template<>
+void BSPLib::Pop( std::string &string )                     //   
+
+template< typename tPrimitive >
+void BSPLib::PopPtrs( tPrimitive *begin )                   // 
+
+template< typename tPrimitive, size_t tSize >
+void BSPLib::PopCArray( tPrimitive( &container )[tSize] )   // 
+
+template< typename tContainer >
+void BSPLib::PopContainer( tContainer &container )          // 
+
+template < typename tIterator>
+void BSPLib::PopIterator( tIterator begin )                 // 
+
+void BSPLib::Classic::Pop( const void *ident )              // (2) Classic
+void bsp_popreg( const void *ident )			            // (3) BSP
 ```
 
 Pops the register described by `ident`.
