@@ -18,8 +18,11 @@ pages:
     - 'Time': 'util/time.md'
 - Halting:
     - 'Abort': 'halting/abort.md'
-- Synchronisation Point: 'sync.md'
-- Registration & Deregistration: 'regdereg.md'
+- Synchronisation Point:
+    - 'Sync': 'sync/sync.md'
+- Registration & Deregistration:
+    - 'Put': 'regdereg/push.md'
+    - 'Pop': 'regdereg/pop.md'
 - Communication: 'communication.md'
 - Messaging: 'messaging.md'
 - Messaging Utilities: 'messagingutil.md'
