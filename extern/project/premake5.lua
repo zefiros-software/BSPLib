@@ -32,7 +32,7 @@ solution "bsp-library"
 
     configuration "Release"     
         flags "LinkTimeOptimization"
-        optimize "Speed"
+        optimize "Full"
 			
     configuration "gmake"
         linkoptions {

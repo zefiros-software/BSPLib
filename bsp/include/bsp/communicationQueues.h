@@ -83,7 +83,7 @@ namespace BspInternal
          * @return The queue.
          */
 
-        tQueue &GetQueueToMe( std::size_t source, std::size_t me )
+        inline tQueue &GetQueueToMe( std::size_t source, std::size_t me )
         {
             return GetQueue( source, me );
         }
@@ -97,14 +97,14 @@ namespace BspInternal
          * @return The queue.
          */
 
-        tQueue &GetQueueFromMe( std::size_t target, std::size_t me )
+        inline tQueue &GetQueueFromMe( std::size_t target, std::size_t me )
         {
             return GetQueue( me, target );
         }
 
     private:
 
-        /// an obimination we have to live with,
+        /// an abomination we have to live with,
         /// a flattened std::vector< std::vector <> > but without
         /// inneficient cache thrashing.
         std::vector< tQueue > mQueues;

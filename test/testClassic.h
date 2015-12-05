@@ -34,7 +34,7 @@ inline void AbortTest()
 
 TEST( P( Classic ), AbortTest )
 {
-    EXPECT_FALSE( BSPLib::Execute( AbortTest, 32 ) );
+    EXPECT_FALSE( BSPLib::Execute( AbortTest, 8 ) );
 
 }
 
@@ -50,7 +50,7 @@ inline void AbortTestMain()
 
 TEST( P( Classic ), AbortTestMain )
 {
-    EXPECT_FALSE( BSPLib::Execute( AbortTestMain, 32 ) );
+    EXPECT_FALSE( BSPLib::Execute( AbortTestMain, 8 ) );
 }
 
 inline void AbortTestFirst()
@@ -67,7 +67,7 @@ inline void AbortTestFirst()
 
 TEST( P( Classic ), AbortTestFirst )
 {
-    EXPECT_FALSE( BSPLib::Execute( AbortTestFirst, 32 ) );
+    EXPECT_FALSE( BSPLib::Execute( AbortTestFirst, 8 ) );
 }
 
 inline void AbortTestAllWaitExceptOne()
@@ -85,7 +85,7 @@ inline void AbortTestAllWaitExceptOne()
 
 TEST( P( Classic ), AbortTestAllWaitExceptOne )
 {
-    EXPECT_FALSE( BSPLib::Execute( AbortTestAllWaitExceptOne, 32 ) );
+    EXPECT_FALSE( BSPLib::Execute( AbortTestAllWaitExceptOne, 8 ) );
 }
 
 inline void AbortTestAllWaitExceptMain()
@@ -103,7 +103,7 @@ inline void AbortTestAllWaitExceptMain()
 
 TEST( P( Classic ), AbortTestAllWaitExceptMain )
 {
-    EXPECT_FALSE( BSPLib::Execute( AbortTestAllWaitExceptMain, 32 ) );
+    EXPECT_FALSE( BSPLib::Execute( AbortTestAllWaitExceptMain, 8 ) );
 }
 
 inline void EmptyTest()

@@ -72,7 +72,7 @@ namespace BspInternal
          * @return true if it will succeed, false if it fails.
          */
 
-        BSP_FORCEINLINE bool FitsInStack( size_t size )
+        BSP_FORCEINLINE bool FitsInStack( size_t size ) const
         {
             return mCursor + size < mStack.size();
         }
