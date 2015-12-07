@@ -38,6 +38,18 @@ TEST( P( Classic ), AbortTest )
 
 }
 
+inline void VAbortTest()
+{
+    BSPLib::Sync();
+    BSPLib::Classic::VAbort( "", {} );
+}
+
+TEST( P( Classic ), VAbortTest )
+{
+    EXPECT_FALSE( BSPLib::Execute( AbortTest, 32 ) );
+
+}
+
 inline void AbortTestMain()
 {
     BSPLib::Sync();

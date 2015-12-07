@@ -19,6 +19,8 @@ the computation, and thus you are able to continue or restart
 the program. When you use [`BSPLib::Execute()`](../logic/execute.md)
 you can query whether the program was aborted or not. When  [`BSPLib::Execute()`](../logic/execute.md)
 is not used, the main thread may throw an exception.
+
+If [`BSPLib::Init()`](../logic/init.md) is called after an abort, it will determine whether all threads have actually aborted. If not, it will notify the waiting threads about the abort. If even this fails, the entire program will terminate.
   
 #Parameters
 
