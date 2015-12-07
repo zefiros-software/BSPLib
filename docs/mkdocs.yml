@@ -31,6 +31,9 @@ pages:
 
 - Communication:
     - 'Get Register': 'com/get.md'
+    - 'Get Register - Primitives' : 'com/getPrimitive.md'
+    - 'Get Register - Pointers' : 'com/getPtrs.md'
+    - 'Get Register - Containers' : 'com/getContainer.md'
     - 'Put Register': 'com/put.md'
 
 - Messaging:
