@@ -35,8 +35,8 @@ pages:
 
 - Messaging:
 
-    - 'Move': 'messaging/move.md'
-    - 'Send': 'messaging/send.md'
+    - 'Move Memory': 'messaging/move.md'
+    - 'Send Memory': 'messaging/send.md'
     - 'Get Queue Size': 'messaging/qsize.md'
 
 - Messaging Utilities:
@@ -46,6 +46,6 @@ pages:
 - High Performance:
     - 'Get Register': 'hp/hpget.md'
     - 'Put Register': 'hp/hpput.md'
-    - 'HPSend': 'hp/hpsend.md'
+    - 'Send Memory': 'hp/hpsend.md'
 
 - Classic: 'classic.md'
