@@ -46,7 +46,7 @@ inline void VAbortTest()
 
 TEST( P( Classic ), VAbortTest )
 {
-    EXPECT_FALSE( BSPLib::Execute( AbortTest, 32 ) );
+    EXPECT_FALSE( BSPLib::Execute( VAbortTest, 32 ) );
 
 }
 
