@@ -538,7 +538,7 @@ public:
         assert( mRegisters[pid][GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
-        const char *dstBuff = reinterpret_cast<const char *>( mThreadRegisterLocation[pid][globalId] );
+        const char *dstBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
         BspInternal::StackAllocator::StackLocation bufferLocation = mPutBufferStacks[tpid].Alloc( nbytes, srcBuff );
 
         mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::PutRequest{ bufferLocation, dstBuff + offset, nbytes } );
@@ -582,7 +582,7 @@ public:
         assert( mRegisters[pid][GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
-        const char *srcBuff = reinterpret_cast<const char *>( mThreadRegisterLocation[pid][globalId] );
+        const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
 
         mGetRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::GetRequest{ dst, srcBuff + offset, nbytes } );
     }
