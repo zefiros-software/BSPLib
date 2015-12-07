@@ -7,7 +7,7 @@ uint32_t bsp_pid()					// (3) BSP
 ```
 
 When [`BSPLib::Classic::Begin()`](../logic/begin.md) has been called, all processors will get
-a unique identifier assigned in the range [1, [`BSPLib::NProcs() - 1`](../nprocs.md)]. And the main thread holds
+a unique identifier assigned in the range [1, [`BSPLib::NProcs() - 1`](nprocs.md)]. And the main thread holds
 identifier 0.
 
 #Return Value
