@@ -179,9 +179,9 @@ namespace BSPLib
         Classic::Push( &ident, sizeof( tPrimitive ) );
     }
 
-    inline void Push( const void *ident, size_t size )
+    inline void Push( const void *ident, size_t byteSize )
     {
-        Classic::Push( ident, size );
+        Classic::Push( ident, byteSize );
     }
 
     inline void Push()
@@ -303,9 +303,9 @@ namespace BSPLib
     }
 
     template< typename tPrimitive >
-    void PutPtrs( uint32_t pid, tPrimitive *begin, size_t size )
+    void PutPtrs( uint32_t pid, tPrimitive *begin, size_t count )
     {
-        PutPtrs( pid, begin, begin + size, begin, begin );
+        PutPtrs( pid, begin, begin + count, begin, begin );
     }
 
     template< typename tPrimitive >
