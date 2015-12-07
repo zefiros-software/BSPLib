@@ -105,6 +105,123 @@ void PutPointersBeginEndOffsetTest()
 }
 
 template< typename tPrimitive, uint32_t tCount, int32_t tOffset, uint32_t tBegin, uint32_t tEnd >
+void PutSamePointersBeginEndTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sTarget = ( s + tOffset + nProc ) % nProc;
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    tPrimitive container[tCount];
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    BSPLib::PushPtrs( container + tBegin, container + tEnd );
+
+    BSPLib::Sync();
+
+    BSPLib::PutPtrs( sTarget, container + tBegin, container + tEnd );
+
+    BSPLib::PopPtrs( container + tBegin );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        if ( i < tBegin || i >= tEnd )
+        {
+            EXPECT_EQ( ( tPrimitive )( s + 1 + i ), container[i] );
+        }
+        else
+        {
+            EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), container[i] );
+        }
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset, uint32_t tBegin, uint32_t tEnd >
+void PutSamePointersBeginEndContainerTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sTarget = ( s + tOffset + nProc ) % nProc;
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    tPrimitive container[tCount];
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    BSPLib::PushCArray( container );
+
+    BSPLib::Sync();
+
+    BSPLib::PutPtrs( sTarget, container, container + tBegin, container + tEnd );
+
+    BSPLib::PopPtrs( container + tBegin );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        if ( i < tBegin || i >= tEnd )
+        {
+            EXPECT_EQ( ( tPrimitive )( s + 1 + i ), container[i] );
+        }
+        else
+        {
+            EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), container[i] );
+        }
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset, uint32_t tBegin, uint32_t tEnd >
+void PutSamePointersOffsetCountContainerTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sTarget = ( s + tOffset + nProc ) % nProc;
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    tPrimitive container[tCount];
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    BSPLib::PushCArray( container );
+
+    BSPLib::Sync();
+
+    BSPLib::PutPtrs( sTarget, container, tBegin, tEnd - tBegin );
+
+    BSPLib::PopCArray( container );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        if ( i < tBegin || i >= tEnd )
+        {
+            EXPECT_EQ( ( tPrimitive )( s + 1 + i ), container[i] );
+        }
+        else
+        {
+            EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), container[i] );
+        }
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset, uint32_t tBegin, uint32_t tEnd >
 void GetPointersBeginEndTest()
 {
     uint32_t s = BSPLib::ProcId();
@@ -207,26 +324,68 @@ BspTest5( Pointers, 8, PutPointersBeginEndTest, uint64_t, 50, 7, 19, 47 );
 BspTest5( Pointers, 16, PutPointersBeginEndTest, uint64_t, 50, 5, 7, 31 );
 BspTest5( Pointers, 32, PutPointersBeginEndTest, uint64_t, 50, 27, 3, 39 );
 
-BspTest5( Pointers, 2, PutPointersBeginEndOffsetTest, uint8_t, 50, 1, 13, 29 );
-BspTest5( Pointers, 4, PutPointersBeginEndOffsetTest, uint8_t, 50, 3, 17, 43 );
-BspTest5( Pointers, 8, PutPointersBeginEndOffsetTest, uint8_t, 50, 7, 19, 47 );
-BspTest5( Pointers, 16, PutPointersBeginEndOffsetTest, uint8_t, 50, 5, 7, 31 );
-BspTest5( Pointers, 32, PutPointersBeginEndOffsetTest, uint8_t, 50, 27, 3, 39 );
-BspTest5( Pointers, 2, PutPointersBeginEndOffsetTest, uint16_t, 50, 1, 13, 29 );
-BspTest5( Pointers, 4, PutPointersBeginEndOffsetTest, uint16_t, 50, 3, 17, 43 );
-BspTest5( Pointers, 8, PutPointersBeginEndOffsetTest, uint16_t, 50, 7, 19, 47 );
-BspTest5( Pointers, 16, PutPointersBeginEndOffsetTest, uint16_t, 50, 5, 7, 31 );
-BspTest5( Pointers, 32, PutPointersBeginEndOffsetTest, uint16_t, 50, 27, 3, 39 );
-BspTest5( Pointers, 2, PutPointersBeginEndOffsetTest, uint32_t, 50, 1, 13, 29 );
-BspTest5( Pointers, 4, PutPointersBeginEndOffsetTest, uint32_t, 50, 3, 17, 43 );
-BspTest5( Pointers, 8, PutPointersBeginEndOffsetTest, uint32_t, 50, 7, 19, 47 );
-BspTest5( Pointers, 16, PutPointersBeginEndOffsetTest, uint32_t, 50, 5, 7, 31 );
-BspTest5( Pointers, 32, PutPointersBeginEndOffsetTest, uint32_t, 50, 27, 3, 39 );
-BspTest5( Pointers, 2, PutPointersBeginEndOffsetTest, uint64_t, 50, 1, 13, 29 );
-BspTest5( Pointers, 4, PutPointersBeginEndOffsetTest, uint64_t, 50, 3, 17, 43 );
-BspTest5( Pointers, 8, PutPointersBeginEndOffsetTest, uint64_t, 50, 7, 19, 47 );
-BspTest5( Pointers, 16, PutPointersBeginEndOffsetTest, uint64_t, 50, 5, 7, 31 );
-BspTest5( Pointers, 32, PutPointersBeginEndOffsetTest, uint64_t, 50, 27, 3, 39 );
+BspTest5( Pointers, 2, PutSamePointersBeginEndTest, uint8_t, 50, 1, 13, 29 );
+BspTest5( Pointers, 4, PutSamePointersBeginEndTest, uint8_t, 50, 3, 17, 43 );
+BspTest5( Pointers, 8, PutSamePointersBeginEndTest, uint8_t, 50, 7, 19, 47 );
+BspTest5( Pointers, 16, PutSamePointersBeginEndTest, uint8_t, 50, 5, 7, 31 );
+BspTest5( Pointers, 32, PutSamePointersBeginEndTest, uint8_t, 50, 27, 3, 39 );
+BspTest5( Pointers, 2, PutSamePointersBeginEndTest, uint16_t, 50, 1, 13, 29 );
+BspTest5( Pointers, 4, PutSamePointersBeginEndTest, uint16_t, 50, 3, 17, 43 );
+BspTest5( Pointers, 8, PutSamePointersBeginEndTest, uint16_t, 50, 7, 19, 47 );
+BspTest5( Pointers, 16, PutSamePointersBeginEndTest, uint16_t, 50, 5, 7, 31 );
+BspTest5( Pointers, 32, PutSamePointersBeginEndTest, uint16_t, 50, 27, 3, 39 );
+BspTest5( Pointers, 2, PutSamePointersBeginEndTest, uint32_t, 50, 1, 13, 29 );
+BspTest5( Pointers, 4, PutSamePointersBeginEndTest, uint32_t, 50, 3, 17, 43 );
+BspTest5( Pointers, 8, PutSamePointersBeginEndTest, uint32_t, 50, 7, 19, 47 );
+BspTest5( Pointers, 16, PutSamePointersBeginEndTest, uint32_t, 50, 5, 7, 31 );
+BspTest5( Pointers, 32, PutSamePointersBeginEndTest, uint32_t, 50, 27, 3, 39 );
+BspTest5( Pointers, 2, PutSamePointersBeginEndTest, uint64_t, 50, 1, 13, 29 );
+BspTest5( Pointers, 4, PutSamePointersBeginEndTest, uint64_t, 50, 3, 17, 43 );
+BspTest5( Pointers, 8, PutSamePointersBeginEndTest, uint64_t, 50, 7, 19, 47 );
+BspTest5( Pointers, 16, PutSamePointersBeginEndTest, uint64_t, 50, 5, 7, 31 );
+BspTest5( Pointers, 32, PutSamePointersBeginEndTest, uint64_t, 50, 27, 3, 39 );
+
+BspTest5( Pointers, 2, PutSamePointersBeginEndContainerTest, uint8_t, 50, 1, 13, 29 );
+BspTest5( Pointers, 4, PutSamePointersBeginEndContainerTest, uint8_t, 50, 3, 17, 43 );
+BspTest5( Pointers, 8, PutSamePointersBeginEndContainerTest, uint8_t, 50, 7, 19, 47 );
+BspTest5( Pointers, 16, PutSamePointersBeginEndContainerTest, uint8_t, 50, 5, 7, 31 );
+BspTest5( Pointers, 32, PutSamePointersBeginEndContainerTest, uint8_t, 50, 27, 3, 39 );
+BspTest5( Pointers, 2, PutSamePointersBeginEndContainerTest, uint16_t, 50, 1, 13, 29 );
+BspTest5( Pointers, 4, PutSamePointersBeginEndContainerTest, uint16_t, 50, 3, 17, 43 );
+BspTest5( Pointers, 8, PutSamePointersBeginEndContainerTest, uint16_t, 50, 7, 19, 47 );
+BspTest5( Pointers, 16, PutSamePointersBeginEndContainerTest, uint16_t, 50, 5, 7, 31 );
+BspTest5( Pointers, 32, PutSamePointersBeginEndContainerTest, uint16_t, 50, 27, 3, 39 );
+BspTest5( Pointers, 2, PutSamePointersBeginEndContainerTest, uint32_t, 50, 1, 13, 29 );
+BspTest5( Pointers, 4, PutSamePointersBeginEndContainerTest, uint32_t, 50, 3, 17, 43 );
+BspTest5( Pointers, 8, PutSamePointersBeginEndContainerTest, uint32_t, 50, 7, 19, 47 );
+BspTest5( Pointers, 16, PutSamePointersBeginEndContainerTest, uint32_t, 50, 5, 7, 31 );
+BspTest5( Pointers, 32, PutSamePointersBeginEndContainerTest, uint32_t, 50, 27, 3, 39 );
+BspTest5( Pointers, 2, PutSamePointersBeginEndContainerTest, uint64_t, 50, 1, 13, 29 );
+BspTest5( Pointers, 4, PutSamePointersBeginEndContainerTest, uint64_t, 50, 3, 17, 43 );
+BspTest5( Pointers, 8, PutSamePointersBeginEndContainerTest, uint64_t, 50, 7, 19, 47 );
+BspTest5( Pointers, 16, PutSamePointersBeginEndContainerTest, uint64_t, 50, 5, 7, 31 );
+BspTest5( Pointers, 32, PutSamePointersBeginEndContainerTest, uint64_t, 50, 27, 3, 39 );
+
+BspTest5( Pointers, 2, PutSamePointersOffsetCountContainerTest, uint8_t, 50, 1, 13, 29 );
+BspTest5( Pointers, 4, PutSamePointersOffsetCountContainerTest, uint8_t, 50, 3, 17, 43 );
+BspTest5( Pointers, 8, PutSamePointersOffsetCountContainerTest, uint8_t, 50, 7, 19, 47 );
+BspTest5( Pointers, 16, PutSamePointersOffsetCountContainerTest, uint8_t, 50, 5, 7, 31 );
+BspTest5( Pointers, 32, PutSamePointersOffsetCountContainerTest, uint8_t, 50, 27, 3, 39 );
+BspTest5( Pointers, 2, PutSamePointersOffsetCountContainerTest, uint16_t, 50, 1, 13, 29 );
+BspTest5( Pointers, 4, PutSamePointersOffsetCountContainerTest, uint16_t, 50, 3, 17, 43 );
+BspTest5( Pointers, 8, PutSamePointersOffsetCountContainerTest, uint16_t, 50, 7, 19, 47 );
+BspTest5( Pointers, 16, PutSamePointersOffsetCountContainerTest, uint16_t, 50, 5, 7, 31 );
+BspTest5( Pointers, 32, PutSamePointersOffsetCountContainerTest, uint16_t, 50, 27, 3, 39 );
+BspTest5( Pointers, 2, PutSamePointersOffsetCountContainerTest, uint32_t, 50, 1, 13, 29 );
+BspTest5( Pointers, 4, PutSamePointersOffsetCountContainerTest, uint32_t, 50, 3, 17, 43 );
+BspTest5( Pointers, 8, PutSamePointersOffsetCountContainerTest, uint32_t, 50, 7, 19, 47 );
+BspTest5( Pointers, 16, PutSamePointersOffsetCountContainerTest, uint32_t, 50, 5, 7, 31 );
+BspTest5( Pointers, 32, PutSamePointersOffsetCountContainerTest, uint32_t, 50, 27, 3, 39 );
+BspTest5( Pointers, 2, PutSamePointersOffsetCountContainerTest, uint64_t, 50, 1, 13, 29 );
+BspTest5( Pointers, 4, PutSamePointersOffsetCountContainerTest, uint64_t, 50, 3, 17, 43 );
+BspTest5( Pointers, 8, PutSamePointersOffsetCountContainerTest, uint64_t, 50, 7, 19, 47 );
+BspTest5( Pointers, 16, PutSamePointersOffsetCountContainerTest, uint64_t, 50, 5, 7, 31 );
+BspTest5( Pointers, 32, PutSamePointersOffsetCountContainerTest, uint64_t, 50, 27, 3, 39 );
 
 BspTest5( Pointers, 2, GetPointersBeginEndTest, uint8_t, 50, 1, 13, 29 );
 BspTest5( Pointers, 4, GetPointersBeginEndTest, uint8_t, 50, 3, 17, 43 );
