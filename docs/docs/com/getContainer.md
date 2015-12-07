@@ -1,15 +1,6 @@
 #Interfaces
 
 ```cpp
-template< typename tPrimitive >
-void BSPLib::Get( uint32_t pid, tPrimitive &src, tPrimitive &dst )              // (1) References
-
-template<>
-void BSPLib::Get( uint32_t pid, std::string &src, std::string &dst )     // (2) std::string references
-
-template< typename tPrimitive >
-void BSPLib::Get( uint32_t pid, tPrimitive &var )                               // (3) Reference
-
 template< typename tIterator, typename tOutputIterator >
 void BSPLib::GetIterator( uint32_t pid, tIterator srcBegin, tIterator srcCursor, tOutputIterator resultBegin,
                     tOutputIterator resultEnd )
@@ -26,17 +17,11 @@ void BSPLib::GetIterator( uint32_t pid, tIterator begin, size_t offset, size_t c
 template< typename tPrimitive, size_t tSizeIn, size_t tSizeOut >
 void BSPLib::GetCArray( uint32_t pid, tPrimitive( &src )[tSizeIn], tPrimitive( &dst )[tSizeOut] )
 
-template< typename tContainer >
-void BSPLib::PutContainer( uint32_t pid, tContainer &container )
-
 template < typename tContainerIn, typename tContainerOut >
 void BSPLib::GetContainer( uint32_t pid, tContainerIn &src, tContainerOut &dst )    
 
 template< typename tPrimitive, size_t tSize >
 void BSPLib::GetCArray( uint32_t pid, tPrimitive( &container )[tSize] )
-
-void BSPLib::Classic::Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
-void bsp_get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
 ```
 
 Pushes a register, with the given size. 
