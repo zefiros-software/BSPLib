@@ -490,13 +490,19 @@ namespace BSPLib
     template< typename tIterator >
     void PutIterator( uint32_t pid, tIterator begin, tIterator cursor, tIterator end )
     {
-        PutIterator( pid, begin, end, begin, cursor );
+        PutIterator( pid, cursor, end, begin, cursor );
     }
 
     template< typename tIterator >
     void PutIterator( uint32_t pid, tIterator begin, tIterator end )
     {
         PutIterator( pid, begin, begin, end );
+    }
+
+    template< typename tIterator >
+    void PutIterator( uint32_t pid, tIterator begin, size_t offset, size_t count )
+    {
+        PutIterator( pid, begin + offset, begin + offset + count, begin, begin + offset );
     }
 
     template< typename tIterator, typename tOutputIterator >
@@ -509,13 +515,19 @@ namespace BSPLib
     template< typename tIterator >
     void GetIterator( uint32_t pid, tIterator begin, tIterator cursor, tIterator end )
     {
-        GetIterator( pid, begin, cursor, begin, end );
+        GetIterator( pid, begin, cursor, cursor, end );
     }
 
     template< typename tIterator >
     void GetIterator( uint32_t pid, tIterator begin, tIterator end )
     {
         GetIterator( pid, begin, begin, end );
+    }
+
+    template< typename tIterator >
+    void GetIterator( uint32_t pid, tIterator begin, size_t offset, size_t count )
+    {
+        GetIterator( pid, begin, begin + offset, begin + offset, begin + offset + count );
     }
 
     template< typename tIterator, typename tTag >
