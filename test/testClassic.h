@@ -198,7 +198,8 @@ void GetTest()
     uint32_t num = s + 1;
     uint32_t receive = 0;
 
-    BSPLib::Classic::Push( &num, sizeof( uint32_t ) );
+    // Test new function that passes through to classic
+    BSPLib::Push( &num, sizeof( uint32_t ) );
 
     BSPLib::Sync();
 
@@ -213,7 +214,8 @@ void GetTest()
         receive = 0;
     }
 
-    BSPLib::Classic::Pop( &num );
+    // Test new function that passes through to classic
+    BSPLib::Pop( &num );
 }
 
 template< uint32_t tPutGets, int32_t tOffset >

@@ -44,6 +44,8 @@ void PutPrimitiveTest()
 
     BSPLib::Put( sTarget, primitive, result );
 
+    BSPLib::Pop( result );
+
     BSPLib::Sync();
 
     ASSERT_EQ( result, sSource + 1 );
@@ -174,6 +176,8 @@ void GetPrimitiveTest()
 
     BSPLib::Get( sSource, primitive, result );
 
+    BSPLib::Pop( primitive );
+
     BSPLib::Sync();
 
     ASSERT_EQ( result, sSource + 1 );
@@ -228,6 +232,8 @@ void GetPrimitiveStringTest()
     result.resize( primitiveSize );
 
     BSPLib::Get( sSource, primitive, result );
+    BSPLib::Pop( primitive );
+    BSPLib::Pop( primitiveSize );
 
     BSPLib::Sync();
 
