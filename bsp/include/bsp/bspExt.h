@@ -346,6 +346,18 @@ namespace BSPLib
         GetPtrs( pid, begin, begin, end );
     }
 
+    template< typename tPrimitive >
+    void GetPtrs( uint32_t pid, tPrimitive *begin, size_t offset, size_t count )
+    {
+        GetPtrs( pid, begin, offset, begin + offset, count );
+    }
+
+    template< typename tPrimitive >
+    void GetPtrs( uint32_t pid, tPrimitive *begin, size_t count )
+    {
+        GetPtrs( pid, begin, begin, begin + count );
+    }
+
     template< typename tPrimitive, typename tTagPrimitive >
     void SendPtrs( uint32_t pid, tTagPrimitive *tag, tPrimitive *begin, size_t count )
     {
