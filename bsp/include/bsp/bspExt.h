@@ -268,7 +268,7 @@ namespace BSPLib
     template< typename tPrimitive >
     void PushPtrs( tPrimitive *begin, size_t count )
     {
-        Classic::Push( begin, size * sizeof( tPrimitive ) );
+        Classic::Push( begin, count * sizeof( tPrimitive ) );
     }
 
     template< typename tPrimitive >
@@ -462,7 +462,7 @@ namespace BSPLib
     template< typename tIterator >
     void PushIterator( tIterator begin, size_t count )
     {
-        PushPtrs( &*begin, size );
+        PushPtrs( &*begin, count );
     }
 
     template< typename tIterator >
