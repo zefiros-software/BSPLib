@@ -308,6 +308,43 @@ void GetIteratorsBeginEndContainerTest()
 }
 
 template< typename tPrimitive, uint32_t tCount, int32_t tOffset, uint32_t tBegin, uint32_t tEnd >
+void GetSameIteratorsBeginEndTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    std::vector< tPrimitive > container( tCount );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    BSPLib::PushIterator( container.begin() + tBegin, container.begin() + tEnd );
+
+    BSPLib::Sync();
+
+    BSPLib::GetIterator( sSource, container.begin() + tBegin, container.begin() + tEnd );
+    BSPLib::PopIterator( container.begin() + tBegin );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        if ( i < tBegin || i >= tEnd )
+        {
+            EXPECT_EQ( ( tPrimitive )( s + 1 + i ), container[i] );
+        }
+        else
+        {
+            EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), container[i] );
+        }
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset, uint32_t tBegin, uint32_t tEnd >
 void GetSameIteratorsBeginEndContainerTest()
 {
     uint32_t s = BSPLib::ProcId();
@@ -548,6 +585,27 @@ BspTest5( Iterators, 4, GetSameIteratorsBeginEndContainerTest, uint64_t, 50, 3, 
 BspTest5( Iterators, 8, GetSameIteratorsBeginEndContainerTest, uint64_t, 50, 7, 19, 47 );
 BspTest5( Iterators, 16, GetSameIteratorsBeginEndContainerTest, uint64_t, 50, 5, 7, 31 );
 BspTest5( Iterators, 32, GetSameIteratorsBeginEndContainerTest, uint64_t, 50, 27, 3, 39 );
+
+BspTest5( Iterators, 2, GetSameIteratorsBeginEndTest, uint8_t, 50, 1, 13, 29 );
+BspTest5( Iterators, 4, GetSameIteratorsBeginEndTest, uint8_t, 50, 3, 17, 43 );
+BspTest5( Iterators, 8, GetSameIteratorsBeginEndTest, uint8_t, 50, 7, 19, 47 );
+BspTest5( Iterators, 16, GetSameIteratorsBeginEndTest, uint8_t, 50, 5, 7, 31 );
+BspTest5( Iterators, 32, GetSameIteratorsBeginEndTest, uint8_t, 50, 27, 3, 39 );
+BspTest5( Iterators, 2, GetSameIteratorsBeginEndTest, uint16_t, 50, 1, 13, 29 );
+BspTest5( Iterators, 4, GetSameIteratorsBeginEndTest, uint16_t, 50, 3, 17, 43 );
+BspTest5( Iterators, 8, GetSameIteratorsBeginEndTest, uint16_t, 50, 7, 19, 47 );
+BspTest5( Iterators, 16, GetSameIteratorsBeginEndTest, uint16_t, 50, 5, 7, 31 );
+BspTest5( Iterators, 32, GetSameIteratorsBeginEndTest, uint16_t, 50, 27, 3, 39 );
+BspTest5( Iterators, 2, GetSameIteratorsBeginEndTest, uint32_t, 50, 1, 13, 29 );
+BspTest5( Iterators, 4, GetSameIteratorsBeginEndTest, uint32_t, 50, 3, 17, 43 );
+BspTest5( Iterators, 8, GetSameIteratorsBeginEndTest, uint32_t, 50, 7, 19, 47 );
+BspTest5( Iterators, 16, GetSameIteratorsBeginEndTest, uint32_t, 50, 5, 7, 31 );
+BspTest5( Iterators, 32, GetSameIteratorsBeginEndTest, uint32_t, 50, 27, 3, 39 );
+BspTest5( Iterators, 2, GetSameIteratorsBeginEndTest, uint64_t, 50, 1, 13, 29 );
+BspTest5( Iterators, 4, GetSameIteratorsBeginEndTest, uint64_t, 50, 3, 17, 43 );
+BspTest5( Iterators, 8, GetSameIteratorsBeginEndTest, uint64_t, 50, 7, 19, 47 );
+BspTest5( Iterators, 16, GetSameIteratorsBeginEndTest, uint64_t, 50, 5, 7, 31 );
+BspTest5( Iterators, 32, GetSameIteratorsBeginEndTest, uint64_t, 50, 27, 3, 39 );
 
 BspTest5( Iterators, 2, GetSameIteratorsOffsetCountContainerTest, uint8_t, 50, 1, 13, 29 );
 BspTest5( Iterators, 4, GetSameIteratorsOffsetCountContainerTest, uint8_t, 50, 3, 17, 43 );
