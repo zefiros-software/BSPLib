@@ -62,6 +62,10 @@ True when the BSP program executed successfully, othwerise false.
 
 This is the most basic way of calling this function.
 
+**Normal**
+
+This is the normal usage of the function.
+
 ```cpp
 void main( int32_t, const char ** )
 {
@@ -70,6 +74,28 @@ void main( int32_t, const char ** )
 		std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
 				  << " of " << BSPLib::NProcs() << std::endl;
 	}, BSPLib::NProcs() );
+}
+```
+
+**Non Gracefull Exit**
+
+If the computation could call abort, one can check for it on the return type.
+
+```cpp
+void main( int32_t, const char ** )
+{
+	bool success = BSPLib::Excute( []
+	{
+		std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
+				  << " of " << BSPLib::NProcs() << std::endl;
+                  
+        if ( BSPLib::ProcId() == 0 )
+        {
+            BSPLib::Abort( "Quit non gracefully" );
+        }
+	}, BSPLib::NProcs() );
+    
+    assert( !success );
 }
 ```
 
