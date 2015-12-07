@@ -46,6 +46,7 @@ void PutVectorTest()
     BSPLib::Sync();
 
     BSPLib::PutContainer( sTarget, container, result );
+    BSPLib::PopContainer( container );
 
     BSPLib::Sync();
 
@@ -78,6 +79,7 @@ void PutFPVectorTest()
     BSPLib::Sync();
 
     BSPLib::PutContainer( sTarget, container, result );
+    BSPLib::PopContainer( container );
 
     BSPLib::Sync();
 
@@ -111,6 +113,7 @@ void PutStdArrayTest()
     BSPLib::Sync();
 
     BSPLib::PutContainer( sTarget, container, result );
+    BSPLib::PopContainer( container );
 
     BSPLib::Sync();
 
@@ -144,6 +147,7 @@ void PutFPStdArrayTest()
     BSPLib::Sync();
 
     BSPLib::PutContainer( sTarget, container, result );
+    BSPLib::PopContainer( container );
 
     BSPLib::Sync();
 
@@ -177,6 +181,7 @@ void PutCArrayTest()
     BSPLib::Sync();
 
     BSPLib::PutCArray( sTarget, container, result );
+    BSPLib::PopCArray( container );
 
     BSPLib::Sync();
 
@@ -210,6 +215,7 @@ void PutFPCArrayTest()
     BSPLib::Sync();
 
     BSPLib::PutCArray( sTarget, container, result );
+    BSPLib::PopCArray( container );
 
     BSPLib::Sync();
 
@@ -241,6 +247,7 @@ void GetVectorTest()
     BSPLib::Sync();
 
     BSPLib::GetContainer( sSource, container, result );
+    BSPLib::PopContainer( container );
 
     BSPLib::Sync();
 
@@ -272,6 +279,7 @@ void GetFPVectorTest()
     BSPLib::Sync();
 
     BSPLib::GetContainer( sSource, container, result );
+    BSPLib::PopContainer( container );
 
     BSPLib::Sync();
 
@@ -304,6 +312,7 @@ void GetStdArrayTest()
     BSPLib::Sync();
 
     BSPLib::GetContainer( sSource, container, result );
+    BSPLib::PopContainer( container );
 
     BSPLib::Sync();
 
@@ -336,6 +345,7 @@ void GetFPStdArrayTest()
     BSPLib::Sync();
 
     BSPLib::GetContainer( sSource, container, result );
+    BSPLib::PopContainer( container );
 
     BSPLib::Sync();
 
@@ -368,6 +378,7 @@ void GetCArrayTest()
     BSPLib::Sync();
 
     BSPLib::GetCArray( sSource, container, result );
+    BSPLib::PopCArray( container );
 
     BSPLib::Sync();
 
@@ -400,6 +411,7 @@ void GetFPCArrayTest()
     BSPLib::Sync();
 
     BSPLib::GetCArray( sSource, container, result );
+    BSPLib::PopCArray( container );
 
     BSPLib::Sync();
 
