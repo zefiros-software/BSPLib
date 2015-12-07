@@ -303,9 +303,21 @@ namespace BSPLib
     }
 
     template< typename tPrimitive >
+    void PutPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *cursor, tPrimitive *end )
+    {
+        PutPtrs( pid, cursor, end, begin, cursor );
+    }
+
+    template< typename tPrimitive >
     void PutPtrs( uint32_t pid, tPrimitive *begin, size_t count )
     {
-        PutPtrs( pid, begin, begin + count, begin, begin );
+        PutPtrs( pid, begin, begin, begin + count );
+    }
+
+    template< typename tPrimitive >
+    void PutPtrs( uint32_t pid, tPrimitive *begin, size_t offset, size_t count )
+    {
+        PutPtrs( pid, begin + offset, count, begin, offset );
     }
 
     template< typename tPrimitive >
