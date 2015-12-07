@@ -16,17 +16,8 @@ and [`BSPLib::Classic::End()`](end.md) calls. When no [`BSPLib::Classic::Init()`
 SPMD mode, and calls the `main()` function in all threads. Otherwise the given entry point from the
 [`BSPLib::Classic::Init()`](init.md) call will be used.
 
-```spec
-Like many other communications libraries, BSPlib adopts a Single Program Multiple Data (SPMD) programming model. The task of writing an SPMD program will typically involve
-mapping a problem that manipulates a data structure of size `N` into `p` instances of a program that each manipulate an `N/p` sized block of the original domain. The role of
-BSPlib is to provide the infrastructure required for the user to take care of the data distribution, and any implied communication necessary to manipulate parts of
-the data structure that are on a remote process. An alternativerole for BSPlib is to provide an architecture independent target for higher-level libraries or programming tools that autom
-atically distribute the problem domain among the processes.
-
-Processes are created in a BSPlib program by the operations bsp_begin and bsp_end. They bracket a piece of code to be run in an SPMD manner on a number of processors. There
-can only be one instance of a bsp_begin/bsp_end pair within a program. If bsp_begin and bsp_end are the first and last statements in a program, then the entire
-BSPlib compu-tation is SPMD. An alternative mode is available where a single process starts execution and determines the number of parallel processes required for the calculation.
-```
+!!! danger "Deprication"
+    This function has been depricated in favour of [`BSPLib::Execute()`](execute.md).
 	 
 #Parameters
 
@@ -49,9 +40,6 @@ BSPlib compu-tation is SPMD. An alternative mode is available where a single pro
 	* Starts the timer for the main thread.
    Else:
      Starts the timer for the current thread.
-
-#Deprication
-This function has been depricated in favour of [`BSPLib::Execute()`](execute.md).
 
 #Exceptions
 

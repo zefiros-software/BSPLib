@@ -9,6 +9,9 @@ Ends the BSP computation. All threads must call this function to gracefully exit
 and [`BSPLib::Classic::End()`](end.md) calls. Wherein the [`BSPLib::Classic::End()`](end.md) should be the last call in the computation. Calling this function
 will ensure that the library is reset for reuse, and thuse we can restart calculations or start another SPMD program.
 
+!!! danger "Deprication"
+    This function has been depricated in favour of [`BSPLib::Execute()`](execute.md).
+ 
 #Pre-Conditions
 
  * Begin has been called
@@ -18,9 +21,6 @@ will ensure that the library is reset for reuse, and thuse we can restart calcul
  * Ended is true
  * All threads have synced and ended.
  * The main thread releases all threads.
- 
-#Deprication
-This function has been depricated in favour of [`BSPLib::Execute()`](execute.md).
  
 #Examples
 

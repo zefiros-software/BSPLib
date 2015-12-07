@@ -46,6 +46,22 @@ When debug builds are too slow, you can remove the extra safety check by definin
 * MultiBSP interface addition.
 * Utility functions, such as broadcasting and various distributions.
 
+## BSPedupack
+As an example usage of the BSP programming model we included the BSPedupack written by [Rob H. Bisseling](http://www.staff.science.uu.nl/~bisse101/)
+with his permission. It includes some tools to benchmark and test the library on different machines, to quote
+from his own [site](http://www.staff.science.uu.nl/~bisse101/Software/software):
+
+>*BSPedupack is a library of numerical algorithms written in C according to the BSP model. 
+It uses the BSPlib standard library. The 'edu' in the name stands for educational. 
+The programs are intended for teaching: they give examples of portable parallel 
+numerical programs. The trade-off between clarity/brevity on the one hand, and efficiency 
+on the other hand is in favour of clarity/brevity. There is also an MPI version which 
+teaches how to program in bulk synchronous parallel style using the collective communications
+from MPI-1 and the one-sided communications from MPI-2. You guessed it, this package is called 
+MPIedupack. Both packages accompany the book: [Parallel Scientific Computation: 
+A Structured Approach using BSP and MPI](http://ukcatalogue.oup.com/product/9780198529392.do), 
+by [Rob H. Bisseling](http://www.staff.science.uu.nl/~bisse101/), Oxford University Press, 
+March 2004. ISBN 978-0-19-852939-2.*
 
 ## Alternatives
 * [MulticoreBSP](http://www.multicorebsp.com)
@@ -59,13 +75,21 @@ were some alternatives.
 ### BSPLib vs MulticoreBSP
 * BSPLib is headeronly, whilst MulticoreBSP requires linking.
 * BSPLib is crossplatform, but MulticoreBSP requires POSIX compatibility.
+* MulticoreBSP can be compiled with a C compiler.
+* MulticoreBSP programs will compile faster.
+* BSPLib can disable sanity checks to boost performance.
+* BSPLib will only synchronise the used functionality, so we have faster synchronisation.
 
 ### BSPLib vs Oxford BSP Toolkit
 * BSPLib is headeronly, whilst Oxford BSP Toolkit requires linking.
+* Oxford BSP Toolkit programs will compile faster.
 
 ### BSPLib vs BSPonMPI
 * BSPLib is headeronly, whilst BSPonMPI requires linking.
 * BSPLib uses a permissive license (MIT), whereas BSPonMPI uses (LGPL).
+* BSPonMPI is based on MPI, so it uses another abstraction layer, whereas BSPLIb uses a low level
+  threading interface.
+* BSPonMPI programs will compile faster.
 
 ## Bugs
 When a bug is found please insert it in the issue tracker, so we can resolve it as quickly as we can.
