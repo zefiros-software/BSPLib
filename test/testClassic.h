@@ -25,6 +25,7 @@
 
 #include "helper.h"
 #include <random>
+#include <stdarg.h>
 
 inline void AbortTest()
 {
@@ -41,7 +42,18 @@ TEST( P( Classic ), AbortTest )
 inline void VAbortTest()
 {
     BSPLib::Sync();
-    BSPLib::Classic::VAbort( "", {} );
+    []( const char *format, ... )
+    {
+        va_list args;
+        va_start( args, format );
+
+        //pass to bsp_vabort
+
+        BSPLib::Classic::VAbort( format, args );
+
+        //mark end of variable arguments
+        va_end( args );
+    }( "", "test" );
 }
 
 TEST( P( Classic ), VAbortTest )
