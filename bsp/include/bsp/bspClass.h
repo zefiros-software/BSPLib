@@ -899,7 +899,10 @@ private:
 
     BSP_FORCEINLINE size_t LocalToGlobal( uint32_t pid, const void *reg )
     {
-        return mRegisters[pid][reg].registerCount;
+#ifndef BSP_SKIP_CHECKS
+        assert( mRegisters[pid].find( reg ) != mRegisters[pid].end() );
+#endif
+        return ( *mRegisters[pid].find( reg ) ).second.registerCount;
     }
 
     BSP_FORCEINLINE const void *GlobalToLocal( uint32_t pid, size_t globalId )

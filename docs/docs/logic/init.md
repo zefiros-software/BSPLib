@@ -21,10 +21,10 @@ Initialises the BSP computation process. Please note that the main thread should
 #Post-Conditions
 
  * Tag size is 0.
- * Entry point is now `entry`, thus when we call `Begin()` all threads except for the
+ * Entry point is now `entry`, thus when we call [`BSPLib::Classic::Begin()`](begin.md) all threads except for the
    main thread will execute this function.
- * For the main thread, `ProcId() == 0`, other threads get their identifier assigned
-   in the `Begin()` function.
+ * For the main thread, `BSPLib::ProcId() == 0`, other threads get their identifier assigned
+   in the [`BSPLib::Classic::Begin()`](begin.md) function.
    
 #Deprication
 This function has been depricated in favour of [`BSPLib::Execute()`](execute.md).
