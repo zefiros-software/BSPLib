@@ -397,7 +397,7 @@ namespace BSPLib
     template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
     void SendPtrs( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, tPrimitive *end )
     {
-        SendPtrs( pid, tagContainer, begin, end );
+        SendPtrs( pid, tagContainer, begin, end - begin );
     }
 
     template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >

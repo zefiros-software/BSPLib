@@ -48,7 +48,7 @@ void PutPrimitiveTest()
 
     BSPLib::Sync();
 
-    ASSERT_EQ( result, sSource + 1 );
+    EXPECT_EQ( result, sSource + 1 );
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -133,7 +133,7 @@ void PutSamePrimitiveTest()
 
     BSPLib::Sync();
 
-    ASSERT_EQ( primitive, sSource + 1 );
+    EXPECT_EQ( primitive, sSource + 1 );
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -180,7 +180,7 @@ void GetPrimitiveTest()
 
     BSPLib::Sync();
 
-    ASSERT_EQ( result, sSource + 1 );
+    EXPECT_EQ( result, sSource + 1 );
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -260,7 +260,7 @@ void GetSamePrimitiveTest()
 
     BSPLib::Sync();
 
-    ASSERT_EQ( primitive, sSource + 1 );
+    EXPECT_EQ( primitive, sSource + 1 );
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -365,7 +365,7 @@ void SendPrimitiveStringTest()
 }
 
 template< int32_t tOffset, typename tTag >
-void TagPrimitiveTest()
+void TagPrimitiveOverloadTest()
 {
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
@@ -666,26 +666,26 @@ BspTest1( Primitive, 32, SendPrimitiveStringTest, 13 );
 
 
 
-BspTest2( Primitive, 2, TagPrimitiveTest, 1, uint8_t );
-BspTest2( Primitive, 4, TagPrimitiveTest, 3, uint8_t );
-BspTest2( Primitive, 8, TagPrimitiveTest, 7, uint8_t );
-BspTest2( Primitive, 16, TagPrimitiveTest, 5, uint8_t );
-BspTest2( Primitive, 32, TagPrimitiveTest, 13, uint8_t );
-BspTest2( Primitive, 2, TagPrimitiveTest, 1, uint16_t );
-BspTest2( Primitive, 4, TagPrimitiveTest, 3, uint16_t );
-BspTest2( Primitive, 8, TagPrimitiveTest, 7, uint16_t );
-BspTest2( Primitive, 16, TagPrimitiveTest, 5, uint16_t );
-BspTest2( Primitive, 32, TagPrimitiveTest, 13, uint16_t );
-BspTest2( Primitive, 2, TagPrimitiveTest, 1, uint32_t );
-BspTest2( Primitive, 4, TagPrimitiveTest, 3, uint32_t );
-BspTest2( Primitive, 8, TagPrimitiveTest, 7, uint32_t );
-BspTest2( Primitive, 16, TagPrimitiveTest, 5, uint32_t );
-BspTest2( Primitive, 32, TagPrimitiveTest, 13, uint32_t );
-BspTest2( Primitive, 2, TagPrimitiveTest, 1, uint64_t );
-BspTest2( Primitive, 4, TagPrimitiveTest, 3, uint64_t );
-BspTest2( Primitive, 8, TagPrimitiveTest, 7, uint64_t );
-BspTest2( Primitive, 16, TagPrimitiveTest, 5, uint64_t );
-BspTest2( Primitive, 32, TagPrimitiveTest, 13, uint64_t );
+BspTest2( Primitive, 2, TagPrimitiveOverloadTest, 1, uint8_t );
+BspTest2( Primitive, 4, TagPrimitiveOverloadTest, 3, uint8_t );
+BspTest2( Primitive, 8, TagPrimitiveOverloadTest, 7, uint8_t );
+BspTest2( Primitive, 16, TagPrimitiveOverloadTest, 5, uint8_t );
+BspTest2( Primitive, 32, TagPrimitiveOverloadTest, 13, uint8_t );
+BspTest2( Primitive, 2, TagPrimitiveOverloadTest, 1, uint16_t );
+BspTest2( Primitive, 4, TagPrimitiveOverloadTest, 3, uint16_t );
+BspTest2( Primitive, 8, TagPrimitiveOverloadTest, 7, uint16_t );
+BspTest2( Primitive, 16, TagPrimitiveOverloadTest, 5, uint16_t );
+BspTest2( Primitive, 32, TagPrimitiveOverloadTest, 13, uint16_t );
+BspTest2( Primitive, 2, TagPrimitiveOverloadTest, 1, uint32_t );
+BspTest2( Primitive, 4, TagPrimitiveOverloadTest, 3, uint32_t );
+BspTest2( Primitive, 8, TagPrimitiveOverloadTest, 7, uint32_t );
+BspTest2( Primitive, 16, TagPrimitiveOverloadTest, 5, uint32_t );
+BspTest2( Primitive, 32, TagPrimitiveOverloadTest, 13, uint32_t );
+BspTest2( Primitive, 2, TagPrimitiveOverloadTest, 1, uint64_t );
+BspTest2( Primitive, 4, TagPrimitiveOverloadTest, 3, uint64_t );
+BspTest2( Primitive, 8, TagPrimitiveOverloadTest, 7, uint64_t );
+BspTest2( Primitive, 16, TagPrimitiveOverloadTest, 5, uint64_t );
+BspTest2( Primitive, 32, TagPrimitiveOverloadTest, 13, uint64_t );
 
 BspTest2( Primitive, 2, TagPrimitiveFPTest, 1, float );
 BspTest2( Primitive, 4, TagPrimitiveFPTest, 3, float );
