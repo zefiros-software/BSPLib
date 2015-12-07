@@ -3,389 +3,74 @@ Since BSP originally was a C library, the whole interface was designed
 to be used from C. We made the interface easier to work with from C++, 
 but we also provide the classic interface implementation.
 
-[TOC]
-
 ##Program Logic
 
-###bsp_init
-
-**Interface**
-
-```c++
-void bsp_init(void*spmd(void), int32_t argc, char **argv)
-```
-
-**Details**
-
-This is an alias of [`BSPLib::ClassicInit()`](logic.md#init).
-
-###bsp_begin
-
-**Interface**
-
-```c++
-void bsp_begin( uint32_t p )
-```
-
-**Details**
-
-This is an alias of [`BSPLib::Classic::Begin()`](logic.md#begin).
-
-###bsp_end
-
-**Interface**
-
-```c++
-void bsp_end()
-```
-
-**Details**
-
-This is an alias of [`BSPLib::Classic::End()`](logic.md#end).
+| Classic                         | Modern                                       |
+| ------------------------------- | -------------------------------------------- |
+| [`bsp_init()`](logic/init.md)   | [`BSPLib::Classic::Init()`](logic/init.md)   |
+| [`bsp_begin()`](logic/begin.md) | [`BSPLib::Classic::Begin()`](logic/begin.md) |
+| [`bsp_end()`](logic/begin.md)   | [`BSPLib::Classic::End()`](logic/end.md)     |
 
 ##Utilities
 
-###bsp_pid
-
-**Interface**
-
-```c++
-uint32_t bsp_pid()
-```
-
-**Details**
-
-This is an alias of [`BSPLib::Classic::ProcId()`](utility.md#procid).
-
-###bsp_nprocs
-
-**Interface**
-
-```c++
-uint32_t bsp_nprocs()
-```
-
-**Details**
-
-This is an alias of [`BSPLib::Classic::NProcs()`](utility.md#nprocs).
-
-###bsp_time
-
-**Interface**
-
-```c++
-double bsp_time()
-```
-
-**Details**
-
-This is an alias of [`BSPLib::Classic::Time()`](utility.md#time). 
-
----
+| Classic                          | Modern                                |
+| -------------------------------- | ------------------------------------- |
+| [`bsp_pid()`](util/procid.md)    | [`BSPLib::ProcId()`](util/procid.md)  |
+| [`bsp_nprocs()`](util/nprocs.md) | [`BSPLib::NProcs()`](util/nprocs.md)  |
+| [`bsp_time()`](util/time.md)     | [`BSPLib::Time()`](util/time.md)      |
 
 ##Halting
 
-###bsp_abort
+| Classic                            | Modern                                          |
+| ---------------------------------- | ----------------------------------------------- |
+| [`bsp_abort()`](halting/abort.md)  | [`BSPLib::Classic::Abort()`](halting/abort.md)  |
+| [`bsp_vabort()`](halting/abort.md) | [`BSPLib::Classic::VAbort()`](halting/abort.md) |
 
-**Interface**
-
-```c++
-void bsp_abort(const char *errorMessage, ... )
-```
-
-**Parameters**
-
-* `errorMessage`
-* `...`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::Abort()`.
-
-###bsp_vabort
-
-**Interface**
-
-```c++
-void bsp_vabort(const char *errorMessage, va_list args )
-```
-
-**Parameters**
-
-* `errorMessage`
-* `args`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::VAbort()`.
-
----
 
 ##Synchronisation Point
 
-###bsp_sync
-
-**Interface**
-
-```c++
-void bsp_sync()
-```
-
-**Details**
-
-This is an alias of `BSPLib::Classic::Sync()`.
-
----
+| Classic                      | Modern                            |
+| ---------------------------- | --------------------------------- |
+| [`bsp_sync()`](sync/sync.md) | [`BSPLib::Sync()`](sync/sync.md)  |
 
 ##Registration & Deregistration
 
-###bsp_push_reg
+| Classic                               | Modern                                |
+| ------------------------------------- | ------------------------------------- |
+| [`bsp_push_reg()`](regdereg/push.md)  | [`BSPLib::Push()`](regdereg/push.md)  |
+| [`bsp_pop_reg()`](regdereg/pop.md)    | [`BSPLib::Pop()`](regdereg/pop.md)    |
 
-**Interface**
-
-```c++
-void bsp_push_reg( const void *ident, size_t size )
-```
-
-**Parameters**
-
-* `ident`
-* `size`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::PushReg()`.
-
-###bsp_pop_reg
-
-**Interface**
-
-```c++
-void bsp_push_reg( const void *ident)
-```
-
-**Parameters**
-
-* `ident`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::PopReg()`.
-
----
 
 ##Communication
 
-###bsp_put
+| Classic                   | Modern                            |
+| ------------------------- | --------------------------------- |
+| [`bsp_put()`](com/put.md) | [`BSPLib::Put()`](halting/put.md) |
+| [`bsp_get()`](com/get.md) | [`BSPLib::Get()`](halting/get.md) |
 
-**Interface**
-
-```c++
-void bsp_put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
-```
-
-**Parameters**
-
-* `pid`
-* `src`
-* `dst`
-* `offset`
-* `nbytes`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::Put()`.
-
-###bsp_get
-
-**Interface**
-
-```c++
-void bsp_get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
-```
-
-**Parameters**
-
-* `pid`
-* `src`
-* `offset`
-* `dst`
-* `nbytes`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::Get()`.
-
----
 
 ##Messaging
 
-###bsp_send
+| Classic                             | Modern                                  |
+| ----------------------------------- | --------------------------------------- |
+| [`bsp_send()`](messaging/send.md)   | [`BSPLib::Send()`](messaging/send.md)   |
+| [`bsp_qsize()`](messaging/qsize.md) | [`BSPLib::QSize()`](messaging/qsize.md) |
+| [`bsp_move()`](messaging/move.md)   | [`BSPLib::Move()`](messaging/move.md)   |
 
-**Interface**
-
-```c++
-void bsp_send( uint32_t pid, const void *tag, const void *payload, size_t size )
-```
-
-**Parameters**
-
-* `pid`
-* `tag`
-* `payload`
-* `size`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::Send()`.
-
-###bsp_qsize
-
-**Interface**
-
-```c++
-void bsp_qsize( size_t *packets, size_t *accumulatedSize )
-```
-
-**Parameters**
-
-* `packets`
-* `accumulatedSize`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::QSize()`.
-
-###bsp_move
-
-**Interface**
-
-```c++
-void bsp_move( void *payload, size_t maxCopySize )
-```
-
-**Parameters**
-
-* `payload`
-* `maxCopySize`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::Move()`.
-
----
 
 ##Messaging Utilities
 
-###bsp_set_tagsize
+| Classic                                            | Modern                                                |
+| -------------------------------------------------- | ----------------------------------------------------- |
+| [`bsp_set_tagsize()`](messagingutil/gettagsize.md) | [`BSPLib::SetTagSize()`](messagingutil/gettagsize.md) |
+| [`bsp_get_tag()`](messagingutil/gettag.md)         | [`BSPLib::GetTag()`](messagingutil/gettag.md)         |
 
-**Interface**
-
-```c++
-void bsp_set_tagsize( size_t *size )
-```
-
-**Parameters**
-
-* `size`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::SetTagSize()`.
-
-###bsp_get_tag
-
-**Interface**
-
-```c++
-void bsp_get_tag( size_t *status, void *tag )
-```
-
-**Parameters**
-
-* `size`
-* `tag`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::GetTag()`.
-
----
 
 ## High Performance
 
-###bsp_hpmove
-
-**Interface**
-
-```c++
-void bsp_hpmove( void **tagPtr, void **payloadPtr )
-```
-
-**Parameters**
-
-* `tagPtr`
-* `payloadPtr`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::HPMove()`.
-
-###bsp_hpsend
-
-**Interface**
-
-```c++
-void bsp_hpsend( uint32_t pid, const void *tag, const void *payload, size_t size )
-```
-
-**Parameters**
-
-* `pid`
-* `tag`
-* `payload`
-* `size`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::HPSend()`.
-
-###bsp_hpput
-
-**Interface**
-
-```c++
-void bsp_hpput( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
-```
-
-**Parameters**
-
-* `pid`
-* `src`
-* `dst`
-* `offset`
-* `nbytes`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::HPPut()`.
-
-###bsp_hpget
-
-**Interface**
-
-```c++
-void bsp_hpget( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
-```
-
-**Parameters**
-
-* `pid`
-* `src`
-* `dst`
-* `offset`
-* `nbytes`
-
-**Details**
-
-This is an alias of `BSPLib::Classic::HPGet()`.
+| Classic                        | Modern                                |
+| ------------------------------ | ------------------------------------- |
+| [`bsp_hpmove()`](hp/hpmove.md) | [`BSPLib::HPMove()`](hp/hpmove.md)    |
+| [`bsp_hpget()`](hp/hpget.md)   | [`BSPLib::HPGet()`](hp/hpget.md)      |
+| [`bsp_hpput()`](hp/hpput.md)   | [`BSPLib::HPPut()`](hp/hpput.md)      |
+| [`bsp_hpsend()`](hp/hpsend.md) | [`BSPLib::HPSend()`](hp/hpsend.md)    |

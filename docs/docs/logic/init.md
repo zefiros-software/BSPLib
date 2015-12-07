@@ -6,6 +6,13 @@ void bsp_init( void(*spmd)(void), int32_t argc, char **argv)                    
 ```
 
 Initialises the BSP computation process. Please note that the main thread should also call the entry function.
+   
+!!! note "Warnings"
+    * By default, [`BSPLib::Classic::Init()`](init.md) will print a warning to `stderr` in case an abort of the previous BSP program has been detected. This message can be suppressed by the symbol `BSP_SUPPRESS_ABORT_WARNING`.
+    * When [`BSPLib::Classic::Init()`](init.md) failed to join all threads from the previous BSP program, an error will be printed to `stderr`, and the entire program will be terminated by `std::terminate()`. This behaviour cannot be disabled, as it will most certainly cause errors in the next BSP    program.
+ 
+!!! danger "Deprication"
+    This function has been depricated in favour of [`BSPLib::Execute()`](execute.md).
 
 #Parameters
 
@@ -25,14 +32,7 @@ Initialises the BSP computation process. Please note that the main thread should
    main thread will execute this function.
  * For the main thread, `BSPLib::ProcId() == 0`, other threads get their identifier assigned
    in the [`BSPLib::Classic::Begin()`](begin.md) function.
-   
-#Deprication
-This function has been depricated in favour of [`BSPLib::Execute()`](execute.md).
 
-#Warnings
- * By default, [`BSPLib::Classic::Init()`](init.md) will print a warning to `stderr` in case an abort of the previous BSP program has been detected. This message can be suppressed by the symbol `BSP_SUPPRESS_ABORT_WARNING`.
- * When [`BSPLib::Classic::Init()`](init.md) failed to join all threads from the previous BSP program, an error will be printed to `stderr`, and the entire program will be terminated by `std::terminate()`. This behaviour cannot be disabled, as it will most certainly cause errors in the next BSP    program.
- 
 #Examples
 
 ###(1) Classic
@@ -95,19 +95,19 @@ void main( int32_t argc, const char **argv )
 {
 	auto entry = []
 	{
-    BSPLib::Classic::Begin( BSPLib::NProcs() );
-    
-    std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
-              << " of " << BSPLib::NProcs() << std::endl;
+        BSPLib::Classic::Begin( BSPLib::NProcs() );
         
-    BSPLib::Classic::End();
-	}
+        std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
+                << " of " << BSPLib::NProcs() << std::endl;
+            
+        BSPLib::Classic::End();
+	};
 	
-  // Set the entry point for the other threads
-  BSPLib::Classic::Init( entry, argc, argv );
+    // Set the entry point for the other threads
+    BSPLib::Classic::Init( entry, argc, argv );
   
-  // Main thread needs to call it also
-  entry();
+    // Main thread needs to call it also
+    entry();
 }
 ```
 

@@ -20,6 +20,12 @@ is not used, the main thread may throw an exception.
 
 If [`BSPLib::Init()`](../logic/init.md) is called after an abort, it will determine whether all threads have actually aborted. If not, it will notify the waiting threads about the abort. If even this fails, the entire program will terminate.
   
+!!! note "Warnings"
+    The termination behaviour is different in BSPLib differs from that in other BSP libraries.
+  
+!!! danger "Deprication"
+    This function has been depricated and should be avoided.
+
 #Parameters
 
 * `format` Describes the message to format.
@@ -29,13 +35,6 @@ If [`BSPLib::Init()`](../logic/init.md) is called after an abort, it will determ
 #Post-Conditions
 * All threads other than main thread will exit on a BSP call, unless the BSP process is restarted.
 * If main thread, a BSPAbort exception will be thrown.
-
-#Warnings
-* The termination behaviour is different in this BSP implementation
-  than in other libraries.
-  
-#Deprication
-This function has been depricated and should be avoided.
   
 #Examples
 

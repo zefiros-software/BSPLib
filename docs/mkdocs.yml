@@ -3,7 +3,7 @@ site_url: https://www.bsplib.eu
 repo_url: https://github.com/Zefiros-Software/BSPLib
 site_description: BSPLib a fast and easy to use parallel computation libary.
 theme: readthedocs
-copyright: Copyright (c) 2015 Mick van Duijn, Koen Visscher and Paul Visscher
+copyright: Copyright © 2015 Mick van Duijn, Koen Visscher and Paul Visscher
 
 pages:
 - BSP: 'index.md'
@@ -47,5 +47,13 @@ pages:
     - 'Get Register': 'hp/hpget.md'
     - 'Put Register': 'hp/hpput.md'
     - 'Send Memory': 'hp/hpsend.md'
+    - 'Move Memory': 'hp/hpmove.md'
 
 - Classic: 'classic.md'
+
+markdown_extensions:
+    - toc:
+        permalink: True
+        separator: "_"
+    - admonition:
+    - sane_lists:
