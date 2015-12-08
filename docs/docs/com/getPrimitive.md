@@ -26,8 +26,8 @@ Internally, it calculates the size in bytes that is required for the primitive, 
 #Parameters
 
 * `pid` The ID of the processor to communicate with.
-* `srcRef` Reference to the source of the information in the other processor.
-* `dstRef` Reference to the destination for the information in the current processor.
+* `src` Reference to the source of the information in the other processor.
+* `dst` Reference to the destination for the information in the current processor.
 * `var` Reference to both the source of the in the other processor, and the destination for the information in the
         current processor.
 
