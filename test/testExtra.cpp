@@ -251,7 +251,7 @@ void TagCArrayOverloadTest()
 
     BSPLib::Sync();
 
-    BSPLib::SendPtrs( sSend, tagContainer, &message, ( &message ) + 1 );
+    BSPLib::SendPtrsWithCArray( sSend, tagContainer, &message, ( &message ) + 1 );
 
     BSPLib::Sync();
 
@@ -265,6 +265,100 @@ void TagCArrayOverloadTest()
         EXPECT_EQ( expectedTag[i], receiveTag[i] );
     }
 
+    EXPECT_EQ( sizeof( uint32_t ), status );
+}
+
+template< typename tTagPrimitive, int32_t tCount, int32_t tOffset >
+void TagCArrayOverloadTest2()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    uint32_t message = s + 1;
+    uint32_t mailbox = s;
+
+    uint32_t expectedMail = sReceive + 1;
+
+    tTagPrimitive tagContainer[tCount];
+    tTagPrimitive receiveTag[tCount];
+    tTagPrimitive expectedTag[tCount];
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        tagContainer[i] = ( tTagPrimitive )( s + 1 + i );
+        expectedTag[i] = ( tTagPrimitive )( sReceive + 1 + i );
+        receiveTag[i] = ( tTagPrimitive )s;
+    }
+
+    size_t status = 0;
+
+    BSPLib::SetTagsize< tTagPrimitive >( tCount );
+
+    BSPLib::Sync();
+
+    BSPLib::SendPtrsWithCArray( sSend, tagContainer, &message, 1 );
+
+    BSPLib::Sync();
+
+    BSPLib::GetTagCArray( status, receiveTag );
+    BSPLib::Move( mailbox );
+
+    EXPECT_EQ( expectedMail, mailbox );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( expectedTag[i], receiveTag[i] );
+    }
+
+    EXPECT_EQ( sizeof( uint32_t ), status );
+}
+
+template< int32_t tOffset >
+void TagPrimitiveStringOverloadTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    uint32_t message = s + 1;
+    uint32_t mailbox = s;
+
+    uint32_t expectedMail = sReceive + 1;
+
+    std::stringstream ss;
+
+    ss << std::setfill( '0' ) << std::setw( 32 ) << ( ( s - 1 + nProc ) % nProc );
+    std::string tag( ss.str() );
+    ss.str( "" );
+
+    ss << std::setfill( '0' ) << std::setw( 32 ) << s;
+    std::string receiveTag( ss.str() );
+    ss.str( "" );
+
+    ss << std::setfill( '0' ) << std::setw( 32 ) << ( ( sReceive - 1 + nProc ) % nProc );
+    std::string expectedTag( ss.str() );
+    ss.str( "" );
+
+    size_t status = 0;
+
+    BSPLib::SetTagsize< char >( 32 );
+
+    BSPLib::Sync();
+
+    BSPLib::SendPtrs( sSend, tag, &message, ( &message ) + 1 );
+
+    BSPLib::Sync();
+
+    BSPLib::GetTag( status, receiveTag );
+    BSPLib::Move( mailbox );
+
+    EXPECT_EQ( expectedMail, mailbox );
+    EXPECT_EQ( expectedTag, receiveTag );
     EXPECT_EQ( sizeof( uint32_t ), status );
 }
 
@@ -314,5 +408,7 @@ BspTest( Extra, 32, BSPAbortMessageTest );
 
 BspTest3( Extra, 8, TagVectorOverloadTest, uint32_t, 23, 5 );
 BspTest3( Extra, 8, TagStdArrayOverloadTest, uint32_t, 23, 5 );
-//BspTest3( Extra, 8, TagCArrayOverloadTest, uint32_t, 23, 5 );
+BspTest3( Extra, 8, TagCArrayOverloadTest, uint32_t, 23, 5 );
+BspTest3( Extra, 8, TagCArrayOverloadTest2, uint32_t, 23, 5 );
 BspTest2( Extra, 8, TagPrimitiveOverloadTest, 5, uint32_t );
+BspTest1( Extra, 8, TagPrimitiveStringOverloadTest, 5 );

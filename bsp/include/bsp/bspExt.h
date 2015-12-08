@@ -395,13 +395,13 @@ namespace BSPLib
     }
 
     template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
-    void SendPtrs( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, tPrimitive *end )
+    void SendPtrsWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, tPrimitive *end )
     {
         SendPtrs( pid, tagContainer, begin, end - begin );
     }
 
     template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
-    void SendPtrs( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, size_t count )
+    void SendPtrsWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, size_t count )
     {
         SendPtrs( pid, tagContainer, begin, count );
     }
@@ -554,6 +554,18 @@ namespace BSPLib
         SendIterator( pid, tag, begin, end - begin );
     }
 
+    template< typename tIterator, typename tTagPrimitive, uint32_t tTagSize >
+    void SendIteratorWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tIterator begin, size_t count )
+    {
+        SendPtrsWithCArray( pid, tagContainer, &*begin, count );
+    }
+
+    template< typename tIterator, typename tTagPrimitive, uint32_t tTagSize >
+    void SendIteratorWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tIterator begin, tIterator end )
+    {
+        SendIteratorWithCArray( pid, tagContainer, end - begin );
+    }
+
     template< typename tIterator >
     void SendIterator( uint32_t pid, tIterator begin, size_t count )
     {
@@ -626,6 +638,12 @@ namespace BSPLib
         SendPtrs( pid, tag, payload, tSize );
     }
 
+    template< typename tPrimitive, typename tTagPrimitive, size_t tSize, size_t tTagSize >
+    void SendCArrayWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive( &payload )[tSize] )
+    {
+        SendPtrsWithCArray( pid, tagContainer, payload, tSize );
+    }
+
     template< typename tPrimitive, size_t tSize >
     void SendCArray( uint32_t pid, tPrimitive( &payload )[tSize] )
     {
@@ -684,6 +702,12 @@ namespace BSPLib
     void SendContainer( uint32_t pid, tTag &tag, tContainer &payload )
     {
         SendIterator( pid, tag, payload.begin(), payload.end() );
+    }
+
+    template< typename tTagPrimitive, typename tContainer, size_t tTagSize >
+    void SendContainerWithCArray( uint32_t pid, tTagPrimitive( &tag )[tTagSize], tContainer &payload )
+    {
+        SendIteratorWithCArray( pid, tag, payload.begin(), payload.end() );
     }
 
     template< typename tContainer >
@@ -833,6 +857,20 @@ namespace BSPLib
     inline void Send( uint32_t pid, const std::string &payload )
     {
         SendPtrs( pid, payload.data(), payload.size() );
+    }
+
+
+
+    template< typename tTagPrimitive, size_t tTagSize >
+    void SendWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], const std::string &payload )
+    {
+        SendPtrs( pid, tagContainer, payload.data(), payload.size() );
+    }
+
+    template< typename tPrimitive, typename tTagPrimitive, size_t tTagSize >
+    void SendWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], const tPrimitive &payload )
+    {
+        SendPtrs( pid, tagContainer, &payload, 1 );
     }
 
 #ifndef BSP_DISABLE_NAMESPACE
