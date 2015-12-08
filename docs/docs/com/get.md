@@ -2,9 +2,9 @@
 
 ```cpp
 void BSPLib::Classic::Get( uint32_t pid, const void *src, ptrdiff_t offset,
-                           void *dst, size_t nbytes )                       // (4) Classic
+                           void *dst, size_t nbytes )                       // (1) Classic
 void bsp_get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst,   
-              size_t nbytes )                                               // (5) Legacy
+              size_t nbytes )                                               // (2) Legacy
 ```
 
 Gets a buffer of size `nbytes` from source pointer `src` that is located in the processor with ID `pid` at offset `offset` 
@@ -12,7 +12,6 @@ bytes from source pointer `src` and stores it at the location of `dst`.
 
 1. Classic BSP function.
 2. Legacy BSP function
-
 
 #Parameters
 
