@@ -10,26 +10,35 @@ void BSPLib::Get( uint32_t pid, std::string &src, std::string &dst )    // (2) s
 template< typename tPrimitive >
 void BSPLib::Get( uint32_t pid, tPrimitive &var )                       // (3) Reference
 ```
+This operation get the registered primitive of another processor and copies the 
+memory into its own memory. It gets the primitive stored in `src` that 
+is located in the processor with ID `pid` and stores it at the location of `dst`. 
+Internally, it calculates the size in bytes that is required for the primitive, 
+and calls to [`BSPLib::Classic::Get()`](get.md).
 
-Gets the primitive stored in `src` that is located in the processor with ID `pid` and stores it at the location of `dst`. 
-Internally, it calculates the size in bytes that is required for the primitive, and calls to [`BSPLib::Classic::Get()`](get.md).
-
-1. Gets the value from `src` in the processor with ID `pid` and stores it in `dst`, using references.
+1. Gets the value from `src` in the processor with ID `pid` and stores 
+   it in `dst`, using references.
 2. Overload for `std::string`.
-3. Get the value from `var` in the processor with ID `pid` and stores it in `var`, the same reference.
+3. Get the value from `var` in the processor with ID `pid` and 
+   stores it in `var`, the same reference.
 
+!!! tip
+    There are also other specialisations available. See
+    [Containers](getContainer.md), [Primitives](getPrimitive.md)
+    and [Pointers](getPtrs.md).
+    
 !!! danger "Warnings"
-     * In case of (2), the destination `std::string` must be at least as big as the source `std::string`. 
-       Make sure it is correctly resized, either by deciding on a fixed size, or communicating the size beforehand.
-
+     * In case of (2), the destination `std::string` must be at least as big 
+       as the source `std::string`. Make sure it is correctly resized, 
+       either by deciding on a fixed size, or communicating the size beforehand.
 
 #Parameters
 
-* `pid` The ID of the processor to communicate with.
+* `pid` The identifier of the processor to communicate with.
 * `src` Reference to the source of the information in the other processor.
 * `dst` Reference to the destination for the information in the current processor.
-* `var` Reference to both the source of the in the other processor, and the destination for the information in the
-        current processor.
+* `var` Reference to both the source of the in the other processor, and the 
+  destination for the information in the current processor.
 
 #Pre-Conditions
 * [`BSPLib::Begin()`](../logic/begin.md) has been called.
@@ -39,18 +48,13 @@ Internally, it calculates the size in bytes that is required for the primitive, 
 
 #Post-Conditions
 * Get request has been queued.
-* In the next superstep, the destination will have the copied value from the source.
+* In the next superstep [`BSPLib::Sync()`](../sync/sync.md), the destination 
+  will have the copied value from the source.
      
 #Examples
 
-###(1) Modern
+### (1) References
 
-This is interface one should choose to use.
+### (2) std::string
 
-###(2) Classic
-
-This is the implementation of the classic interface, in a modern style.
-
-###(3) BSP
-
-This interface is included for backwards compatibility with other BSP libraries.
+### (3) Reference

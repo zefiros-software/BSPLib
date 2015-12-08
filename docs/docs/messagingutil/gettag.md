@@ -27,7 +27,8 @@ Gets the tag for the next message in the send queue.
 
 1. Classic BSP function.
 2. Legacy BSP function
-3. Uses a reference for `status`, as it is not allowed to be `nullptr`. Uses a reference to store the tag.
+3. Uses a reference for `status`, as it is not allowed to be `nullptr`. 
+   Uses a reference to store the tag.
 4. Specialisation of (3) for `std::string`.
 5. Uses a reference for `status`. More typesafe version for the tag pointer.
 6. Uses a reference for `status`. Uses an iterator to describe te beginning of the tag.
@@ -60,14 +61,18 @@ The queue is in the same state as before.
      
 #Examples
 
-###(1) Modern
+### (1) Classic
 
-This is interface one should choose to use.
+### (2) Legacy
 
-###(2) Classic
+### (3) Reference
 
-This is the implementation of the classic interface, in a modern style.
+### (4) std::string
 
-###(3) BSP
+### (5) Pointer
 
-This interface is included for backwards compatibility with other BSP libraries.
+### (6) Iterator
+
+### (7) Container
+
+### (8) C-Array

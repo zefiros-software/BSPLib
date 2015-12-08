@@ -44,8 +44,8 @@ the BSP program.
 6. Pops the address of `beginIt`.
 7. Pops the addresses of the C-Array.
 8. Pops the addresses of the container.
-9. Classic BSP function.
-10. Legacy BSP function.
+9. Classic BSP function, this is the interface one should prefer to use over the old BSP interface.
+10. Legacy BSP function, this interface is included for backwards compatibility with other BSP libraries.
 
 !!! danger "Warnings"
     * In case of (4), the `std::string` must not have been resized.
