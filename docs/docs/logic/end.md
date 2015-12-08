@@ -2,7 +2,7 @@
 
 ```cpp
 void BSPLib::Classic::End() // (1) Classic
-void bsp_end()				// (2) BSP
+void bsp_end()                // (2) BSP
 ```
 
 Ends the BSP computation. All threads must call this function to gracefully exit the BSP program. A BSP program is paired by [`BSPLib::Classic::Begin()`](begin.md) 
@@ -31,15 +31,15 @@ will ensure that the library is reset for reuse, and thuse we can restart calcul
 
 ```cpp
 void main( int32_t, const char ** )
-{		
-	BSPLib::Classic::Begin( BSPLib::NProcs() );
-	
-	std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
-			  << " of " << BSPLib::NProcs() << std::endl;
-	
-	// Stop all the threads, reset the library
-	// and resume execution on the main thread.
-	BSPLib::Classic::End();
+{        
+    BSPLib::Classic::Begin( BSPLib::NProcs() );
+    
+    std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
+              << " of " << BSPLib::NProcs() << std::endl;
+    
+    // Stop all the threads, reset the library
+    // and resume execution on the main thread.
+    BSPLib::Classic::End();
 }
 ```
 
@@ -48,13 +48,13 @@ void main( int32_t, const char ** )
 ```cpp
 void main( int32_t, const char ** )
 {
-	BSPLib::Classic::Begin( BSPLib::NProcs() );
-	
-	std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
-			  << " of " << BSPLib::NProcs() << std::endl;
-	
-	// Stop all the threads, reset the library
-	// and resume execution on the main thread.
-	BSPLib::Classic::End();
+    BSPLib::Classic::Begin( BSPLib::NProcs() );
+    
+    std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
+              << " of " << BSPLib::NProcs() << std::endl;
+    
+    // Stop all the threads, reset the library
+    // and resume execution on the main thread.
+    BSPLib::Classic::End();
 }
 ```

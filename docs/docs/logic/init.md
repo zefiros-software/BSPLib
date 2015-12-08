@@ -94,16 +94,16 @@ program logic functions yourself.
 ```cpp
 void main( int32_t argc, const char **argv )
 {
-	auto entry = []
-	{
+    auto entry = []
+    {
         BSPLib::Classic::Begin( BSPLib::NProcs() );
         
         std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
                 << " of " << BSPLib::NProcs() << std::endl;
             
         BSPLib::Classic::End();
-	};
-	
+    };
+
     // Set the entry point for the other threads
     BSPLib::Classic::Init( entry, argc, argv );
   
