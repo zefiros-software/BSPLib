@@ -8,7 +8,7 @@ void bsp_vabort( const char *errorMessage, va_list args )              // (4) BS
 ```
 
 Aborts the BSP program with the given error message. The formatting used is the same as in
-fprintf. If more than one processors calls [`BSPLib::Abort()`](abort.md), than
+fprintf. If more than one processors calls [`BSPLib::Abort()`](abort.md), then
 all processors may print the abort message, and not just one. 
 
 The thread that aborts prints the message to `stderr`.

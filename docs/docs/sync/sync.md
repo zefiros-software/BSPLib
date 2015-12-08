@@ -7,9 +7,10 @@ void bsp_sync()                  // (3) BSP
 ```
 
 Synchronises all threads and communications. This marks the end of a computation super step, 
-and each processor can handle its own computations between the super steps. At the end and not earlier
-of the super step in the synchronisation point, the communication is handled. The synchronisation 
-point also ensures all threads are synchronised, and functions as a barrier.
+and each processor can handle its own computations between the super steps. At the end (and not earlier)
+of the super step in the synchronisation point, the communication is handled. All threads have queued
+their desired communications before this point, and the queues will now be handled here. The 
+synchronisation point also ensures all threads are synchronised, and functions as a barrier.
 
 #Pre-Conditions
 * [`BSPLib::Classic::Begin()`](../logic/begin.md) has been called.
@@ -87,13 +88,13 @@ void main( int32_t, const char ** )
     // before printing the second line.
       BSPLib::Excute( []
     {            
-        std::cout << "Thread " <<  Bbsp_pid() 
+        std::cout << "Thread " <<  bsp_pid() 
                   << " waiting on barrier 1" << std::endl;
         
         // Wait for all threads to print
         bsp_sync();
     
-        std::cout << "Thread " <<  Bbsp_pid() 
+        std::cout << "Thread " <<  bsp_pid() 
                   << " waiting on barrier 2" << std::endl;
         bsp_sync();
     }, nProcs );

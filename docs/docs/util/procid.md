@@ -6,9 +6,9 @@ uint32_t BSPLib::Classic::ProcId()  // (2) Classic
 uint32_t bsp_pid()                    // (3) BSP
 ```
 
-When [`BSPLib::Classic::Begin()`](../logic/begin.md) has been called, all processors will get
-a unique identifier assigned in the range [`1`, [`BSPLib::NProcs() - 1`](nprocs.md)]. And the main thread holds
-identifier `0`.
+When [`BSPLib::Classic::Begin()`](../logic/begin.md) has been called, all processors other than the main thread
+will get a unique identifier assigned in the range [`[1, [BSPLib::NProcs() - 1]`](nprocs.md). The main 
+thread holds identifier `0`.
 
 1. This is interface one should choose to use, and is semantically the same as the other interfaces.
 2. Classic BSP function, this is the interface one should prefer to use over the old BSP interface.
