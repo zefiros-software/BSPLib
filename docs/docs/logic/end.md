@@ -9,6 +9,9 @@ Ends the BSP computation. All threads must call this function to gracefully exit
 and [`BSPLib::Classic::End()`](end.md) calls. Wherein the [`BSPLib::Classic::End()`](end.md) should be the last call in the computation. Calling this function
 will ensure that the library is reset for reuse, and thuse we can restart calculations or start another SPMD program.
 
+1. Classic BSP function, this is the interface one should prefer to use over the old BSP interface.
+2. Legacy BSP function, this interface is included for backwards compatibility with other BSP libraries.
+
 !!! danger "Deprication"
     This function has been depricated in favour of [`BSPLib::Execute()`](execute.md).
  
@@ -26,8 +29,6 @@ will ensure that the library is reset for reuse, and thuse we can restart calcul
 
 ###(1) Classic
 
-This is the interface one should prefer to use, over the old BSP interface.
-
 ```cpp
 void main( int32_t, const char ** )
 {		
@@ -43,8 +44,6 @@ void main( int32_t, const char ** )
 ```
 
 ###(2) BSP
-
-This interface is included for backwards compatibility with other BSP libraries.
 
 ```cpp
 void main( int32_t, const char ** )

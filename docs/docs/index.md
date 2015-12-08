@@ -23,6 +23,19 @@ After this you can use the include `#include "bsp/bsp.h"` in your code to start 
 ## Usage
 For detailed usage, please visit [BSPLib](www.bsplib.eu).
 
+**Example**
+
+```cpp
+void main( int32_t, const char ** )
+{
+    BSPLib::Excute( []
+    {
+        std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
+                  << " of " << BSPLib::NProcs() << std::endl;
+    }, BSPLib::NProcs() );
+}
+```
+
 ### Flexibility
 
 #### Don't like the classic interface?

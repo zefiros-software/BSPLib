@@ -6,6 +6,9 @@ void bsp_init( void(*spmd)(void), int32_t argc, char **argv)                    
 ```
 
 Initialises the BSP computation process. Please note that the main thread should also call the entry function.
+
+1. Classic BSP function, this is the interface one should prefer to use over the old BSP interface.
+2. Legacy BSP function, this interface is included for backwards compatibility with other BSP libraries.
    
 !!! note "Warnings"
     * By default, [`BSPLib::Classic::Init()`](init.md) will print a warning to `stderr` in case an abort of the previous BSP program has been detected. This message can be suppressed by the symbol `BSP_SUPPRESS_ABORT_WARNING`.
@@ -36,8 +39,6 @@ Initialises the BSP computation process. Please note that the main thread should
 #Examples
 
 ###(1) Classic
-
-This is the interface one should prefer to use, over the old BSP interface.
 
 **SPMD Exectution**
 
@@ -112,8 +113,6 @@ void main( int32_t argc, const char **argv )
 ```
 
 ###(2) BSP
-
-This interface is included for backwards compatibility with other BSP libraries.
 
 ```cpp
 void Spmd()

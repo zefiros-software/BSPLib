@@ -16,6 +16,9 @@ and [`BSPLib::Classic::End()`](end.md) calls. When no [`BSPLib::Classic::Init()`
 SPMD mode, and calls the `main()` function in all threads. Otherwise the given entry point from the
 [`BSPLib::Classic::Init()`](init.md) call will be used.
 
+1. Classic BSP function, this is the interface one should prefer to use over the old BSP interface.
+2. Legacy BSP function, this interface is included for backwards compatibility with other BSP libraries.
+
 !!! danger "Deprication"
     This function has been depricated in favour of [`BSPLib::Execute()`](execute.md).
 	 
@@ -49,8 +52,6 @@ SPMD mode, and calls the `main()` function in all threads. Otherwise the given e
 #Examples
 
 ###(1) Classic
-
-This is the interface one should prefer to use, over the old BSP interface.
 
 **SPMD Exectution**
 
@@ -118,8 +119,6 @@ void main( int32_t argc, const char **argv )
 ```
 
 ###(2) BSP
-
-This interface is included for backwards compatibility with other BSP libraries.
 
 ```cpp
 void main( int32_t, const char ** )
