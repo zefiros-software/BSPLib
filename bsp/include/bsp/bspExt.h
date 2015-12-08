@@ -455,7 +455,7 @@ namespace BSPLib
     template< typename tPrimitive >
     void MovePtrs( tPrimitive *begin, tPrimitive *end )
     {
-        MovePtrs( begin, end - begin );
+        MovePtrs( begin, ( uint32_t )( end - begin ) );
     }
 
     template< typename tIterator >
@@ -574,7 +574,7 @@ namespace BSPLib
     template< typename tIterator, typename tTagPrimitive, uint32_t tTagSize >
     void SendIteratorWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tIterator begin, tIterator end )
     {
-        SendIteratorWithCArray( pid, tagContainer, end - begin );
+        SendIteratorWithCArray( pid, tagContainer, begin, end - begin );
     }
 
     template< typename tIterator >
@@ -598,7 +598,7 @@ namespace BSPLib
     template< typename tIterator >
     void MoveIterator( tIterator begin, tIterator end )
     {
-        MoveIterator( begin, end - begin );
+        MoveIterator( begin, ( uint32_t )( end - begin ) );
     }
 
     template< typename tPrimitive, size_t tSize >
