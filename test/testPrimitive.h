@@ -324,7 +324,7 @@ void SendPrimitiveOverloadTest()
     uint32_t tag = s;
     size_t status = 0;
 
-    BSPLib::SetTagsize< size_t >();
+    BSPLib::SetTagsize< uint32_t >();
 
     BSPLib::Sync();
 
