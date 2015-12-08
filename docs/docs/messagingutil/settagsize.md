@@ -15,7 +15,8 @@ Sets a tagsize for the next superstep.
 
 1. Classic BSP function.
 2. Legacy BSP function
-3. Sets the tagsize to the size of a primitive, `sizeof(tPrimitive)` will be the new tagsize.
+3. Sets the tagsize to the size of a primitive, `sizeof(tPrimitive)` 
+   will be the new tagsize.
 4. Sets the tagsize to the size of count primitives, `count * sizeof(tPrimitive)`.
 
 #Parameters
@@ -32,14 +33,10 @@ The tagsize will be updated during the next [synchronization](../sync/sync.md)
      
 #Examples
 
-###(1) Modern
+### (1) Classic
 
-This is interface one should choose to use.
+### (2) Legacy
 
-###(2) Classic
+### (3) Primitive
 
-This is the implementation of the classic interface, in a modern style.
-
-###(3) BSP
-
-This interface is included for backwards compatibility with other BSP libraries.
+### (4) Count
