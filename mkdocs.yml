@@ -6,7 +6,7 @@ theme: readthedocs
 copyright: Copyright © 2015 Mick van Duijn, Koen Visscher and Paul Visscher
 
 pages:
-- BSP: 'index.md'
+- BSP: '../README.md'
 
 - Program Logic:
     - 'Execute BSP Program': 'logic/execute.md'
@@ -49,11 +49,11 @@ pages:
     - 'Get Tag': 'messagingutil/gettag.md'
     - 'Set Tag Size': 'messagingutil/settagsize.md'
 
-- High Performance:
-    - 'Get Register': 'hp/hpget.md'
-    - 'Put Register': 'hp/hpput.md'
-    - 'Send Memory': 'hp/hpsend.md'
-    - 'Move Memory': 'hp/hpmove.md'
+#- High Performance:
+#    - 'Get Register': 'hp/hpget.md'
+#    - 'Put Register': 'hp/hpput.md'
+#    - 'Send Memory': 'hp/hpsend.md'
+#    - 'Move Memory': 'hp/hpmove.md'
 
 - Classic: 'classic.md'
 
