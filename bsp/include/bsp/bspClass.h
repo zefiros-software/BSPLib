@@ -67,6 +67,7 @@ public:
     {
         mAbort = true;
         vfprintf( stderr, format, args );
+        CheckAborted();
     }
 
     /**
