@@ -284,16 +284,15 @@ namespace BSPLib
     }
 
     template< typename tPrimitive >
-    void PutPtrs( uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcEnd, tPrimitive *resultBegin, tPrimitive *resultDst )
+    void PutPtrs( uint32_t pid, tPrimitive *srcBegin, size_t count, tPrimitive *resultBegin, size_t offset )
     {
-        Classic::Put( pid, srcBegin, resultBegin, ( resultDst - resultBegin ) * sizeof( tPrimitive ),
-                      ( srcEnd - srcBegin ) * sizeof( tPrimitive ) );
+        Classic::Put( pid, srcBegin, resultBegin, offset * sizeof( tPrimitive ), count * sizeof( tPrimitive ) );
     }
 
     template< typename tPrimitive >
-    void PutPtrs( uint32_t pid, tPrimitive *srcBegin, size_t count, tPrimitive *resultBegin, size_t offset )
+    void PutPtrs( uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcEnd, tPrimitive *resultBegin, tPrimitive *resultDst )
     {
-        PutPtrs( pid, srcBegin, srcBegin + count, resultBegin, resultBegin + offset );
+        PutPtrs( pid, srcBegin, srcEnd - srcBegin, resultBegin, resultDst - resultBegin );
     }
 
     template< typename tPrimitive >
