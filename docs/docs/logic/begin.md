@@ -21,7 +21,7 @@ SPMD mode, and calls the `main()` function in all threads. Otherwise the given e
 
 !!! danger "Deprication"
     This function has been depricated in favour of [`BSPLib::Execute()`](execute.md).
-	 
+    
 #Parameters
 
 * `p` The maximum processors to use in computation. Assigning more processors than 
@@ -30,17 +30,17 @@ SPMD mode, and calls the `main()` function in all threads. Otherwise the given e
 #Pre-Conditions
 
  * If Init has been called: 
-	 * Will execute entry in parallel.
-  	
-	Else: 
- 	  
-	 * Will execute main in parallel. Also, a warning will be printed to `stderr`.
-		 
+    * Will execute entry in parallel.
+  
+    Else: 
+
+    * Will execute main in parallel. Also, a warning will be printed to `stderr`.
+        
  * If called from the main thread:
  
-	* Resets and initialises the communication queues and buffers.
-	* Calls the entry point for all other threads.
-	* Starts the timer for the main thread.
+    * Resets and initialises the communication queues and buffers.
+    * Calls the entry point for all other threads.
+    * Starts the timer for the main thread.
    Else:
      Starts the timer for the current thread.
 
@@ -61,8 +61,8 @@ and thus automatically recalls the `main()` function for the other threads.
 ```cpp
 void main( int32_t, const char ** )
 {
-	  // No Init call, so other threads will call
-	  // the main fuction
+    // No Init call, so other threads will call
+    // the main fuction
     BSPLib::Classic::Begin( BSPLib::NProcs() );
     
     std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
@@ -79,8 +79,8 @@ void main( int32_t, const char ** )
 {
     using namespace BSPLib;
     
-	  // No Init call, so other threads will call
-	  // the main fuction
+    // No Init call, so other threads will call
+    // the main fuction
     Classic::Begin( NProcs() );
     
     std::cout << "Hello BSP Worldwide from process " << ProcId() 
@@ -110,9 +110,9 @@ void Spmd()
 
 void main( int32_t argc, const char **argv )
 {
-	  // Set the entry point for the other threads
+    // Set the entry point for the other threads
     BSPLib::Classic::Init( Spmd, argc, argv );
-	
+    
     // Main thread needs to call it also
     Spmd();
 }
@@ -123,13 +123,13 @@ void main( int32_t argc, const char **argv )
 ```cpp
 void main( int32_t, const char ** )
 {
-  // No Init call, so other threads will call
-  // the main fuction
-  bsp_begin( bsp_nprocs() );
-  
-  std::cout << "Hello BSP Worldwide from process " << bsp_pid() 
+    // No Init call, so other threads will call
+    // the main fuction
+    bsp_begin( bsp_nprocs() );
+    
+    std::cout << "Hello BSP Worldwide from process " << bsp_pid() 
             << " of " << bsp_nprocs() << std::endl;
-  
-  bsp_end();
+    
+    bsp_end();
 }
 ```

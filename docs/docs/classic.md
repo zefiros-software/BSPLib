@@ -45,8 +45,8 @@ but we also provide the classic interface implementation.
 
 | Classic                   | Modern                            |
 | ------------------------- | --------------------------------- |
-| [`bsp_put()`](com/put.md) | [`BSPLib::Put()`](halting/put.md) |
-| [`bsp_get()`](com/get.md) | [`BSPLib::Get()`](halting/get.md) |
+| [`bsp_put()`](com/put.md) | [`BSPLib::Put()`](com/put.md) |
+| [`bsp_get()`](com/get.md) | [`BSPLib::Get()`](com/get.md) |
 
 
 ##Messaging
@@ -62,7 +62,7 @@ but we also provide the classic interface implementation.
 
 | Classic                                            | Modern                                                |
 | -------------------------------------------------- | ----------------------------------------------------- |
-| [`bsp_set_tagsize()`](messagingutil/gettagsize.md) | [`BSPLib::SetTagSize()`](messagingutil/gettagsize.md) |
+| [`bsp_set_tagsize()`](messagingutil/settagsize.md) | [`BSPLib::SetTagSize()`](messagingutil/settagsize.md) |
 | [`bsp_get_tag()`](messagingutil/gettag.md)         | [`BSPLib::GetTag()`](messagingutil/gettag.md)         |
 
 

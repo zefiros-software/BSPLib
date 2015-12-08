@@ -23,10 +23,10 @@ template < typename tIterator>
 void BSPLib::PushIterator( tIterator beginIt, tIterator endIt ) // (8) Iterators
 
 template< typename tPrimitive, size_t tSize >
-void BSPLib::PushCArray( tPrimitive( &cArray )[tSize] )        // (9) C-Array
+void BSPLib::PushCArray( tPrimitive( &cArray )[tSize] )         // (9) C-Array
 
 template< typename tContainer >
-void BSPLib::PushContainer( tContainer &container )            // (10) Container
+void BSPLib::PushContainer( tContainer &container )             // (10) Container
 
 
 void BSPLib::Classic::Push( const void *ident, size_t byteSize ) // (11) Classic
@@ -98,12 +98,24 @@ the BSP program.
 
 ###(1) Modern
 
-This is interface one should choose to use.
+###(2) Padding
 
-###(2) Classic
+###(3) Reference
 
-This is the implementation of the classic interface, in a modern style.
+###(4) std::string
 
-###(3) BSP
+###(5) Primitive pointer
 
-This interface is included for backwards compatibility with other BSP libraries.
+###(6) Primitive pointers
+
+###(7) Iterator
+
+###(8) Iterators
+
+###(9) C-Array
+
+###(10) Container
+
+###(11) Classic
+
+###(12) BSP

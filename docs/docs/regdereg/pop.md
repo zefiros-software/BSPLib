@@ -1,8 +1,8 @@
 #Interfaces
 
 ```cpp
-void BSPLib::Pop( const void *ident )			            // (1) Modern
-void BSPLib::Pop()			                                // (2) Padding
+void BSPLib::Pop( const void *ident )                       // (1) Modern
+void BSPLib::Pop()                                          // (2) Padding
 
 template< typename tPrimitive >
 void BSPLib::Pop( tPrimitive &identRef )                    // (3) Reference
@@ -23,7 +23,7 @@ template< typename tContainer >
 void BSPLib::PopContainer( tContainer &container )          // (8) Container
 
 void BSPLib::Classic::Pop( const void *ident )              // (9) Classic
-void bsp_popreg( const void *ident )			            // (10) BSP
+void bsp_popreg( const void *ident )                        // (10) BSP
 ```
 
 Pops a register and makes it unavailable in the next superstep. 
@@ -72,17 +72,25 @@ the BSP program.
 #Post-Conditions
 * Pop request has been queued.
 * In the next superstep, this register will be unavailable for [`BSPLib::Put()`](../com/put.md)/[`BSPLib::Get()`](../com/get.md).
-	 
+     
 #Examples
 
-###(1) Modern
+### (1) Modern
 
-This is interface one should choose to use.
+### (2) Padding
 
-###(2) Classic
+### (3) Reference
 
-This is the implementation of the classic interface, in a modern style.
+### (4) std::string
 
-###(3) BSP
+### (5) Primitive pointer
 
-This interface is included for backwards compatibility with other BSP libraries.
+### (6) Iterator
+
+### (7) C-Array
+
+### (8) Container
+
+### (9) Classic
+
+### (10) BSP
