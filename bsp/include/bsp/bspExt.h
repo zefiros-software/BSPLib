@@ -747,6 +747,16 @@ namespace BSPLib
         Classic::SetTagSize( &size );
     }
 
+    inline void QSize( size_t &packets )
+    {
+        Classic::QSize( &packets, nullptr );
+    }
+
+    inline void QSize( size_t &packets, size_t &accumulatedSize )
+    {
+        Classic::QSize( &packets, &accumulatedSize );
+    }
+
     template< typename tPrimitive >
     void GetTag( size_t &status, tPrimitive &tag )
     {

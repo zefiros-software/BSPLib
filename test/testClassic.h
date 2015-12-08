@@ -379,6 +379,63 @@ void QSizeTest()
     }
 }
 
+template< uint32_t tRounds, uint32_t tPacketCount, uint32_t tPacketSize, int32_t tOffset >
+void QSizeTestOverload()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+
+    uint32_t packets[tPacketSize];
+
+    size_t packetCount;
+    size_t totalSize;
+
+    for ( uint32_t i = 0; i < tRounds; ++i )
+    {
+        for ( uint32_t j = 0; j < tPacketCount; ++j )
+        {
+            BSPLib::Classic::Send( sSend, NULL, packets, tPacketSize * sizeof( uint32_t ) );
+        }
+
+        BSPLib::Sync();
+
+        BSPLib::QSize( packetCount, totalSize );
+
+        EXPECT_EQ( tPacketCount, packetCount );
+        EXPECT_EQ( tPacketCount * tPacketSize * sizeof( uint32_t ), totalSize );
+    }
+}
+
+template< uint32_t tRounds, uint32_t tPacketCount, uint32_t tPacketSize, int32_t tOffset >
+void QSizeTestOverload2()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+
+    uint32_t packets[tPacketSize];
+
+    size_t packetCount;
+    //size_t totalSize;
+
+    for ( uint32_t i = 0; i < tRounds; ++i )
+    {
+        for ( uint32_t j = 0; j < tPacketCount; ++j )
+        {
+            BSPLib::Classic::Send( sSend, NULL, packets, tPacketSize * sizeof( uint32_t ) );
+        }
+
+        BSPLib::Sync();
+
+        BSPLib::QSize( packetCount );
+
+        EXPECT_EQ( tPacketCount, packetCount );
+    }
+}
+
 template< uint32_t tRounds >
 void MultiSendTest()
 {
@@ -704,6 +761,9 @@ BspTest4( Classic, 8, QSizeTest, 10, 10, 10, 7 );
 BspTest4( Classic, 16, QSizeTest, 10, 10, 10, 7 );
 BspTest4( Classic, 32, QSizeTest, 10, 10, 10, 7 );
 BspTest4( Classic, 32, QSizeTest, 10, 100, 17, 41 );
+
+BspTest4( Classic, 32, QSizeTestOverload, 10, 100, 17, 41 );
+BspTest4( Classic, 32, QSizeTestOverload2, 10, 100, 17, 41 );
 
 BspTest1( Classic, 2, MultiSendTest, 50 );
 BspTest1( Classic, 4, MultiSendTest, 50 );
