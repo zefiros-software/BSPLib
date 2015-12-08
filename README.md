@@ -5,8 +5,8 @@
 The BSP specification can be found [here](bsp.pdf) and is maintained by [bsp-worldwide.org](http://www.bsp-worldwide.org). Parts of the
 documentation and code are based off this specification, to ensure backward compatibility between BSP libraries.
 
-#Code
-The code can be found [here](https://github.com/Zefiros-Software/BSPLib).
+#[Code](https://github.com/Zefiros-Software/BSPLib) & [Documentation](http://www.bsplib.eu)
+The code can be found [here](https://github.com/Zefiros-Software/BSPLib). See [this](http://www.bsplib.eu) for the documentation.
 
 ## Features
 * Fast: All our code is hand optimised using profilers, to ensure maximum performance.
