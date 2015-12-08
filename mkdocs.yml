@@ -1,5 +1,5 @@
 site_name: BSPLib
-site_url: https://www.bsplib.eu
+site_url: http://www.bsplib.eu
 repo_url: https://github.com/Zefiros-Software/BSPLib
 site_description: BSPLib a fast and easy to use parallel computation libary.
 theme: readthedocs
