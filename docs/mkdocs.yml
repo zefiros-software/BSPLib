@@ -41,8 +41,8 @@ pages:
 
 - Messaging:
 
-    - 'Move Memory': 'messaging/move.md'
     - 'Send Memory': 'messaging/send.md'
+    - 'Move Memory': 'messaging/move.md'
     - 'Get Queue Size': 'messaging/qsize.md'
 
 - Messaging Utilities:

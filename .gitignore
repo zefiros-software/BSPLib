@@ -24,3 +24,4 @@ bsp/My Advisor XE Results *
 test/My Advisor XE Results *
 docs/docs/.vscode/
 *.ipgset
+*/.vscode
