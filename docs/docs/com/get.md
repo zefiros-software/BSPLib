@@ -15,6 +15,7 @@ bytes from source pointer `src` and stores it at the location of `dst`.
 
 #Parameters
 
+* `pid` The ID of the processor to communicate with.
 * `src` Pointer to the source of the information in the other processor.
 * `offset` Offset from the source `src` in bytes to start reading from.
 * `dst` Pointer to the destination for the information in the current processor.
@@ -24,7 +25,7 @@ bytes from source pointer `src` and stores it at the location of `dst`.
 * [`BSPLib::Begin()`](../logic/begin.md) has been called.
 * `src != nullptr`.
 * `dst != nullptr`.
-* [`BSPLib::Push()`](../regdereg/push.md) has been called on `src` with at leas size `offset + nbytes` in the processor with ID `pid`.
+* [`BSPLib::Push()`](../regdereg/push.md) has been called on `src` with at least size `offset + nbytes` in the processor with ID `pid`.
 * A [`BSPLib::Sync()`](../sync/sync.md) has happened between [`BSPLig::Push()`](../regdereg/push.md) and this call.
 
 #Post-Conditions

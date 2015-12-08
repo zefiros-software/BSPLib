@@ -35,6 +35,9 @@ pages:
     - 'Get Register - Pointers' : 'com/getPtrs.md'
     - 'Get Register - Containers' : 'com/getContainer.md'
     - 'Put Register': 'com/put.md'
+    - 'Put Register - Primitives' : 'com/putPrimitive.md'
+    - 'Put Register - Pointers' : 'com/putPtrs.md'
+    - 'Put Register - Containers' : 'com/putContainer.md'
 
 - Messaging:
 
