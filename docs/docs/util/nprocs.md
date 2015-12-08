@@ -1,9 +1,9 @@
 #Interfaces
 
 ```cpp
-uint32_t BSPLib::NProcs()            // (1) Modern
+uint32_t BSPLib::NProcs()           // (1) Modern
 uint32_t BSPLib::Classic::NProcs()  // (2) Classic
-uint32_t bsp_nprocs()                // (3) BSP
+uint32_t bsp_nprocs()               // (3) BSP
 ```
 
 Gets the the amount of processors used by the BSP library. When the BSP library is not

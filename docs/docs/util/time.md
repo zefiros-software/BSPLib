@@ -8,8 +8,8 @@ double bsp_time()                // (3) BSP
 Gets the time in seconds since for this thread since starting calculations by
 calling [`BSPLib::Classic::Begin()`](../logic/begin.md). This function internally
 uses a high precion time, however a good resolution is not guaranteed and may vary
-between platforms and compilers. The timings are not synchronised between threads, and
-may vary.
+between platforms and compilers. The timings are thread specific, and
+may vary, due to startup times.
 
 1. This is interface one should choose to use, and is semantically the same as the other interfaces.
 2. Classic BSP function, this is the interface one should prefer to use over the old BSP interface.
