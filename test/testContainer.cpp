@@ -729,7 +729,7 @@ void TagCArrayTest()
 
     BSPLib::Sync();
 
-    BSPLib::Send( sSend, tagContainer, message );
+    BSPLib::SendWithCArray( sSend, tagContainer, message );
 
     BSPLib::Sync();
 
@@ -872,7 +872,7 @@ void TagFPCArrayTest()
 
     BSPLib::Sync();
 
-    BSPLib::Send( sSend, tagContainer, message );
+    BSPLib::SendWithCArray( sSend, tagContainer, message );
 
     BSPLib::Sync();
 
