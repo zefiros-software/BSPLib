@@ -6,7 +6,7 @@ theme: readthedocs
 copyright: Copyright © 2015 Mick van Duijn, Koen Visscher and Paul Visscher
 
 pages:
-- BSP: '../README.md'
+- BSP: 'index.md'
 
 - Program Logic:
     - 'Execute BSP Program': 'logic/execute.md'
