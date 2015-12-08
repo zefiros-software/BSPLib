@@ -1,62 +1,36 @@
 #Interfaces
 
 ```cpp
-template< typename tPrimitive >
-void BSPLib::Get( uint32_t pid, tPrimitive &src, tPrimitive &dst )              // (1) References
-
-template<>
-void BSPLib::Get( uint32_t pid, std::string &src, std::string &dst )     // (2) std::string references
-
-template< typename tPrimitive >
-void BSPLib::Get( uint32_t pid, tPrimitive &var )                               // (3) Reference
-
-template< typename tIterator, typename tOutputIterator >
-void BSPLib::GetIterator( uint32_t pid, tIterator srcBegin, tIterator srcCursor, tOutputIterator resultBegin,
-                    tOutputIterator resultEnd )
-
-template< typename tIterator >
-void BSPLib::GetIterator( uint32_t pid, tIterator begin, tIterator cursor, tIterator end )
-
-template< typename tIterator >
-void BSPLib::GetIterator( uint32_t pid, tIterator begin, tIterator end )
-
-template< typename tIterator >
-void BSPLib::GetIterator( uint32_t pid, tIterator begin, size_t offset, size_t count )
-
-template< typename tPrimitive, size_t tSizeIn, size_t tSizeOut >
-void BSPLib::GetCArray( uint32_t pid, tPrimitive( &src )[tSizeIn], tPrimitive( &dst )[tSizeOut] )
-
-template< typename tContainer >
-void BSPLib::PutContainer( uint32_t pid, tContainer &container )
-
-template < typename tContainerIn, typename tContainerOut >
-void BSPLib::GetContainer( uint32_t pid, tContainerIn &src, tContainerOut &dst )    
-
-template< typename tPrimitive, size_t tSize >
-void BSPLib::GetCArray( uint32_t pid, tPrimitive( &container )[tSize] )
-
-void BSPLib::Classic::Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
-void bsp_get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
+void BSPLib::Classic::Get( uint32_t pid, const void *src, ptrdiff_t offset,
+                           void *dst, size_t nbytes )                       // (4) Classic
+void bsp_get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst,   
+              size_t nbytes )                                               // (5) Legacy
 ```
 
-Pushes a register, with the given size. 
+Gets a buffer of size `nbytes` from source pointer `src` that is located in the processor with ID `pid` at offset `offset` 
+bytes from source pointer `src` and stores it at the location of `dst`.
 
-1. Modern interface of the classic BSP function.
-
-!!! danger "Warnings"
-     * In case of (4), the std::string must not be resized.
+1. Classic BSP function.
+2. Legacy BSP function
 
 
 #Parameters
 
-* `ident` The address to register.
+* `src` Pointer to the source of the information in the other processor.
+* `offset` Offset from the source `src` in bytes to start reading from.
+* `dst` Pointer to the destination for the information in the current processor.
+* `nbytes` Number of bytes to read.
 
 #Pre-Conditions
-* [`BSPLib::Classic::Begin()`](../logic/begin.md) has been called.
+* [`BSPLib::Begin()`](../logic/begin.md) has been called.
+* `src != nullptr`.
+* `dst != nullptr`.
+* [`BSPLib::Push()`](../regdereg/push.md) has been called on `src` with at leas size `offset + nbytes` in the processor with ID `pid`.
+* A [`BSPLib::Sync()`](../sync/sync.md) has happened between [`BSPLig::Push()`](../regdereg/push.md) and this call.
 
 #Post-Conditions
-* Push request has been queued.
-* In the next superstep, this register will be available for [`BSPLib::Put()`](../com/put.md)/[`BSPLib::Get()`](../com/get.md).
+* Get request has been queued.
+* In the next superstep, the destination will have the copied value from the source.
      
 #Examples
 

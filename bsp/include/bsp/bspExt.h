@@ -479,12 +479,18 @@ namespace BSPLib
     }
 
     template< typename tIterator, typename tOutputIterator >
+    void PutIterator( uint32_t pid, tIterator srcBegin, size_t count, tOutputIterator resultBegin, size_t offset )
+    {
+        PutPtrs( pid, &*srcBegin, count, &*resultBegin, offset );
+    }
+
+    template< typename tIterator, typename tOutputIterator >
     void PutIterator( uint32_t pid, tIterator srcBegin, tIterator srcEnd, tOutputIterator resultBegin,
                       tOutputIterator resultDst )
     {
         assert( srcEnd == srcBegin || &*( srcEnd - 1 ) - &*srcBegin == srcEnd - srcBegin - 1 );
         assert( resultDst == resultBegin || &*( resultDst - 1 ) - &*resultBegin == resultDst - resultBegin - 1 );
-        PutPtrs( pid, &*srcBegin, srcEnd - srcBegin, &*resultBegin, resultDst - resultBegin );
+        PutIterator( pid, srcBegin, srcEnd - srcBegin, resultBegin, resultDst - resultBegin );
     }
 
     template< typename tIterator >
@@ -506,10 +512,16 @@ namespace BSPLib
     }
 
     template< typename tIterator, typename tOutputIterator >
+    void GetIterator( uint32_t pid, tIterator srcBegin, size_t offset, tOutputIterator resultBegin, size_t count )
+    {
+        GetPtrs( pid, &*srcBegin, offset, &*resultBegin, count );
+    }
+
+    template< typename tIterator, typename tOutputIterator >
     void GetIterator( uint32_t pid, tIterator srcBegin, tIterator srcCursor, tOutputIterator resultBegin,
                       tOutputIterator resultEnd )
     {
-        GetPtrs( pid, &*srcBegin, srcCursor - srcBegin, &*resultBegin, resultEnd - resultBegin );
+        GetIterator( pid, srcBegin, srcCursor - srcBegin, resultBegin, resultEnd - resultBegin );
     }
 
     template< typename tIterator >

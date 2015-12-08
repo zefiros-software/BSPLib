@@ -2,26 +2,38 @@
 
 ```cpp
 template< typename tIterator, typename tOutputIterator >
-void BSPLib::GetIterator( uint32_t pid, tIterator srcBegin, tIterator srcCursor, tOutputIterator resultBegin,
-                    tOutputIterator resultEnd )
+    void GetIterator( uint32_t pid, tIterator srcBegin, size_t offset, 
+                      tOutputIterator resultBegin, 
+                      size_t count )                            // (1) Begin-Offset-Count
+
+template< typename tIterator, typename tOutputIterator >
+void BSPLib::GetIterator( uint32_t pid, tIterator srcBegin, tIterator srcCursor, 
+                          tOutputIterator resultBegin,
+                          tOutputIterator resultEnd )           // (2) Begin-Cursor-End
 
 template< typename tIterator >
-void BSPLib::GetIterator( uint32_t pid, tIterator begin, tIterator cursor, tIterator end )
+void BSPLib::GetIterator( uint32_t pid, tIterator begin, 
+                          tIterator cursor, tIterator end )     // (3) Same Begin-Cursor-End
 
 template< typename tIterator >
-void BSPLib::GetIterator( uint32_t pid, tIterator begin, tIterator end )
+void BSPLib::GetIterator( uint32_t pid, tIterator begin, 
+                          tIterator end )                       // (4) Same Begin-End
 
 template< typename tIterator >
-void BSPLib::GetIterator( uint32_t pid, tIterator begin, size_t offset, size_t count )
+void BSPLib::GetIterator( uint32_t pid, tIterator begin,
+                          size_t offset, size_t count )         // (5) Same Begin-Offset-Count
 
 template< typename tPrimitive, size_t tSizeIn, size_t tSizeOut >
-void BSPLib::GetCArray( uint32_t pid, tPrimitive( &src )[tSizeIn], tPrimitive( &dst )[tSizeOut] )
+void BSPLib::GetCArray( uint32_t pid, tPrimitive( &src )[tSizeIn], 
+                        tPrimitive( &dst )[tSizeOut] )          // (6) C-Array
 
 template < typename tContainerIn, typename tContainerOut >
-void BSPLib::GetContainer( uint32_t pid, tContainerIn &src, tContainerOut &dst )    
+void BSPLib::GetContainer( uint32_t pid, tContainerIn &src,
+                           tContainerOut &dst )                 // (7) General container    
 
 template< typename tPrimitive, size_t tSize >
-void BSPLib::GetCArray( uint32_t pid, tPrimitive( &container )[tSize] )
+void BSPLib::GetCArray( uint32_t pid, 
+                        tPrimitive( &container )[tSize] )       // (8) Same container
 ```
 
 Pushes a register, with the given size. 

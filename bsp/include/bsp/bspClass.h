@@ -513,7 +513,7 @@ public:
      * * Begin has been called.
      * * src != nullptr.
      * * dst != nullptr.
-     * * PushReg has been called on dst with at least size offset + nbytes in the processor with ID pid.
+     * * Push has been called on dst with at least size offset + nbytes in the processor with ID pid.
      * * A Sync has happened between PushReg and this call.
      */
 
@@ -546,7 +546,7 @@ public:
 
     /**
      * Gets a buffer of size nbytes from source pointer src that is located in the thread with ID pid at offset from
-     * source pointer src and stores it at the location of.
+     * source pointer src and stores it at the location of dst.
      *
      * @param   pid         The processor ID.
      * @param   src         Source to read the buffer from.
@@ -558,7 +558,7 @@ public:
      * * Begin has been called.
      * * src != nullptr.
      * * dst != nullptr.
-     * * PushReg has been called on dst with at leas size offset + nbytes in the processor with ID pid.
+     * * Push has been called on src with at leas size offset + nbytes in the processor with ID pid.
      * * A Sync has happened between PushReg and this call.
      */
 

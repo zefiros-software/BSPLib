@@ -2,46 +2,69 @@
 
 ```cpp
 template< typename tPrimitive >
-void BSPLib::GetPtrs( uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcCursor, 
-              tPrimitive *resultBegin, tPrimitive *resultEnd )          // (4) Pointers
-
-template< typename tPrimitive >
 void BSPLib::GetPtrs( uint32_t pid, tPrimitive *srcBegin, size_t offset,
-              tPrimitive *resultBegin, size_t count )                       // (1) 
+              tPrimitive *resultBegin, size_t count )           // (1) Begin-Offset-Count
+              
+template< typename tPrimitive >
+void BSPLib::GetPtrs( uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcCursor, 
+              tPrimitive *resultBegin, tPrimitive *resultEnd )  // (2) Begin-End-Cursor
 
 template< typename tPrimitive >
-void BSPLib::GetPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *cursor,
-              tPrimitive *end )                                             // (2)
+void BSPLib::GetPtrs( uint32_t pid, tPrimitive *begin,
+                      tPrimitive *cursor, tPrimitive *end ) // (3) Same Begin-End-Cursor
 
 template< typename tPrimitive >
-void BSPLib::GetPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *end )    // (3)
+void BSPLib::GetPtrs( uint32_t pid, tPrimitive *begin, 
+                      tPrimitive *end )                     // (4) Same Begin-End
 
 template< typename tPrimitive >
-void BSPLib::GetPtrs( uint32_t pid, tPrimitive *begin, size_t offset,
-                      size_t count )                                        // (4)
+void BSPLib::GetPtrs( uint32_t pid, tPrimitive *begin,
+                      size_t offset, size_t count )         // (5) Same Begin-Offset-Count
 
 template< typename tPrimitive >
-void BSPLib::GetPtrs( uint32_t pid, tPrimitive *begin, size_t count )       // (5)
+void BSPLib::GetPtrs( uint32_t pid, tPrimitive *begin,
+                      size_t count )                        // (6) Same Begin-Count
 ```
 
-Retrieves a buffer of size `count`, starting at `begin`
+Gets a buffer of size `count` primitives from source pointer `srcBegin` that is located in the processor with ID `pid` at offset `offset` 
+primitives from source pointer `src` and stores it at the location of `dstBegin`.
 
-1. Modern interface of the classic BSP function.
+1. Gets a buffer of size `count` primitives from source pointer `srcBegin` that is located in the processor with ID `pid` at offset `offset` 
+   primitives from source pointer `src` and stores it at the location of `dstBegin`.
+2. Uses `resultBegin` and `resultEnd` pointers to calculate the number of primitives `count`, and uses `srcCursor` instead of `offset`
+   to determine the offset it needs to start reading from.
+3. The same as (1), but now, it uses `begin` as `srcBegin`, `cursor` as both `srcCursor` and `resultBegin`, and `end` as `resultEnd`.
+   It stores the values in the same location as they were located in the other processor.
+4. The same as (3), but now `begin` is used as both `begin` and `cursor`. It copies the entire range from `begin` to `end` from the
+   processor with ID `pid` to the same location in the current processor.
+5. The same as (3), with the behaviour: `cursor = begin + offset` and `end = begin + offset + count`.
+6. The same as (5), with the behaviour: `offset = 0`.
 
 !!! danger "Warnings"
-     * In case of (4), the std::string must not be resized.
+     * `std::string` is not assumed to be a primitive in this case, although it was in [`BSPLib::Get()`](getPrimitive.md).
 
 
 #Parameters
 
-* `ident` The address to register.
+* `srcBegin` Pointer to the begin of the information in the other processor.
+* `offset` Offset from the source `srcBegin` in number of primitives to start reading from.
+* `resultBegin` Pointer to the destination for the information in the current processor.
+* `count` Number of primitives to read.
+* `srcCursor` Other method to determine `offset`. The behaviour is the same as taking `offset = srcCursor - srcBegin`.
+* `resultEnd` Other method to determine `count`. The behaviour is the same as taking `count = resultEnd - resultBegin`.
+* `begin` Pointer to the begin of the information in both the processors.
+* `cursor` Cursor to start reading from in the other processor, and to start writing to in the current processor.
+* `end` End of the information block to get.
 
 #Pre-Conditions
-* [`BSPLib::Classic::Begin()`](../logic/begin.md) has been called.
+* [`BSPLib::Begin()`](../logic/begin.md) has been called.
+* None of the pointers `srcBegin`, `resultBegin`, `srcCursor`, `begin`, `cursor` and `end` is allowed to be `nullptr`. 
+* [`BSPLib::Push()`](../regdereg/push.md) has been called on `srcBegin` or `begin` with at leas size `offset + nbytes` in the processor with ID `pid`.
+* A [`BSPLib::Sync()`](../sync/sync.md) has happened between [`BSPLig::Push()`](../regdereg/push.md) and this call.
 
 #Post-Conditions
-* Push request has been queued.
-* In the next superstep, this register will be available for [`BSPLib::Put()`](../com/put.md)/[`BSPLib::Get()`](../com/get.md).
+* Get request has been queued.
+* In the next superstep, the destination in the current processor will have the copied value from the source in the other processor.
      
 #Examples
 
