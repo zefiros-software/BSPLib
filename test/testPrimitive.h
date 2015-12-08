@@ -308,6 +308,38 @@ void SendPrimitiveTest()
 }
 
 template< int32_t tOffset, typename tPrimitive >
+void SendPrimitiveOverloadTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    tPrimitive message = ( tPrimitive )s + 1;
+    tPrimitive mailbox = ( tPrimitive )s;
+
+    tPrimitive expectedMail = ( tPrimitive )sReceive + 1;
+
+    uint32_t tag = s;
+    size_t status = 0;
+
+    BSPLib::SetTagsize< size_t >();
+
+    BSPLib::Sync();
+
+    BSPLib::Send( sSend, &tag, message );
+
+    BSPLib::Sync();
+
+    BSPLib::GetTagPtr( status, &tag );
+    BSPLib::Move( mailbox );
+
+    EXPECT_EQ( sReceive, tag );
+    EXPECT_EQ( expectedMail, mailbox );
+}
+
+template< int32_t tOffset, typename tPrimitive >
 void SendPrimitiveFPTest()
 {
     uint32_t s = BSPLib::ProcId();
@@ -360,6 +392,108 @@ void SendPrimitiveStringTest()
     mailbox.resize( size );
 
     BSPLib::Move( mailbox );
+
+    EXPECT_EQ( expectedMail, mailbox );
+}
+
+template< int32_t tOffset >
+void SendPrimitiveStringOverloadTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    std::string message = std::to_string( s + 1 );
+    std::string mailbox = std::to_string( s );
+
+    std::string expectedMail = std::to_string( sReceive + 1 );
+    size_t size = message.size();
+
+    BSPLib::SetTagsize< size_t >();
+
+    BSPLib::Sync();
+
+    BSPLib::Send( sSend, &size, message );
+
+    BSPLib::Sync();
+
+    size_t status;
+
+    BSPLib::GetTagPtr( status, &size );
+
+    mailbox.resize( size );
+
+    BSPLib::Move( mailbox );
+
+    EXPECT_EQ( expectedMail, mailbox );
+}
+
+template< int32_t tOffset >
+void SendPrimitiveStringOverloadTest2()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    std::string message = std::to_string( s + 1 );
+    std::string mailbox = std::to_string( s );
+
+    std::string expectedMail = std::to_string( sReceive + 1 );
+    size_t size = message.size();
+
+    BSPLib::Send( sSend, message );
+
+    BSPLib::Sync();
+
+    BSPLib::GetTagPtr( size, &size );
+
+    mailbox.resize( size );
+
+    BSPLib::Move( mailbox );
+
+    EXPECT_EQ( expectedMail, mailbox );
+}
+
+template< int32_t tOffset, size_t tCount >
+void SendPrimitiveStringOverloadTest3()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    std::string message = std::to_string( s + 1 );
+    std::string mailbox = std::to_string( s );
+
+    std::string expectedMail = std::to_string( sReceive + 1 );
+    size_t size = message.size();
+
+    uint32_t tag[tCount];
+    std::fill_n( tag, tCount, s );
+
+    BSPLib::SetTagsize< uint32_t >( tCount );
+
+    BSPLib::Sync();
+
+    BSPLib::SendWithCArray( sSend, tag, message );
+
+    BSPLib::Sync();
+
+    BSPLib::GetTagCArray( size, tag );
+
+    mailbox.resize( size );
+
+    BSPLib::Move( mailbox );
+
+    for ( size_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( sReceive, tag[i] );
+    }
 
     EXPECT_EQ( expectedMail, mailbox );
 }
@@ -647,6 +781,12 @@ BspTest2( Primitive, 8, SendPrimitiveTest, 7, uint64_t );
 BspTest2( Primitive, 16, SendPrimitiveTest, 5, uint64_t );
 BspTest2( Primitive, 32, SendPrimitiveTest, 13, uint64_t );
 
+BspTest2( Primitive, 2, SendPrimitiveOverloadTest, 1, uint8_t );
+BspTest2( Primitive, 4, SendPrimitiveOverloadTest, 3, uint8_t );
+BspTest2( Primitive, 8, SendPrimitiveOverloadTest, 7, uint8_t );
+BspTest2( Primitive, 16, SendPrimitiveOverloadTest, 5, uint8_t );
+BspTest2( Primitive, 32, SendPrimitiveOverloadTest, 13, uint8_t );
+
 BspTest2( Primitive, 2, SendPrimitiveFPTest, 1, float );
 BspTest2( Primitive, 4, SendPrimitiveFPTest, 3, float );
 BspTest2( Primitive, 8, SendPrimitiveFPTest, 7, float );
@@ -663,6 +803,29 @@ BspTest1( Primitive, 4, SendPrimitiveStringTest, 3 );
 BspTest1( Primitive, 8, SendPrimitiveStringTest, 7 );
 BspTest1( Primitive, 16, SendPrimitiveStringTest, 5 );
 BspTest1( Primitive, 32, SendPrimitiveStringTest, 13 );
+
+BspTest1( Primitive, 2, SendPrimitiveStringOverloadTest, 1 );
+BspTest1( Primitive, 4, SendPrimitiveStringOverloadTest, 3 );
+BspTest1( Primitive, 8, SendPrimitiveStringOverloadTest, 7 );
+BspTest1( Primitive, 16, SendPrimitiveStringOverloadTest, 5 );
+BspTest1( Primitive, 32, SendPrimitiveStringOverloadTest, 13 );
+
+BspTest1( Primitive, 2, SendPrimitiveStringOverloadTest2, 1 );
+BspTest1( Primitive, 4, SendPrimitiveStringOverloadTest2, 3 );
+BspTest1( Primitive, 8, SendPrimitiveStringOverloadTest2, 7 );
+BspTest1( Primitive, 16, SendPrimitiveStringOverloadTest2, 5 );
+BspTest1( Primitive, 32, SendPrimitiveStringOverloadTest2, 13 );
+
+BspTest2( Primitive, 2, SendPrimitiveStringOverloadTest3, 1, 20 );
+BspTest2( Primitive, 4, SendPrimitiveStringOverloadTest3, 3, 20 );
+BspTest2( Primitive, 8, SendPrimitiveStringOverloadTest3, 7, 20 );
+BspTest2( Primitive, 16, SendPrimitiveStringOverloadTest3, 5, 20 );
+BspTest2( Primitive, 32, SendPrimitiveStringOverloadTest3, 13, 20 );
+BspTest2( Primitive, 2, SendPrimitiveStringOverloadTest3, 1, 50 );
+BspTest2( Primitive, 4, SendPrimitiveStringOverloadTest3, 3, 50 );
+BspTest2( Primitive, 8, SendPrimitiveStringOverloadTest3, 7, 50 );
+BspTest2( Primitive, 16, SendPrimitiveStringOverloadTest3, 5, 50 );
+BspTest2( Primitive, 32, SendPrimitiveStringOverloadTest3, 13, 50 );
 
 
 

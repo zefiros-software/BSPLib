@@ -847,11 +847,13 @@ namespace BSPLib
     {
         SendPtrs( pid, tag, payload.data(), payload.size() );
     }
+
     template< typename tPrimitive, typename tTag >
     void Send( uint32_t pid, tTag *tag, const tPrimitive &payload )
     {
         SendPtrs( pid, tag, &payload, 1 );
     }
+
     template< typename tTag >
     void Send( uint32_t pid, tTag *tag, const std::string &payload )
     {
