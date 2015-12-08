@@ -17,7 +17,7 @@ template < typename tIterator>
 void BSPLib::PopIterator( tIterator beginIt )               // (6) Iterator
 
 template< typename tPrimitive, size_t tSize >
-void BSPLib::PopCArray( tPrimitive( &container )[tSize] )   // (7) C-Array
+void BSPLib::PopCArray( tPrimitive( &cArray )[tSize] )      // (7) C-Array
 
 template< typename tContainer >
 void BSPLib::PopContainer( tContainer &container )          // (8) Container
@@ -64,7 +64,13 @@ the BSP program.
 
 #Parameters
 
-* `ident` The buffer pointer to register.
+* `ident` The address to deregister.
+* `identRef` Reference to the variable to deregister.
+* `stringRef` Reference to the string to deregiser.
+* `begin` Begin of the address space to deregister.
+* `beginIt` Iterator describing the begin of the address space to deregister.
+* `cArray` C-Array of which we deregister all addresses.
+* `container` Container of which we deregister all addresses.
 
 #Pre-Conditions
 * [`BSPLib::Classic::Begin()`](../logic/begin.md) has been called.

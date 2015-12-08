@@ -58,7 +58,7 @@ the BSP program.
 !!! danger "Warnings"
      * In case of (4), the std::string must not be resized. If a resize is absolutely
        necessary, it should be done before pushing the register, or after popping the
-       register. Also, make sure the processes agree on the size beforehand.
+       register. Also, make sure the processors agree on the size beforehand.
      * In case of (7), (8) and (10), make sure the iterators describe contiguous memory, 
        and are not invalidated (due to resizes).
      * When `BSPLib::Push()` is called after `BSPLib::Pop()`, the register that has
