@@ -933,7 +933,7 @@ void SendCArrayOverloadTest3()
 
     BSPLib::Sync();
 
-    BSPLib::SendCArray( sSend, tag, message );
+    BSPLib::SendCArrayWithCArray( sSend, tag, message );
 
     BSPLib::Sync();
 
