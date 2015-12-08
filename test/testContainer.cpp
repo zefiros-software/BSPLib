@@ -46,13 +46,44 @@ void PutVectorTest()
     BSPLib::Sync();
 
     BSPLib::PutContainer( sTarget, container, result );
-    BSPLib::PopContainer( container );
+    BSPLib::PopContainer( result );
 
     BSPLib::Sync();
 
     for ( uint32_t i = 0; i < tCount; ++i )
     {
         EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), result[i] );
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset >
+void PutVectorOverloadTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sTarget = ( s + tOffset + nProc ) % nProc;
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    std::vector< tPrimitive > container( tCount );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    BSPLib::PushContainer( container );
+
+    BSPLib::Sync();
+
+    BSPLib::PutContainer( sTarget, container );
+    BSPLib::PopContainer( container );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), container[i] );
     }
 }
 
@@ -79,7 +110,7 @@ void PutFPVectorTest()
     BSPLib::Sync();
 
     BSPLib::PutContainer( sTarget, container, result );
-    BSPLib::PopContainer( container );
+    BSPLib::PopContainer( result );
 
     BSPLib::Sync();
 
@@ -113,7 +144,7 @@ void PutStdArrayTest()
     BSPLib::Sync();
 
     BSPLib::PutContainer( sTarget, container, result );
-    BSPLib::PopContainer( container );
+    BSPLib::PopContainer( result );
 
     BSPLib::Sync();
 
@@ -147,7 +178,7 @@ void PutFPStdArrayTest()
     BSPLib::Sync();
 
     BSPLib::PutContainer( sTarget, container, result );
-    BSPLib::PopContainer( container );
+    BSPLib::PopContainer( result );
 
     BSPLib::Sync();
 
@@ -181,13 +212,44 @@ void PutCArrayTest()
     BSPLib::Sync();
 
     BSPLib::PutCArray( sTarget, container, result );
-    BSPLib::PopCArray( container );
+    BSPLib::PopCArray( result );
 
     BSPLib::Sync();
 
     for ( uint32_t i = 0; i < tCount; ++i )
     {
         EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), result[i] );
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset >
+void PutCArrayOverloadTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sTarget = ( s + tOffset + nProc ) % nProc;
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    tPrimitive container[tCount];
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    BSPLib::PushCArray( container );
+
+    BSPLib::Sync();
+
+    BSPLib::PutCArray( sTarget, container );
+    BSPLib::PopCArray( container );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), container[i] );
     }
 }
 
@@ -215,7 +277,7 @@ void PutFPCArrayTest()
     BSPLib::Sync();
 
     BSPLib::PutCArray( sTarget, container, result );
-    BSPLib::PopCArray( container );
+    BSPLib::PopCArray( result );
 
     BSPLib::Sync();
 
@@ -227,6 +289,38 @@ void PutFPCArrayTest()
 
 template< typename tPrimitive, uint32_t tCount, int32_t tOffset >
 void GetVectorTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    std::vector< tPrimitive > container( tCount );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    std::vector< tPrimitive > result( tCount, ( tPrimitive )s );
+
+    BSPLib::PushContainer( container );
+
+    BSPLib::Sync();
+
+    BSPLib::GetContainer( sSource, container, result );
+    BSPLib::PopContainer( container );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), result[i] );
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset >
+void GetVectorOverloadTest()
 {
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
@@ -389,6 +483,36 @@ void GetCArrayTest()
 }
 
 template< typename tPrimitive, uint32_t tCount, int32_t tOffset >
+void GetCArrayOverloadTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+
+    tPrimitive container[tCount];
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        container[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    BSPLib::PushCArray( container );
+
+    BSPLib::Sync();
+
+    BSPLib::GetCArray( sSource, container );
+    BSPLib::PopCArray( container );
+
+    BSPLib::Sync();
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sSource + 1 + i ), container[i] );
+    }
+}
+
+template< typename tPrimitive, uint32_t tCount, int32_t tOffset >
 void GetFPCArrayTest()
 {
     uint32_t s = BSPLib::ProcId();
@@ -441,6 +565,133 @@ void SendVectorTest()
     BSPLib::SendContainer( sSend, message );
 
     BSPLib::Sync();
+
+    BSPLib::MoveContainer( mailbox );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sReceive + 1 + i ), mailbox[i] );
+    }
+}
+
+template< typename tPrimitive, int32_t tCount, int32_t tOffset >
+void SendVectorOverloadTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    std::vector< tPrimitive > message( tCount );
+    std::vector< tPrimitive > mailbox( tCount, ( tPrimitive )s );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        message[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    uint32_t tag = s;
+
+    BSPLib::SetTagsize< uint32_t >();
+
+    BSPLib::Sync();
+
+    BSPLib::SendContainer( sSend, tag, message );
+
+    BSPLib::Sync();
+
+    size_t status = 0;
+
+    BSPLib::GetTag( status, tag );
+
+    EXPECT_EQ( sReceive, tag );
+
+    BSPLib::MoveContainer( mailbox );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sReceive + 1 + i ), mailbox[i] );
+    }
+}
+
+template< typename tPrimitive, int32_t tCount, int32_t tOffset >
+void SendVectorOverloadTest2()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    std::vector< tPrimitive > message( tCount );
+    std::vector< tPrimitive > mailbox( tCount, ( tPrimitive )s );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        message[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    uint32_t tag = s;
+
+    BSPLib::SetTagsize< uint32_t >();
+
+    BSPLib::Sync();
+
+    BSPLib::SendContainer( sSend, &tag, message );
+
+    BSPLib::Sync();
+
+    size_t status = 0;
+
+    BSPLib::GetTag( status, tag );
+
+    EXPECT_EQ( sReceive, tag );
+
+    BSPLib::MoveContainer( mailbox );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sReceive + 1 + i ), mailbox[i] );
+    }
+}
+
+template< typename tPrimitive, int32_t tCount, int32_t tOffset >
+void SendVectorOverloadTest3()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    std::vector< tPrimitive > message( tCount );
+    std::vector< tPrimitive > mailbox( tCount, ( tPrimitive )s );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        message[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    uint32_t tag[tCount];
+    std::fill_n( tag, tCount, s );
+
+    BSPLib::SetTagsize< uint32_t >( tCount );
+
+    BSPLib::Sync();
+
+    BSPLib::SendContainerWithCArray( sSend, tag, message );
+
+    BSPLib::Sync();
+
+    size_t status = 0;
+
+    BSPLib::GetTagCArray( status, tag );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( sReceive, tag[i] );
+    }
 
     BSPLib::MoveContainer( mailbox );
 
@@ -563,6 +814,136 @@ void SendCArrayTest()
     BSPLib::SendCArray( sSend, message );
 
     BSPLib::Sync();
+
+    BSPLib::MoveCArray( mailbox );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sReceive + 1 + i ), mailbox[i] );
+    }
+}
+
+template< typename tPrimitive, int32_t tCount, int32_t tOffset >
+void SendCArrayOverloadTest()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    tPrimitive message[tCount];
+    tPrimitive mailbox[tCount];
+
+    std::fill_n( mailbox, tCount, ( tPrimitive )s );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        message[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    uint32_t tag = s;
+
+    BSPLib::SetTagsize< uint32_t >();
+
+    BSPLib::Sync();
+
+    BSPLib::SendCArray( sSend, tag, message );
+
+    BSPLib::Sync();
+
+    size_t status;
+    BSPLib::GetTag( status, tag );
+
+    EXPECT_EQ( sReceive, tag );
+
+    BSPLib::MoveCArray( mailbox );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sReceive + 1 + i ), mailbox[i] );
+    }
+}
+
+template< typename tPrimitive, int32_t tCount, int32_t tOffset >
+void SendCArrayOverloadTest2()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    tPrimitive message[tCount];
+    tPrimitive mailbox[tCount];
+
+    std::fill_n( mailbox, tCount, ( tPrimitive )s );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        message[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    uint32_t tag = s;
+
+    BSPLib::SetTagsize< uint32_t >();
+
+    BSPLib::Sync();
+
+    BSPLib::SendCArray( sSend, &tag, message );
+
+    BSPLib::Sync();
+
+    size_t status;
+    BSPLib::GetTag( status, tag );
+
+    EXPECT_EQ( sReceive, tag );
+
+    BSPLib::MoveCArray( mailbox );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( ( tPrimitive )( sReceive + 1 + i ), mailbox[i] );
+    }
+}
+
+template< typename tPrimitive, int32_t tCount, int32_t tOffset >
+void SendCArrayOverloadTest3()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+
+    tPrimitive message[tCount];
+    tPrimitive mailbox[tCount];
+
+    std::fill_n( mailbox, tCount, ( tPrimitive )s );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        message[i] = ( tPrimitive )( s + 1 + i );
+    }
+
+    uint32_t tag[tCount];
+    std::fill_n( tag, tCount, s );
+
+    BSPLib::SetTagsize< uint32_t >( tCount );
+
+    BSPLib::Sync();
+
+    BSPLib::SendCArray( sSend, tag, message );
+
+    BSPLib::Sync();
+
+    size_t status;
+    BSPLib::GetTag( status, tag );
+
+    for ( uint32_t i = 0; i < tCount; ++i )
+    {
+        EXPECT_EQ( sReceive, tag[i] );
+    }
 
     BSPLib::MoveCArray( mailbox );
 
@@ -913,6 +1294,8 @@ BspTest3( Container, 32, PutVectorTest, uint64_t, 50, 27 );
 
 BspTest3( Container, 32, PutVectorTest, uint64_t, 1000, 27 );
 
+BspTest3( Container, 32, PutVectorOverloadTest, uint64_t, 1000, 27 );
+
 #ifndef DEBUG
 BspTest3( Container, 32, PutVectorTest, uint64_t, 10000, 27 );
 #endif
@@ -1013,6 +1396,8 @@ BspTest3( Container, 32, PutCArrayTest, uint64_t, 50, 27 );
 
 BspTest3( Container, 32, PutCArrayTest, uint64_t, 1000, 27 );
 
+BspTest3( Container, 32, PutCArrayOverloadTest, uint64_t, 1000, 27 );
+
 #ifndef DEBUG
 BspTest3( Container, 32, PutCArrayTest, uint64_t, 10000, 27 );
 #endif
@@ -1067,6 +1452,8 @@ BspTest3( Container, 16, GetVectorTest, uint64_t, 50, 5 );
 BspTest3( Container, 32, GetVectorTest, uint64_t, 50, 27 );
 
 BspTest3( Container, 32, GetVectorTest, uint64_t, 1000, 27 );
+
+BspTest3( Container, 32, GetVectorOverloadTest, uint64_t, 1000, 27 );
 
 #ifndef DEBUG
 BspTest3( Container, 32, GetVectorTest, uint64_t, 10000, 27 );
@@ -1168,6 +1555,8 @@ BspTest3( Container, 32, GetCArrayTest, uint64_t, 50, 27 );
 
 BspTest3( Container, 32, GetCArrayTest, uint64_t, 1000, 27 );
 
+BspTest3( Container, 32, GetCArrayOverloadTest, uint64_t, 1000, 27 );
+
 #ifndef DEBUG
 BspTest3( Container, 32, GetCArrayTest, uint64_t, 10000, 27 );
 #endif
@@ -1222,6 +1611,10 @@ BspTest3( Container, 16, SendVectorTest, uint64_t, 50, 5 );
 BspTest3( Container, 32, SendVectorTest, uint64_t, 50, 27 );
 
 BspTest3( Container, 32, SendVectorTest, uint64_t, 1000, 27 );
+
+BspTest3( Container, 32, SendVectorOverloadTest, uint64_t, 1000, 27 );
+BspTest3( Container, 32, SendVectorOverloadTest2, uint64_t, 1000, 27 );
+BspTest3( Container, 32, SendVectorOverloadTest3, uint64_t, 1000, 27 );
 
 #ifndef DEBUG
 BspTest3( Container, 32, SendVectorTest, uint64_t, 10000, 27 );
@@ -1322,6 +1715,10 @@ BspTest3( Container, 16, SendCArrayTest, uint64_t, 50, 5 );
 BspTest3( Container, 32, SendCArrayTest, uint64_t, 50, 27 );
 
 BspTest3( Container, 32, SendCArrayTest, uint64_t, 1000, 27 );
+
+BspTest3( Container, 32, SendCArrayOverloadTest, uint64_t, 1000, 27 );
+BspTest3( Container, 32, SendCArrayOverloadTest2, uint64_t, 1000, 27 );
+BspTest3( Container, 32, SendCArrayOverloadTest3, uint64_t, 1000, 27 );
 
 #ifndef DEBUG
 BspTest3( Container, 32, SendCArrayTest, uint64_t, 10000, 27 );

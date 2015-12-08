@@ -586,7 +586,7 @@ namespace BSPLib
     template< typename tIterator >
     void SendIterator( uint32_t pid, tIterator begin, tIterator end )
     {
-        SendIterator( pid, begin, end - begin );
+        SendIterator( pid, begin, ( uint32_t )( end - begin ) );
     }
 
     template< typename tIterator >
