@@ -103,12 +103,12 @@ were some alternatives.
 ### BSPLib vs BSPonMPI
 * BSPLib is headeronly, whilst BSPonMPI requires linking.
 * BSPLib uses a permissive license (MIT), whereas BSPonMPI uses (LGPL).
-* BSPonMPI is based on MPI, so it uses another abstraction layer, whereas BSPLIb uses a low level
+* BSPonMPI is based on MPI, so it uses another abstraction layer, whereas BSPLib uses a low level
   threading interface.
 * BSPonMPI programs will compile faster.
 
 ## Bugs
-When a bug is found please insert it in the issue tracker, so we can resolve it as quickly as we can.
+When a bug is found, please insert it in the issue tracker, so we can resolve it as quickly as we can.
 
 ## Contributing
 1. Fork it!
@@ -123,7 +123,7 @@ When a bug is found please insert it in the issue tracker, so we can resolve it 
 * Koen Visscher <koen.visscher@zefiros.eu>
 
 ## Used By
-We are interested to find out what projects use BSPLib. We would love it to include your projects here, 
+We are interested to find out what projects use BSPLib. We would love to include your projects here, 
 just shoot us a mail. :)
 
 ## License
