@@ -43,6 +43,11 @@ pages:
 - Messaging:
 
     - 'Send Memory': 'messaging/send.md'
+    - 'Send Memory - Primitives' : 'messaging/sendPrimitive.md'
+    - 'Send Memory - Iterators' : 'messaging/sendIterator.md'
+    - 'Send Memory - Containers' : 'messaging/sendContainer.md'
+    - 'Send Memory - Pointers - Primitives' : 'messaging/sendPtrs.md'
+    - 'Send Memory - Pointers - Containers' : 'messaging/sendTagContainer.md'
     - 'Move Memory': 'messaging/move.md'
     - 'Get Queue Size': 'messaging/qsize.md'
 
