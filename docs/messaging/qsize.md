@@ -2,7 +2,7 @@
 
 ```cpp
 void BSPLib::Classic::QSize( size_t *packets, size_t *accumulatedSize ) // (1) Classic
-void bsp_begin( size_t *packets, size_t *accumulatedSize )              // (2) Legacy
+void bsp_qsize( size_t *packets, size_t *accumulatedSize )              // (2) Legacy
 
 void BSPLib::QSize( size_t &packetsRef )                                // (3) Reference
 void BSPLib::QSize( size_t &packetsRef, size_t &accumulatedSizeRef )    // (4) References
