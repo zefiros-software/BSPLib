@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __UTIL_H__
-#define __UTIL_H__
+#ifndef __BSPLIB_UTIL_H__
+#define __BSPLIB_UTIL_H__
 
 // From boost. Forces inlining on multiple compilers for extra perfomance.
 #if !defined(BSP_FORCEINLINE)
@@ -32,6 +32,18 @@
 #    define BSP_FORCEINLINE inline __attribute__ ((__always_inline__))
 #  else
 #    define BSP_FORCEINLINE inline
+#  endif
+#endif
+
+
+#if !defined(BSP_TLS)
+#  if defined(_MSC_VER)
+#    define BSP_TLS __declspec(thread)
+#  elif defined(__GNUC__) && __GNUC__ > 3
+// Clang also defines __GNUC__ (as 4)
+#    define BSP_TLS __thread
+#  else
+#    error "Define a thread local storage qualifier for your compiler/platform!"
 #  endif
 #endif
 

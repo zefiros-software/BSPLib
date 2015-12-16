@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __REQUESTS_H__
-#define __REQUESTS_H__
+#ifndef __BSPLIB_REQUESTS_H__
+#define __BSPLIB_REQUESTS_H__
 
 #include "bsp/stackAllocator.h"
 
