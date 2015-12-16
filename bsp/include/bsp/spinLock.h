@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __SPINLOCK_H__
-#define __SPINLOCK_H__
+#ifndef __BSPLIB_SPINLOCK_H__
+#define __BSPLIB_SPINLOCK_H__
 
 #include <atomic>
 
