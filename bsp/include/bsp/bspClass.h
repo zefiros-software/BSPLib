@@ -166,7 +166,7 @@ public:
     BSP_FORCEINLINE uint32_t &ProcId()
     {
         //static thread_local uint32_t gPID = 0xdeadbeef;
-        BSP_TLS static uint32_t gPID = 0xdeadbeef;
+        static BSP_TLS uint32_t gPID = 0xdeadbeef;
         
         return gPID;
     }
