@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __CONDVARBARRIER_H__
-#define __CONDVARBARRIER_H__
+#ifndef __BSPLIB_CONDVARBARRIER_H__
+#define __BSPLIB_CONDVARBARRIER_H__
 
 #include "bsp/bspAbort.h"
 

@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __BSPCLASS_H__
-#define __BSPCLASS_H__
+#ifndef __BSPLIB_BSPCLASS_H__
+#define __BSPLIB_BSPCLASS_H__
 
 #include "bsp/communicationQueues.h"
 #include "bsp/condVarBarrier.h"
@@ -165,8 +165,9 @@ public:
 
     BSP_FORCEINLINE uint32_t &ProcId()
     {
-        static thread_local uint32_t gPID = 0xdeadbeef;
-
+        //static thread_local uint32_t gPID = 0xdeadbeef;
+        static BSP_TLS uint32_t gPID = 0xdeadbeef;
+        
         return gPID;
     }
 
