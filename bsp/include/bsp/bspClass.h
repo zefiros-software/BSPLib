@@ -168,7 +168,7 @@ public:
     {
         //static thread_local uint32_t gPID = 0xdeadbeef;
         static BSP_TLS uint32_t gPID = 0xdeadbeef;
-        
+
         return gPID;
     }
 
@@ -313,10 +313,10 @@ public:
         mEnded = false;
         mProcCount = maxProcs;
 
-        ResetChangedBooleans();
-
         mProcessorsData.clear();
         mProcessorsData.resize( maxProcs );
+
+        ResetChangedBooleans();
 
         mPutRequests.ResetResize( maxProcs );
 
@@ -395,14 +395,24 @@ public:
         CheckAborted();
 
         uint32_t &pid = ProcId();
+        const size_t index = mProcessorsData[ProcId()].syncBoolIndex;
+
+        mProcessorsData[ProcId()].syncBoolIndex = 1 - index;
+
+        assert( index == 1 || index == 0 );
+
+        if ( pid == 0 )
+        {
+            ResetChangedBooleans();
+        }
 
         SyncPoint();
 
-        const bool registersChanged = mRegistersChanged;
-        const bool tagSizeChanged = mTagSizeChanged;
-        const bool hasGetRequests = mHasGetRequests;
-        const bool hasPutRequests = hasGetRequests || mHasPutRequests;
-        const bool hasSendRequests = mHasSendRequests;
+        const bool registersChanged = mRegistersChanged[index];
+        const bool tagSizeChanged = mTagSizeChanged[index];
+        const bool hasGetRequests = mHasGetRequests[index];
+        const bool hasPutRequests = hasGetRequests || mHasPutRequests[index];
+        const bool hasSendRequests = mHasSendRequests[index];
 
         if ( tagSizeChanged && pid == 0 && mProcessorsData[0].newTagSize != mTagSize )
         {
@@ -449,12 +459,7 @@ public:
             ProcessPushRequests( pid );
         }
 
-        SyncPoint();
-
-        if ( !pid )
-        {
-            ResetChangedBooleans();
-        }
+        //SyncPoint();
     }
 
     /**
@@ -472,9 +477,8 @@ public:
 
     BSP_FORCEINLINE void PushReg( const void *ident, size_t size )
     {
-        mRegistersChanged = true;
-
         uint32_t &pid = ProcId();
+        mRegistersChanged[mProcessorsData[pid].syncBoolIndex] = true;
 
 #ifndef BSP_SKIP_CHECKS
         assert( pid < mProcCount );
@@ -498,9 +502,8 @@ public:
 
     void PopReg( const void *ident )
     {
-        mRegistersChanged = true;
-
         uint32_t &pid = ProcId();
+        mRegistersChanged[mProcessorsData[pid].syncBoolIndex] = true;
 
 #ifndef BSP_SKIP_CHECKS
         assert( pid < mProcCount );
@@ -530,8 +533,8 @@ public:
 
     BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
     {
-        mHasPutRequests = true;
         uint32_t &tpid = ProcId();
+        mHasPutRequests[mProcessorsData[tpid].syncBoolIndex] = true;
 
 #ifndef BSP_SKIP_CHECKS
         assert( tpid < mProcCount );
@@ -546,7 +549,6 @@ public:
         assert( mProcessorsData[pid].threadRegisterLocation.size() > globalId );
 
         /*mThreadRegisterLocation[pid][globalId]*/
-        assert( mProcessorsData[pid].registers.find( GlobalToLocal( pid, globalId ) ) != mProcessorsData[pid].registers.end() );
         assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
@@ -576,8 +578,8 @@ public:
 
     BSP_FORCEINLINE void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
     {
-        mHasGetRequests = true;
         uint32_t &tpid = ProcId();
+        mHasGetRequests[mProcessorsData[tpid].syncBoolIndex] = true;
 
 #ifndef BSP_SKIP_CHECKS
         assert( tpid < mProcCount );
@@ -589,13 +591,10 @@ public:
 
 #ifndef BSP_SKIP_CHECKS
         assert( mProcessorsData[pid].threadRegisterLocation.size() > globalId );
-
-        // mThreadRegisterLocation[pid][globalId]
-        assert( mProcessorsData[pid].registers.find( GlobalToLocal( pid, globalId ) ) != mProcessorsData[pid].registers.end() );
         assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
-        const char *srcBuff = reinterpret_cast<const char *>( mProcessorsData[pid].threadRegisterLocation[globalId] );
+        const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
 
         mGetRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::GetRequest{ dst, srcBuff + offset, nbytes } );
     }
@@ -615,8 +614,8 @@ public:
 
     BSP_FORCEINLINE void Send( uint32_t pid, const void *tag, const void *payload, const size_t size )
     {
-        mHasSendRequests = true;
         uint32_t &tpid = ProcId();
+        mHasSendRequests[mProcessorsData[tpid].syncBoolIndex] = true;
 
 #ifndef BSP_SKIP_CHECKS
         assert( pid < mProcCount );
@@ -654,7 +653,6 @@ public:
 
     BSP_FORCEINLINE void Move( void *payload, size_t max_copy_size_in )
     {
-        mHasSendRequests = true;
         uint32_t &pid = ProcId();
         ProcessorData &data = mProcessorsData[pid];
 
@@ -683,11 +681,12 @@ public:
 
     BSP_FORCEINLINE void SetTagsize( size_t *size )
     {
-        mTagSizeChanged = true;
+        uint32_t &pid = ProcId();
+        mTagSizeChanged[mProcessorsData[pid].syncBoolIndex] = true;
         assert( size );
         const size_t newSize = *size;
         *size = mTagSize;
-        mProcessorsData[ProcId()].newTagSize = newSize;
+        mProcessorsData[pid].newTagSize = newSize;
     }
 
     /**
@@ -766,7 +765,8 @@ private:
               pushRequestsSize( 0 ),
               popRequestsSize( 0 ),
               putBufferStack( 9064 ),
-              sendBuffers( 9064 )
+              sendBuffers( 9064 ),
+              syncBoolIndex( 0 )
         {
             sendRequests.reserve( 9064 );
             pushRequests.reserve( 9064 );
@@ -779,6 +779,7 @@ private:
         size_t sendRequestsSize;
         size_t pushRequestsSize;
         size_t popRequestsSize;
+        size_t syncBoolIndex;
         BspInternal::StackAllocator putBufferStack;
         BspInternal::StackAllocator sendBuffers;
         std::chrono::time_point< std::chrono::high_resolution_clock > startTime;
@@ -804,11 +805,11 @@ private:
     uint32_t mProcCount;
     std::atomic_size_t mTagSize;
 
-    volatile bool mRegistersChanged;
-    volatile bool mTagSizeChanged;
-    volatile bool mHasGetRequests;
-    volatile bool mHasPutRequests;
-    volatile bool mHasSendRequests;
+    volatile bool mRegistersChanged[2];
+    volatile bool mTagSizeChanged[2];
+    volatile bool mHasGetRequests[2];
+    volatile bool mHasPutRequests[2];
+    volatile bool mHasSendRequests[2];
 
     bool mEnded;
     std::atomic_bool mAbort;
@@ -824,11 +825,12 @@ private:
 
     void ResetChangedBooleans()
     {
-        mRegistersChanged = false;
-        mTagSizeChanged = false;
-        mHasGetRequests = false;
-        mHasPutRequests = false;
-        mHasSendRequests = false;
+        const size_t index = mProcessorsData[ProcId()].syncBoolIndex;
+        mRegistersChanged[index] = false;
+        mTagSizeChanged[index] = false;
+        mHasGetRequests[index] = false;
+        mHasPutRequests[index] = false;
+        mHasSendRequests[index] = false;
     }
 
     void StartTiming()
