@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __BSPCLASS_H__
-#define __BSPCLASS_H__
+#ifndef __BSPLIB_BSPCLASS_H__
+#define __BSPLIB_BSPCLASS_H__
 
 #include "bsp/communicationQueues.h"
 #include "bsp/condVarBarrier.h"
@@ -68,6 +68,7 @@ public:
     {
         mAbort = true;
         vfprintf( stderr, format, args );
+        CheckAborted();
     }
 
     /**
@@ -165,8 +166,9 @@ public:
 
     BSP_FORCEINLINE uint32_t &ProcId()
     {
-        static thread_local uint32_t gPID = 0xdeadbeef;
-
+        //static thread_local uint32_t gPID = 0xdeadbeef;
+        static BSP_TLS uint32_t gPID = 0xdeadbeef;
+        
         return gPID;
     }
 
@@ -522,7 +524,7 @@ public:
      * * Begin has been called.
      * * src != nullptr.
      * * dst != nullptr.
-     * * PushReg has been called on dst with at least size offset + nbytes in the processor with ID pid.
+     * * Push has been called on dst with at least size offset + nbytes in the processor with ID pid.
      * * A Sync has happened between PushReg and this call.
      */
 
@@ -548,7 +550,7 @@ public:
         assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
-        const char *dstBuff = reinterpret_cast<const char *>( mProcessorsData[pid].threadRegisterLocation[globalId] );
+        const char *dstBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
         ptrdiff_t bufferLocation = mProcessorsData[tpid].putBufferStack.Alloc( nbytes, srcBuff );
 
         mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::PutRequest{ bufferLocation, dstBuff + offset, nbytes } );
@@ -556,7 +558,7 @@ public:
 
     /**
      * Gets a buffer of size nbytes from source pointer src that is located in the thread with ID pid at offset from
-     * source pointer src and stores it at the location of.
+     * source pointer src and stores it at the location of dst.
      *
      * @param   pid         The processor ID.
      * @param   src         Source to read the buffer from.
@@ -568,7 +570,7 @@ public:
      * * Begin has been called.
      * * src != nullptr.
      * * dst != nullptr.
-     * * PushReg has been called on dst with at leas size offset + nbytes in the processor with ID pid.
+     * * Push has been called on src with at leas size offset + nbytes in the processor with ID pid.
      * * A Sync has happened between PushReg and this call.
      */
 

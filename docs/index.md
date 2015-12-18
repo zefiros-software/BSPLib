@@ -30,7 +30,7 @@ void main( int32_t, const char ** )
 {
     BSPLib::Excute( []
     {
-        std::cout << "Hello BSP Worldwide from process " << BSPLib::ProcId() 
+        std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
                   << " of " << BSPLib::NProcs() << std::endl;
     }, BSPLib::NProcs() );
 }

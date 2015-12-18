@@ -106,8 +106,55 @@ solution "bsp-library"
         
         configuration { "Coverage", "x64" }
             defines "PREFIX=X64C_"
+          
+solution "bsp-edupack"
+
+    location( root .. "edupack/" )
+    objdir( root .. "bin/obj/" )
+	debugdir( root .. "bin/" )
+    
+    configurations { "Debug", "Release" }
+
+    platforms { "x64", "x32" }
+
+    vectorextensions "SSE2"
+
+    warnings "Extra"
+
+    flags "Unicode" 
+
+    configuration "x32"
+        targetdir( root .. "bin/x32/" )
+        architecture "x32"
+
+    configuration "x64"
+        targetdir( root .. "bin/x64/" )
+        architecture "x64"
+        
+    configuration "Debug"
+        targetsuffix "d"
+        defines "DEBUG"
+        flags "Symbols"
+        optimize "Off"
+
+    configuration "Release"     
+        flags "LinkTimeOptimization"
+        optimize "Speed"
+			
+    configuration "gmake"
+        linkoptions {
+            "-Wl,--no-as-needed",
+            "-pthread"
+            }
             
-    project "bsp-bench"                
+        buildoptions {
+            "-std=c++11",
+            "-pthread"
+            } 
+                             
+    configuration {}
+            
+    project "bench"                
         kind "ConsoleApp"
         flags "WinMain"
 

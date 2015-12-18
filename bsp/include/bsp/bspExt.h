@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __BSPEXT_H__
-#define __BSPEXT_H__
+#ifndef __BSPLIB_BSPEXT_H__
+#define __BSPLIB_BSPEXT_H__
 
 #include "bsp/bspClass.h"
 #include "bsp/util.h"
@@ -179,9 +179,9 @@ namespace BSPLib
         Classic::Push( &ident, sizeof( tPrimitive ) );
     }
 
-    inline void Push( const void *ident, size_t size )
+    inline void Push( const void *ident, size_t byteSize )
     {
-        Classic::Push( ident, size );
+        Classic::Push( ident, byteSize );
     }
 
     inline void Push()
@@ -266,9 +266,9 @@ namespace BSPLib
     }
 
     template< typename tPrimitive >
-    void PushPtrs( tPrimitive *begin, size_t size )
+    void PushPtrs( tPrimitive *begin, size_t count )
     {
-        Classic::Push( begin, size * sizeof( tPrimitive ) );
+        Classic::Push( begin, count * sizeof( tPrimitive ) );
     }
 
     template< typename tPrimitive >
@@ -284,16 +284,15 @@ namespace BSPLib
     }
 
     template< typename tPrimitive >
-    void PutPtrs( uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcEnd, tPrimitive *resultBegin, tPrimitive *resultDst )
+    void PutPtrs( uint32_t pid, tPrimitive *srcBegin, size_t count, tPrimitive *resultBegin, size_t offset )
     {
-        Classic::Put( pid, srcBegin, resultBegin, ( resultDst - resultBegin ) * sizeof( tPrimitive ),
-                      ( srcEnd - srcBegin ) * sizeof( tPrimitive ) );
+        Classic::Put( pid, srcBegin, resultBegin, offset * sizeof( tPrimitive ), count * sizeof( tPrimitive ) );
     }
 
     template< typename tPrimitive >
-    void PutPtrs( uint32_t pid, tPrimitive *srcBegin, size_t count, tPrimitive *resultBegin, size_t offset )
+    void PutPtrs( uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcEnd, tPrimitive *resultBegin, tPrimitive *resultDst )
     {
-        PutPtrs( pid, srcBegin, srcBegin + count, resultBegin, resultBegin + offset );
+        PutPtrs( pid, srcBegin, srcEnd - srcBegin, resultBegin, resultDst - resultBegin );
     }
 
     template< typename tPrimitive >
@@ -303,9 +302,21 @@ namespace BSPLib
     }
 
     template< typename tPrimitive >
-    void PutPtrs( uint32_t pid, tPrimitive *begin, size_t size )
+    void PutPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *cursor, tPrimitive *end )
     {
-        PutPtrs( pid, begin, begin + size, begin, begin );
+        PutPtrs( pid, cursor, end, begin, cursor );
+    }
+
+    template< typename tPrimitive >
+    void PutPtrs( uint32_t pid, tPrimitive *begin, size_t count )
+    {
+        PutPtrs( pid, begin, begin, begin + count );
+    }
+
+    template< typename tPrimitive >
+    void PutPtrs( uint32_t pid, tPrimitive *begin, size_t offset, size_t count )
+    {
+        PutPtrs( pid, begin + offset, count, begin, offset );
     }
 
     template< typename tPrimitive >
@@ -332,6 +343,18 @@ namespace BSPLib
     void GetPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *end )
     {
         GetPtrs( pid, begin, begin, end );
+    }
+
+    template< typename tPrimitive >
+    void GetPtrs( uint32_t pid, tPrimitive *begin, size_t offset, size_t count )
+    {
+        GetPtrs( pid, begin, offset, begin + offset, count );
+    }
+
+    template< typename tPrimitive >
+    void GetPtrs( uint32_t pid, tPrimitive *begin, size_t count )
+    {
+        GetPtrs( pid, begin, begin, begin + count );
     }
 
     template< typename tPrimitive, typename tTagPrimitive >
@@ -371,13 +394,13 @@ namespace BSPLib
     }
 
     template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
-    void SendPtrs( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, tPrimitive *end )
+    void SendPtrsWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, tPrimitive *end )
     {
-        SendPtrs( pid, tagContainer, begin, end );
+        SendPtrs( pid, tagContainer, begin, end - begin );
     }
 
     template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
-    void SendPtrs( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, size_t count )
+    void SendPtrsWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, size_t count )
     {
         SendPtrs( pid, tagContainer, begin, count );
     }
@@ -432,13 +455,13 @@ namespace BSPLib
     template< typename tPrimitive >
     void MovePtrs( tPrimitive *begin, tPrimitive *end )
     {
-        MovePtrs( begin, end - begin );
+        MovePtrs( begin, ( uint32_t )( end - begin ) );
     }
 
     template< typename tIterator >
-    void PushIterator( tIterator begin, size_t size )
+    void PushIterator( tIterator begin, size_t count )
     {
-        PushPtrs( &*begin, size );
+        PushPtrs( &*begin, count );
     }
 
     template< typename tIterator >
@@ -455,18 +478,24 @@ namespace BSPLib
     }
 
     template< typename tIterator, typename tOutputIterator >
+    void PutIterator( uint32_t pid, tIterator srcBegin, size_t count, tOutputIterator resultBegin, size_t offset )
+    {
+        PutPtrs( pid, &*srcBegin, count, &*resultBegin, offset );
+    }
+
+    template< typename tIterator, typename tOutputIterator >
     void PutIterator( uint32_t pid, tIterator srcBegin, tIterator srcEnd, tOutputIterator resultBegin,
                       tOutputIterator resultDst )
     {
         assert( srcEnd == srcBegin || &*( srcEnd - 1 ) - &*srcBegin == srcEnd - srcBegin - 1 );
         assert( resultDst == resultBegin || &*( resultDst - 1 ) - &*resultBegin == resultDst - resultBegin - 1 );
-        PutPtrs( pid, &*srcBegin, srcEnd - srcBegin, &*resultBegin, resultDst - resultBegin );
+        PutIterator( pid, srcBegin, srcEnd - srcBegin, resultBegin, resultDst - resultBegin );
     }
 
     template< typename tIterator >
     void PutIterator( uint32_t pid, tIterator begin, tIterator cursor, tIterator end )
     {
-        PutIterator( pid, begin, end, begin, cursor );
+        PutIterator( pid, cursor, end, begin, cursor );
     }
 
     template< typename tIterator >
@@ -475,23 +504,41 @@ namespace BSPLib
         PutIterator( pid, begin, begin, end );
     }
 
+    template< typename tIterator >
+    void PutIterator( uint32_t pid, tIterator begin, size_t offset, size_t count )
+    {
+        PutIterator( pid, begin + offset, begin + offset + count, begin, begin + offset );
+    }
+
+    template< typename tIterator, typename tOutputIterator >
+    void GetIterator( uint32_t pid, tIterator srcBegin, size_t offset, tOutputIterator resultBegin, size_t count )
+    {
+        GetPtrs( pid, &*srcBegin, offset, &*resultBegin, count );
+    }
+
     template< typename tIterator, typename tOutputIterator >
     void GetIterator( uint32_t pid, tIterator srcBegin, tIterator srcCursor, tOutputIterator resultBegin,
                       tOutputIterator resultEnd )
     {
-        GetPtrs( pid, &*srcBegin, srcCursor - srcBegin, &*resultBegin, resultEnd - resultBegin );
+        GetIterator( pid, srcBegin, srcCursor - srcBegin, resultBegin, resultEnd - resultBegin );
     }
 
     template< typename tIterator >
     void GetIterator( uint32_t pid, tIterator begin, tIterator cursor, tIterator end )
     {
-        GetIterator( pid, begin, cursor, begin, end );
+        GetIterator( pid, begin, cursor, cursor, end );
     }
 
     template< typename tIterator >
     void GetIterator( uint32_t pid, tIterator begin, tIterator end )
     {
         GetIterator( pid, begin, begin, end );
+    }
+
+    template< typename tIterator >
+    void GetIterator( uint32_t pid, tIterator begin, size_t offset, size_t count )
+    {
+        GetIterator( pid, begin, begin + offset, begin + offset, begin + offset + count );
     }
 
     template< typename tIterator, typename tTag >
@@ -518,6 +565,18 @@ namespace BSPLib
         SendIterator( pid, tag, begin, end - begin );
     }
 
+    template< typename tIterator, typename tTagPrimitive, uint32_t tTagSize >
+    void SendIteratorWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tIterator begin, size_t count )
+    {
+        SendPtrsWithCArray( pid, tagContainer, &*begin, count );
+    }
+
+    template< typename tIterator, typename tTagPrimitive, uint32_t tTagSize >
+    void SendIteratorWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tIterator begin, tIterator end )
+    {
+        SendIteratorWithCArray( pid, tagContainer, begin, end - begin );
+    }
+
     template< typename tIterator >
     void SendIterator( uint32_t pid, tIterator begin, size_t count )
     {
@@ -527,7 +586,7 @@ namespace BSPLib
     template< typename tIterator >
     void SendIterator( uint32_t pid, tIterator begin, tIterator end )
     {
-        SendIterator( pid, begin, end - begin );
+        SendIterator( pid, begin, ( uint32_t )( end - begin ) );
     }
 
     template< typename tIterator >
@@ -539,7 +598,7 @@ namespace BSPLib
     template< typename tIterator >
     void MoveIterator( tIterator begin, tIterator end )
     {
-        MoveIterator( begin, end - begin );
+        MoveIterator( begin, ( uint32_t )( end - begin ) );
     }
 
     template< typename tPrimitive, size_t tSize >
@@ -588,6 +647,12 @@ namespace BSPLib
     void SendCArray( uint32_t pid, tTag &tag, tPrimitive( &payload )[tSize] )
     {
         SendPtrs( pid, tag, payload, tSize );
+    }
+
+    template< typename tPrimitive, typename tTagPrimitive, size_t tSize, size_t tTagSize >
+    void SendCArrayWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive( &payload )[tSize] )
+    {
+        SendPtrsWithCArray( pid, tagContainer, payload, tSize );
     }
 
     template< typename tPrimitive, size_t tSize >
@@ -650,6 +715,12 @@ namespace BSPLib
         SendIterator( pid, tag, payload.begin(), payload.end() );
     }
 
+    template< typename tTagPrimitive, typename tContainer, size_t tTagSize >
+    void SendContainerWithCArray( uint32_t pid, tTagPrimitive( &tag )[tTagSize], tContainer &payload )
+    {
+        SendIteratorWithCArray( pid, tag, payload.begin(), payload.end() );
+    }
+
     template< typename tContainer >
     void SendContainer( uint32_t pid, tContainer &payload )
     {
@@ -674,6 +745,16 @@ namespace BSPLib
     {
         size_t size = count * sizeof( tPrimitive );
         Classic::SetTagSize( &size );
+    }
+
+    inline void QSize( size_t &packets )
+    {
+        Classic::QSize( &packets, nullptr );
+    }
+
+    inline void QSize( size_t &packets, size_t &accumulatedSize )
+    {
+        Classic::QSize( &packets, &accumulatedSize );
     }
 
     template< typename tPrimitive >
@@ -776,11 +857,13 @@ namespace BSPLib
     {
         SendPtrs( pid, tag, payload.data(), payload.size() );
     }
+
     template< typename tPrimitive, typename tTag >
     void Send( uint32_t pid, tTag *tag, const tPrimitive &payload )
     {
         SendPtrs( pid, tag, &payload, 1 );
     }
+
     template< typename tTag >
     void Send( uint32_t pid, tTag *tag, const std::string &payload )
     {
@@ -797,6 +880,20 @@ namespace BSPLib
     inline void Send( uint32_t pid, const std::string &payload )
     {
         SendPtrs( pid, payload.data(), payload.size() );
+    }
+
+
+
+    template< typename tTagPrimitive, size_t tTagSize >
+    void SendWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], const std::string &payload )
+    {
+        SendPtrs( pid, tagContainer, payload.data(), payload.size() );
+    }
+
+    template< typename tPrimitive, typename tTagPrimitive, size_t tTagSize >
+    void SendWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], const tPrimitive &payload )
+    {
+        SendPtrs( pid, tagContainer, &payload, 1 );
     }
 
 #ifndef BSP_DISABLE_NAMESPACE
