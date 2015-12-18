@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __STACKALLOCATOR_H__
-#define __STACKALLOCATOR_H__
+#ifndef __BSPLIB_STACKALLOCATOR_H__
+#define __BSPLIB_STACKALLOCATOR_H__
 
 #include "util.h"
 

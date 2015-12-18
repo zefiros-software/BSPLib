@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __BSP_H__
-#define __BSP_H__
+#ifndef __BSPLIB_BSP_H__
+#define __BSPLIB_BSP_H__
 
 #ifndef DEBUG
 #   define BSP_SKIP_CHECKS

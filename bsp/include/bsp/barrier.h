@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __BARRIER_H__
-#define __BARRIER_H__
+#ifndef __BSPLIB_BARRIER_H__
+#define __BSPLIB_BARRIER_H__
 
 #include "bsp/bspAbort.h"
 

@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __MIXEDBARRIER_H__
-#define __MIXEDBARRIER_H__
+#ifndef __BSPLIB_MIXEDBARRIER_H__
+#define __BSPLIB_MIXEDBARRIER_H__
 
 #define BSP_SPIN_ITERATIONS 10000
 
