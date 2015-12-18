@@ -25,6 +25,7 @@
 
 #include "helper.h"
 #include <random>
+#include <stdarg.h>
 
 inline void AbortTest()
 {
@@ -35,6 +36,29 @@ inline void AbortTest()
 TEST( P( Classic ), AbortTest )
 {
     EXPECT_FALSE( BSPLib::Execute( AbortTest, 8 ) );
+
+}
+
+inline void VAbortTest()
+{
+    BSPLib::Sync();
+    []( const char *format, ... )
+    {
+        va_list args;
+        va_start( args, format );
+
+        //pass to bsp_vabort
+
+        BSPLib::Classic::VAbort( format, args );
+
+        //mark end of variable arguments
+        va_end( args );
+    }( "", "test" );
+}
+
+TEST( P( Classic ), VAbortTest )
+{
+    EXPECT_FALSE( BSPLib::Execute( VAbortTest, 32 ) );
 
 }
 
@@ -186,7 +210,8 @@ void GetTest()
     uint32_t num = s + 1;
     uint32_t receive = 0;
 
-    BSPLib::Classic::Push( &num, sizeof( uint32_t ) );
+    // Test new function that passes through to classic
+    BSPLib::Push( &num, sizeof( uint32_t ) );
 
     BSPLib::Sync();
 
@@ -201,7 +226,8 @@ void GetTest()
         receive = 0;
     }
 
-    BSPLib::Classic::Pop( &num );
+    // Test new function that passes through to classic
+    BSPLib::Pop( &num );
 }
 
 template< uint32_t tPutGets, int32_t tOffset >
@@ -350,6 +376,63 @@ void QSizeTest()
 
         EXPECT_EQ( tPacketCount, packetCount );
         EXPECT_EQ( tPacketCount * tPacketSize * sizeof( uint32_t ), totalSize );
+    }
+}
+
+template< uint32_t tRounds, uint32_t tPacketCount, uint32_t tPacketSize, int32_t tOffset >
+void QSizeTestOverload()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+
+    uint32_t packets[tPacketSize];
+
+    size_t packetCount;
+    size_t totalSize;
+
+    for ( uint32_t i = 0; i < tRounds; ++i )
+    {
+        for ( uint32_t j = 0; j < tPacketCount; ++j )
+        {
+            BSPLib::Classic::Send( sSend, NULL, packets, tPacketSize * sizeof( uint32_t ) );
+        }
+
+        BSPLib::Sync();
+
+        BSPLib::QSize( packetCount, totalSize );
+
+        EXPECT_EQ( tPacketCount, packetCount );
+        EXPECT_EQ( tPacketCount * tPacketSize * sizeof( uint32_t ), totalSize );
+    }
+}
+
+template< uint32_t tRounds, uint32_t tPacketCount, uint32_t tPacketSize, int32_t tOffset >
+void QSizeTestOverload2()
+{
+    uint32_t s = BSPLib::ProcId();
+    uint32_t nProc = BSPLib::NProcs();
+
+    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
+
+    uint32_t packets[tPacketSize];
+
+    size_t packetCount;
+    //size_t totalSize;
+
+    for ( uint32_t i = 0; i < tRounds; ++i )
+    {
+        for ( uint32_t j = 0; j < tPacketCount; ++j )
+        {
+            BSPLib::Classic::Send( sSend, NULL, packets, tPacketSize * sizeof( uint32_t ) );
+        }
+
+        BSPLib::Sync();
+
+        BSPLib::QSize( packetCount );
+
+        EXPECT_EQ( tPacketCount, packetCount );
     }
 }
 
@@ -678,6 +761,9 @@ BspTest4( Classic, 8, QSizeTest, 10, 10, 10, 7 );
 BspTest4( Classic, 16, QSizeTest, 10, 10, 10, 7 );
 BspTest4( Classic, 32, QSizeTest, 10, 10, 10, 7 );
 BspTest4( Classic, 32, QSizeTest, 10, 100, 17, 41 );
+
+BspTest4( Classic, 32, QSizeTestOverload, 10, 100, 17, 41 );
+BspTest4( Classic, 32, QSizeTestOverload2, 10, 100, 17, 41 );
 
 BspTest1( Classic, 2, MultiSendTest, 50 );
 BspTest1( Classic, 4, MultiSendTest, 50 );

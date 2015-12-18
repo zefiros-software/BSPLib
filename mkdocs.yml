@@ -1,0 +1,71 @@
+site_name: BSPLib
+site_url: http://www.bsplib.eu
+repo_url: https://github.com/Zefiros-Software/BSPLib
+site_description: BSPLib a fast and easy to use parallel computation libary.
+theme: readthedocs
+copyright: Copyright © 2015 Mick van Duijn, Koen Visscher and Paul Visscher
+google_analytics: ['UA-29999374-2', 'www.bsplib.eu']
+
+pages:
+- BSP: 'index.md'
+
+- Program Logic:
+    - 'Execute BSP Program': 'logic/execute.md'
+    - 'Init BSP Program': 'logic/init.md'
+    - 'Begin BSP Program': 'logic/begin.md'
+    - 'End BSP Program': 'logic/end.md'
+
+- Utilities:
+    - 'Get Processor Count': 'util/nprocs.md'
+    - 'Get Processor Identifier': 'util/procid.md'
+    - 'Get Wall Time': 'util/time.md'
+
+- Halting:
+    - 'Abort Program': 'halting/abort.md'
+
+- Synchronisation Point:
+    - 'Synchronising': 'sync/sync.md'
+
+- Registration & Deregistration:
+    - 'Push Register': 'regdereg/push.md'
+    - 'Pop Register': 'regdereg/pop.md'
+
+- Communication:
+    - 'Get Register': 'com/get.md'
+    - 'Get Register - Primitives' : 'com/getPrimitive.md'
+    - 'Get Register - Pointers' : 'com/getPtrs.md'
+    - 'Get Register - Containers' : 'com/getContainer.md'
+    - 'Put Register': 'com/put.md'
+    - 'Put Register - Primitives' : 'com/putPrimitive.md'
+    - 'Put Register - Pointers' : 'com/putPtrs.md'
+    - 'Put Register - Containers' : 'com/putContainer.md'
+
+- Messaging:
+
+    - 'Send Memory': 'messaging/send.md'
+    - 'Send Memory - Primitives' : 'messaging/sendPrimitive.md'
+    - 'Send Memory - Iterators' : 'messaging/sendIterator.md'
+    - 'Send Memory - Containers' : 'messaging/sendContainer.md'
+    - 'Send Memory - Pointers - Primitives' : 'messaging/sendPtrs.md'
+    - 'Send Memory - Pointers - Containers' : 'messaging/sendTagContainer.md'
+    - 'Move Memory': 'messaging/move.md'
+    - 'Get Queue Size': 'messaging/qsize.md'
+
+- Messaging Utilities:
+    - 'Get Tag': 'messagingutil/gettag.md'
+    - 'Set Tag Size': 'messagingutil/settagsize.md'
+
+#- High Performance:
+#    - 'Get Register': 'hp/hpget.md'
+#    - 'Put Register': 'hp/hpput.md'
+#    - 'Send Memory': 'hp/hpsend.md'
+#    - 'Move Memory': 'hp/hpmove.md'
+
+- Classic: 'classic.md'
+
+markdown_extensions:
+    - toc:
+        permalink: True
+        separator: "_"
+    - admonition:
+    - sane_lists:

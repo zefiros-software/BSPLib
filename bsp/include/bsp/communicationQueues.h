@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __COMMUNICATIONQUEUES_H__
-#define __COMMUNICATIONQUEUES_H__
+#ifndef __BSPLIB_COMMUNICATIONQUEUES_H__
+#define __BSPLIB_COMMUNICATIONQUEUES_H__
 
 #include <vector>
 

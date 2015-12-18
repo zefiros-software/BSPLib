@@ -65,4 +65,10 @@ TEST( P( suite ), func ## _ ## nProc ## _ ## a ## _ ## b ## _ ## c ## _ ## d )  
     BSPLib::Execute( func< a, b, c, d >, nProc );                                   \
 }
 
+#define BspTest5( suite, nProc, func, a, b, c, d, e )                                       \
+TEST( P( suite ), func ## _ ## nProc ## _ ## a ## _ ## b ## _ ## c ## _ ## d ## _ ## e )    \
+{                                                                                           \
+    BSPLib::Execute( func< a, b, c, d, e >, nProc );                                        \
+}
+
 #endif

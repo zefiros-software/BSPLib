@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __BSPABORT_H__
-#define __BSPABORT_H__
+#ifndef __BSPLIB_BSPABORT_H__
+#define __BSPLIB_BSPABORT_H__
 
 #include <exception>
 #include <string>
