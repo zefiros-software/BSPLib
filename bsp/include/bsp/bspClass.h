@@ -23,6 +23,8 @@
 #ifndef __BSPLIB_BSPCLASS_H__
 #define __BSPLIB_BSPCLASS_H__
 
+#define BSP_SKIP_CHECKS
+
 #include "bsp/communicationQueues.h"
 #include "bsp/condVarBarrier.h"
 #include "bsp/mixedBarrier.h"
@@ -459,7 +461,7 @@ public:
             ProcessPushRequests( pid );
         }
 
-        //SyncPoint();
+        SyncPoint();
     }
 
     /**
@@ -552,10 +554,10 @@ public:
         assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
-        const char *dstBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
+        //const char *dstBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
         ptrdiff_t bufferLocation = mProcessorsData[tpid].putBufferStack.Alloc( nbytes, srcBuff );
 
-        mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::PutRequest{ bufferLocation, dstBuff + offset, nbytes } );
+        mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::PutRequest{ bufferLocation, nullptr, globalId, offset, nbytes } );
     }
 
     /**
@@ -594,9 +596,9 @@ public:
         assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
-        const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
+        //const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
 
-        mGetRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::GetRequest{ dst, srcBuff + offset, nbytes } );
+        mGetRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::GetRequest{ dst, globalId, offset, nbytes } );
     }
 
     /**
@@ -764,9 +766,9 @@ private:
               sendRequestsSize( 0 ),
               pushRequestsSize( 0 ),
               popRequestsSize( 0 ),
+              syncBoolIndex( 0 ),
               putBufferStack( 9064 ),
-              sendBuffers( 9064 ),
-              syncBoolIndex( 0 )
+              sendBuffers( 9064 )
         {
             sendRequests.reserve( 9064 );
             pushRequests.reserve( 9064 );
@@ -869,7 +871,7 @@ private:
         }
     }
 
-    BSP_FORCEINLINE void ProcessPutRequests( size_t pid )
+    BSP_FORCEINLINE void ProcessPutRequests( uint32_t pid )
     {
         for ( size_t owner = 0; owner < mProcCount; ++owner )
         {
@@ -879,8 +881,19 @@ private:
             {
                 for ( auto putRequest = putQueue.rbegin(), end = putQueue.rend(); putRequest != end; ++putRequest )
                 {
-                    mProcessorsData[owner].putBufferStack.Extract( putRequest->bufferLocation, putRequest->size,
-                                                                   ( char * )putRequest->destination );
+                    char *dstBuff;
+
+                    if ( putRequest->destination == nullptr )
+                    {
+                        dstBuff = static_cast< char * >( const_cast< void * >( GlobalToLocal( pid, putRequest->globalId ) ) )
+                                  + putRequest->offset;
+                    }
+                    else
+                    {
+                        dstBuff = static_cast< char * >( const_cast< void * >( putRequest->destination ) );
+                    }
+
+                    mProcessorsData[owner].putBufferStack.Extract( putRequest->bufferLocation, putRequest->size, dstBuff );
                 }
 
                 putQueue.clear();
@@ -939,7 +952,7 @@ private:
         }
     }
 
-    BSP_FORCEINLINE void ProcessGetRequests( size_t pid )
+    BSP_FORCEINLINE void ProcessGetRequests( uint32_t pid )
     {
         ProcessorData &data = mProcessorsData[pid];
 
@@ -949,11 +962,12 @@ private:
 
             for ( auto request = getQueue.rbegin(), end = getQueue.rend(); request != end; ++request )
             {
-                const char *srcBuff = reinterpret_cast<const char *>( request->source );
+                //const char *srcBuff = reinterpret_cast<const char *>( request->source );
+                const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, request->globalId ) ) + request->offset;
 
                 BspInternal::StackAllocator::StackLocation bufferLocation = data.putBufferStack.Alloc( request->size, srcBuff );
 
-                mPutRequests.GetQueueFromMe( owner, pid ).emplace_back( BspInternal::PutRequest{ bufferLocation, request->destination, request->size } );
+                mPutRequests.GetQueueFromMe( owner, pid ).emplace_back( BspInternal::PutRequest{ bufferLocation, request->destination, 0, 0, request->size } );
             }
 
             getQueue.clear();
