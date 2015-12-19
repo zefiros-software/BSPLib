@@ -35,7 +35,9 @@ template< typename tBarrier >
 void TestBarrier( uint32_t threads, const std::atomic_bool &abort )
 {
     std::vector< std::future< void > > futures;
-    bool *check = new bool[threads] {0};
+    bool *check = new bool[threads];
+    std::fill_n( check, threads, false );
+
     tBarrier barrier( threads );
 
     for ( size_t i = 0; i < threads - 1; ++i )
