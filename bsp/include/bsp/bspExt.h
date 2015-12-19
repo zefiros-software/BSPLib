@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __BSPEXT_H__
-#define __BSPEXT_H__
+#ifndef __BSPLIB_BSPEXT_H__
+#define __BSPLIB_BSPEXT_H__
 
 #include "bsp/bspClass.h"
 #include "bsp/util.h"

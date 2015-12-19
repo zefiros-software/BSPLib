@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __STACKALLOCATOR_H__
-#define __STACKALLOCATOR_H__
+#ifndef __BSPLIB_STACKALLOCATOR_H__
+#define __BSPLIB_STACKALLOCATOR_H__
 
 #include "util.h"
 
@@ -72,7 +72,7 @@ namespace BspInternal
          * @return true if it will succeed, false if it fails.
          */
 
-        BSP_FORCEINLINE bool FitsInStack( size_t size )
+        BSP_FORCEINLINE bool FitsInStack( size_t size ) const
         {
             return mCursor + size < mStack.size();
         }

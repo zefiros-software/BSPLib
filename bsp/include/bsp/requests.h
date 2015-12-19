@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __REQUESTS_H__
-#define __REQUESTS_H__
+#ifndef __BSPLIB_REQUESTS_H__
+#define __BSPLIB_REQUESTS_H__
 
 #include "bsp/stackAllocator.h"
 
@@ -37,13 +37,16 @@ namespace BspInternal
     {
         StackAllocator::StackLocation bufferLocation;
         const void *destination;
+        size_t globalId;
+        ptrdiff_t offset;
         size_t size;
     };
 
     struct GetRequest
     {
         const void *destination;
-        const void *source;
+        size_t globalId;
+        ptrdiff_t offset;
         size_t size;
     };
 
