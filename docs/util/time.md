@@ -30,7 +30,7 @@ void main( int32_t, const char ** )
   
     // prints: "The processes waited for `x` seconds", where `x` is greater
     // than 5 for each thread. 
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::this_thread::sleep_for( std::chrono::milliseconds( 5000 ) );
         std::cout << "The processes waited for " <<  BSPLib::Time() 
@@ -48,7 +48,7 @@ void main( int32_t, const char ** )
   
     // prints: "The processes waited for `x` seconds", where `x` is greater
     // than 5 for each thread. 
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::this_thread::sleep_for( std::chrono::milliseconds( 5000 ) );
         std::cout << "The processes waited for " <<  BSPLib::Classic::Time() 
@@ -67,7 +67,7 @@ void main( int32_t, const char ** )
   
     // prints: "The processes waited for `x` seconds", where `x` is greater
     // than 5 for each thread. 
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::this_thread::sleep_for( std::chrono::milliseconds( 5000 ) );
         std::cout << "The processes waited for " <<  bsp_sleep() 

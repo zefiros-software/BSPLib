@@ -50,7 +50,7 @@ aborted. If not, it will notify the waiting threads about the abort. If even thi
 ```cpp
 void main( int32_t, const char ** )
 {
-	bool success = BSPLib::Excute( []
+	bool success = BSPLib::Execute( []
 	{
         if ( BSPLib::Classic::ProcId() == 0 )
         {
@@ -74,7 +74,7 @@ void main( int32_t, const char ** )
 ```cpp
 void main( int32_t, const char ** )
 {
-	bool success = BSPLib::Excute( []
+	bool success = BSPLib::Execute( []
 	{
         if ( bsp_pid() == 0 )
         {
