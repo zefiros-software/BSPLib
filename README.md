@@ -28,7 +28,7 @@ For detailed usage, please visit [BSPLib](https://www.bsplib.eu).
 ```cpp
 void main( int32_t, const char ** )
 {
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "Hello BSP Worldwide from process " << BSPLib::ProcId() 
                   << " of " << BSPLib::NProcs() << std::endl;

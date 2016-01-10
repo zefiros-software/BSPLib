@@ -35,13 +35,13 @@ void main( int32_t, const char ** )
     const uint32_t nProcs = BSPLib::NProcs();
   
     // prints: "The current processor identifier is `x`", with x between 0 and `nProcs` - 1.
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "The current processor identifier is " <<  BSPLib::ProcId() << std::endl;
     }, nProcs );
     
     // prints: "The current processor identifier is 0"
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "The current processor identifier is " <<  BSPLib::ProcId() << std::endl;
   }, 1 );
@@ -57,13 +57,13 @@ void main( int32_t, const char ** )
     const uint32_t nProcs = BSPLib::NProcs();
   
     // prints: "The current processor identifier is `x`", with x between 0 and `nProcs` - 1.
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "The current processor identifier is " <<  BSPLib::Classic::ProcId() << std::endl;
     }, nProcs );
     
     // prints: "The current processor identifier is 0"
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "The current processor identifier is " <<  BSPLib::Classic::ProcId() << std::endl;
   }, 1 );
@@ -79,13 +79,13 @@ void main( int32_t, const char ** )
     const uint32_t nProcs = BSPLib::NProcs();
   
     // prints: "The current processor identifier is `x`", with x between 0 and `nProcs` - 1.
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "The current processor identifier is " <<  bsp_pid() << std::endl;
     }, nProcs );
     
     // prints: "The current processor identifier is 0"
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "The current processor identifier is " <<  bsp_pid() << std::endl;
   }, 1 );

@@ -71,7 +71,7 @@ This is the normal usage of the function.
 ```cpp
 void main( int32_t, const char ** )
 {
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
                   << " of " << BSPLib::NProcs() << std::endl;
@@ -86,7 +86,7 @@ If the computation could call abort, one can check for it on the return type.
 ```cpp
 void main( int32_t, const char ** )
 {
-    bool success = BSPLib::Excute( []
+    bool success = BSPLib::Execute( []
     {
         std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
                   << " of " << BSPLib::NProcs() << std::endl;
@@ -106,7 +106,7 @@ void main( int32_t, const char ** )
 ```cpp
 void main( int32_t argc, const char **argv )
 {
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
                   << " of " << BSPLib::NProcs() << std::endl;
