@@ -132,8 +132,8 @@ When you use BSPLib as part of a scientific publication, we would love you to ci
 ```
 @misc{bsplib2016,
   author    = {Mick van Duijn and Koen Visscher and Paul Visscher},
-  title     = {BSPLib: a fast, and easy to use {C++} implementation of the Bulk Synchronous Parallel (BSP) threading model.},
-  abstract  = {BSPLib is a fast, and easy to use {C++} implementation of the Bulk Synchronous Parallel (BSP) threading model. This model is mainly used in the scientific computing field, but can also be applied more general in computer science. This library includes an extended version the standard BSP interface to perform better, and made it more easy to use.},
+  title     = {{BSPLib}: a fast, and easy to use {C++} implementation of the {Bulk} {Synchronous} {Parallel} ({BSP}) threading model.},
+  abstract  = {{BSPLib} is a fast, and easy to use {C++} implementation of the {Bulk} {Synchronous} {Parallel} ({BSP}) threading model. This model is mainly used in the scientific computing field, but can also be applied more general in computer science. This library includes an extended version the standard BSP interface to perform better, and made it more easy to use.},
   howpublished = {\url{http://bsplib.eu/}}
 }
 ```
