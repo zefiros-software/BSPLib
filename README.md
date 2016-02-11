@@ -13,7 +13,7 @@ The code can be found [here](https://github.com/Zefiros-Software/BSPLib). See [t
 * Reliable: We have an extensive testing suite, making sure we do not break forward and backward compatiblity.
 * Easy to use: The library is completely header only. Also next to our improved c++ interface, we shipped the
 classic BSP C interface.
-* Cross platform: Designed to only use C++11, with no external dependecies.
+* Cross platform: Designed to only use C++11, with no external dependencies.
 * Warning free, compiled on the highest warning level.
 
 ## Installation
