@@ -1,5 +1,5 @@
 # BSPLib
-[BSPLib](https://wwww.bsplib.eu) is a fast, and easy to use C++ implementation of the Bulk Synchronous Parallel (BSP) threading model.
+[BSPLib](https://wwww.bsplib.eu) is a fast, and easy to use C++ implementation of the Bulk Synchronous Parallel (BSP) threading model. This model is mainly used in the scientific computing field, but can also be applied more general in computer science. This library includes an extended version the standard BSP interface to perform better, and made it more easy to use.
 
 #BSP
 The BSP specification can be found [here](bsp.pdf) and is maintained by [bsp-worldwide.org](http://www.bsp-worldwide.org). Parts of the
@@ -13,7 +13,7 @@ The code can be found [here](https://github.com/Zefiros-Software/BSPLib). See [t
 * Reliable: We have an extensive testing suite, making sure we do not break forward and backward compatiblity.
 * Easy to use: The library is completely header only. Also next to our improved c++ interface, we shipped the
 classic BSP C interface.
-* Cross platform: Designed to only use C++11, with no external dependecies.
+* Cross platform: Designed to only use C++11, with no external dependencies.
 * Warning free, compiled on the highest warning level.
 
 ## Installation
@@ -30,7 +30,7 @@ void main( int32_t, const char ** )
 {
     BSPLib::Execute( []
     {
-        std::cout << "Hello BSP Worldwide from process " << BSPLib::Classic::ProcId() 
+        std::cout << "Hello BSP Worldwide from process " << BSPLib::ProcId() 
                   << " of " << BSPLib::NProcs() << std::endl;
     }, BSPLib::NProcs() );
 }
@@ -125,6 +125,18 @@ When a bug is found, please insert it in the issue tracker, so we can resolve it
 ## Used By
 We are interested to find out what projects use BSPLib. We would love to include your projects here, 
 just shoot us a mail. :)
+
+## Citing BSPLib
+When you use BSPLib as part of a scientific publication, we would love you to cite this project. This BibTex snippet can be used:
+
+```
+@misc{bsplib2016,
+  author    = {Mick van Duijn and Koen Visscher and Paul Visscher},
+  title     = {{BSPLib}: a fast, and easy to use {C++} implementation of the {Bulk} {Synchronous} {Parallel} ({BSP}) threading model.},
+  abstract  = {{BSPLib} is a fast, and easy to use {C++} implementation of the {Bulk} {Synchronous} {Parallel} ({BSP}) threading model. This model is mainly used in the scientific computing field, but can also be applied more general in computer science. This library includes an extended version the standard BSP interface to perform better, and made it more easy to use.},
+  howpublished = {\url{http://bsplib.eu/}}
+}
+```
 
 ## License
 This project is licensed under the MIT license.
