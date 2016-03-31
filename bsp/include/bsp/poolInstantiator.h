@@ -39,7 +39,9 @@ namespace BspInternal
     public:
 
         explicit PoolInstantiator( const size_t blocksize = 1000 )
-            : mBlockSize( blocksize )
+            : mTotalSize( 0 ),
+              mUsed( 0 ),
+              mBlockSize( blocksize )
         {
             AddMemoryBlockArray();
         }
@@ -83,8 +85,8 @@ namespace BspInternal
 
         tT *GetObject()
         {
-            size_t memBlock = mUsed / mBlockSize;
-            size_t index = memBlock * mUsed;
+            const size_t memBlock = mUsed / mBlockSize;
+            const size_t index = mUsed - memBlock * mBlockSize;
 
             ++mUsed;
 
