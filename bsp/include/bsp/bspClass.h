@@ -566,7 +566,7 @@ public:
         request->globalId = globalId;
         request->size = nbytes;
 
-        mPutRequests.GetQueueFromMe( pid, tpid ).push_back( request );
+        mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( request );
     }
 
     /**
@@ -607,14 +607,7 @@ public:
 
         //const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
 
-        GetInstantiator &instantiator = mGetRequests.GetInstantiatorFromMe( pid, tpid );
-        BspInternal::GetRequest *request = instantiator.CreateInstance();
-        request->destination = dst;
-        request->offset = offset;
-        request->globalId = globalId;
-        request->size = nbytes;
-
-        mGetRequests.GetQueueFromMe( pid, tpid ).push_back( request );
+        mGetRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::GetRequest{ dst, globalId, offset, nbytes } );
     }
 
     /**
@@ -811,13 +804,12 @@ private:
     BspInternal::MixedBarrier mThreadBarrier;
 
     typedef BspInternal::PoolInstantiator< BspInternal::PutRequest > PutInstantiator;
-    typedef BspInternal::PoolInstantiator< BspInternal::GetRequest > GetInstantiator;
 
     BspInternal::CommunicationQueues< std::vector< BspInternal::PutRequest * >, PutInstantiator > mPutRequests;
-    BspInternal::CommunicationQueues< std::vector< BspInternal::GetRequest * >, GetInstantiator > mGetRequests;
+    BspInternal::CommunicationQueues< std::vector< BspInternal::GetRequest >, PutInstantiator > mGetRequests;
 
-    BspInternal::CommunicationQueues< std::vector< BspInternal::SendRequest >, void * > mTmpSendRequests;
-    BspInternal::CommunicationQueues< BspInternal::StackAllocator, void * > mTmpSendBuffers;
+    BspInternal::CommunicationQueues< std::vector< BspInternal::SendRequest >, PutInstantiator > mTmpSendRequests;
+    BspInternal::CommunicationQueues< BspInternal::StackAllocator, PutInstantiator > mTmpSendBuffers;
 
     std::vector< ProcessorData > mProcessorsData;
 
@@ -916,8 +908,6 @@ private:
                 }
 
                 putQueue.clear();
-
-                mPutRequests.GetInstantiatorToMe( owner, pid ).Reset();
             }
         }
     }
@@ -979,31 +969,27 @@ private:
 
         for ( uint32_t owner = 0; owner < mProcCount; ++owner )
         {
-            std::vector< BspInternal::GetRequest * > &getQueue = mGetRequests.GetQueueToMe( owner, pid );
-
-            PutInstantiator &instantiator = mPutRequests.GetInstantiatorFromMe( owner, pid );
+            std::vector< BspInternal::GetRequest > &getQueue = mGetRequests.GetQueueToMe( owner, pid );
 
             for ( auto request = getQueue.rbegin(), end = getQueue.rend(); request != end; ++request )
             {
                 //const char *srcBuff = reinterpret_cast<const char *>( request->source );
-                const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid,
-                                                                                     ( *request )->globalId ) ) + ( *request )->offset;
+                const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, request->globalId ) ) + request->offset;
 
-                BspInternal::StackAllocator::StackLocation bufferLocation = data.putBufferStack.Alloc( ( *request )->size, srcBuff );
+                BspInternal::StackAllocator::StackLocation bufferLocation = data.putBufferStack.Alloc( request->size, srcBuff );
 
+                PutInstantiator &instantiator = mPutRequests.GetInstantiatorFromMe( owner, pid );
                 BspInternal::PutRequest *putRequest = instantiator.CreateInstance();
                 putRequest->bufferLocation = bufferLocation;
-                putRequest->destination = ( *request )->destination;
+                putRequest->destination = request->destination;
                 putRequest->offset = 0;
                 putRequest->globalId = 0;
-                putRequest->size = ( *request )->size;
+                putRequest->size = request->size;
 
-                mPutRequests.GetQueueFromMe( owner, pid ).push_back( putRequest );
+                mPutRequests.GetQueueFromMe( owner, pid ).emplace_back( putRequest );
             }
 
             getQueue.clear();
-
-            mGetRequests.GetInstantiatorToMe( owner, pid ).Reset();
         }
     }
 
