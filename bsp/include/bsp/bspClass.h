@@ -26,7 +26,6 @@
 #define BSP_SKIP_CHECKS
 
 #include "bsp/communicationQueues.h"
-#include "bsp/poolInstantiator.h"
 #include "bsp/condVarBarrier.h"
 #include "bsp/mixedBarrier.h"
 #include "bsp/requests.h"
@@ -558,15 +557,7 @@ public:
         //const char *dstBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
         ptrdiff_t bufferLocation = mProcessorsData[tpid].putBufferStack.Alloc( nbytes, srcBuff );
 
-        PutInstantiator &instantiator = mPutRequests.GetInstantiatorFromMe( pid, tpid );
-        BspInternal::PutRequest *request = instantiator.CreateInstance();
-        request->bufferLocation = bufferLocation;
-        request->destination = nullptr;
-        request->offset = offset;
-        request->globalId = globalId;
-        request->size = nbytes;
-
-        mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( request );
+        mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::PutRequest{ bufferLocation, nullptr, globalId, offset, nbytes } );
     }
 
     /**
@@ -803,13 +794,11 @@ private:
 
     BspInternal::MixedBarrier mThreadBarrier;
 
-    typedef BspInternal::PoolInstantiator< BspInternal::PutRequest > PutInstantiator;
+    BspInternal::CommunicationQueues< std::vector< BspInternal::PutRequest > > mPutRequests;
+    BspInternal::CommunicationQueues< std::vector< BspInternal::GetRequest > > mGetRequests;
 
-    BspInternal::CommunicationQueues< std::vector< BspInternal::PutRequest * >, PutInstantiator > mPutRequests;
-    BspInternal::CommunicationQueues< std::vector< BspInternal::GetRequest >, PutInstantiator > mGetRequests;
-
-    BspInternal::CommunicationQueues< std::vector< BspInternal::SendRequest >, PutInstantiator > mTmpSendRequests;
-    BspInternal::CommunicationQueues< BspInternal::StackAllocator, PutInstantiator > mTmpSendBuffers;
+    BspInternal::CommunicationQueues< std::vector< BspInternal::SendRequest > > mTmpSendRequests;
+    BspInternal::CommunicationQueues< BspInternal::StackAllocator > mTmpSendBuffers;
 
     std::vector< ProcessorData > mProcessorsData;
 
@@ -886,7 +875,7 @@ private:
     {
         for ( size_t owner = 0; owner < mProcCount; ++owner )
         {
-            std::vector< BspInternal::PutRequest * > &putQueue = mPutRequests.GetQueueToMe( owner, pid );
+            std::vector< BspInternal::PutRequest > &putQueue = mPutRequests.GetQueueToMe( owner, pid );
 
             if ( !putQueue.empty() )
             {
@@ -894,17 +883,17 @@ private:
                 {
                     char *dstBuff;
 
-                    if ( ( *putRequest )->destination == nullptr )
+                    if ( putRequest->destination == nullptr )
                     {
-                        dstBuff = static_cast< char * >( const_cast< void * >( GlobalToLocal( pid, ( *putRequest )->globalId ) ) )
-                                  + ( *putRequest )->offset;
+                        dstBuff = static_cast< char * >( const_cast< void * >( GlobalToLocal( pid, putRequest->globalId ) ) )
+                                  + putRequest->offset;
                     }
                     else
                     {
-                        dstBuff = static_cast< char * >( const_cast< void * >( ( *putRequest )->destination ) );
+                        dstBuff = static_cast< char * >( const_cast< void * >( putRequest->destination ) );
                     }
 
-                    mProcessorsData[owner].putBufferStack.Extract( ( *putRequest )->bufferLocation, ( *putRequest )->size, dstBuff );
+                    mProcessorsData[owner].putBufferStack.Extract( putRequest->bufferLocation, putRequest->size, dstBuff );
                 }
 
                 putQueue.clear();
@@ -978,15 +967,7 @@ private:
 
                 BspInternal::StackAllocator::StackLocation bufferLocation = data.putBufferStack.Alloc( request->size, srcBuff );
 
-                PutInstantiator &instantiator = mPutRequests.GetInstantiatorFromMe( owner, pid );
-                BspInternal::PutRequest *putRequest = instantiator.CreateInstance();
-                putRequest->bufferLocation = bufferLocation;
-                putRequest->destination = request->destination;
-                putRequest->offset = 0;
-                putRequest->globalId = 0;
-                putRequest->size = request->size;
-
-                mPutRequests.GetQueueFromMe( owner, pid ).emplace_back( putRequest );
+                mPutRequests.GetQueueFromMe( owner, pid ).emplace_back( BspInternal::PutRequest{ bufferLocation, request->destination, 0, 0, request->size } );
             }
 
             getQueue.clear();

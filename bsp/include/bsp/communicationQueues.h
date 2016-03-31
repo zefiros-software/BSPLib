@@ -35,7 +35,7 @@ namespace BspInternal
      * @tparam  tQueue Type of the queue.
      */
 
-    template< typename tQueue, typename tInstantiator >
+    template< typename tQueue >
     class CommunicationQueues
     {
     public:
@@ -71,9 +71,6 @@ namespace BspInternal
             mQueues.clear();
             mQueues.resize( maxProcsSqr );
 
-            mInstantiators.clear();
-            mInstantiators.resize( maxProcsSqr );
-
             mProcCount = maxProcs;
         }
 
@@ -91,11 +88,6 @@ namespace BspInternal
             return GetQueue( source, me );
         }
 
-        inline tInstantiator &GetInstantiatorToMe( std::size_t source, std::size_t me )
-        {
-            return GetInstantiator( source, me );
-        }
-
         /**
          * Gets the queues of the current processor communicating to the source processor.
          *
@@ -110,18 +102,12 @@ namespace BspInternal
             return GetQueue( me, target );
         }
 
-        inline tInstantiator &GetInstantiatorFromMe( std::size_t target, std::size_t me )
-        {
-            return GetInstantiator( me, target );
-        }
-
     private:
 
         /// an abomination we have to live with,
         /// a flattened std::vector< std::vector <> > but without
         /// inneficient cache thrashing.
         std::vector< tQueue > mQueues;
-        std::vector< tInstantiator > mInstantiators;
 
         /// The amount of processors that may use the queue
         std::size_t mProcCount;
@@ -129,11 +115,6 @@ namespace BspInternal
         tQueue &GetQueue( std::size_t owner, std::size_t target )
         {
             return mQueues[owner * mProcCount + target];
-        }
-
-        tInstantiator &GetInstantiator( std::size_t owner, std::size_t target )
-        {
-            return mInstantiators[owner * mProcCount + target];
         }
     };
 }
