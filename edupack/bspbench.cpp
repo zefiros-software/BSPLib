@@ -1,6 +1,7 @@
 #include "bspedupack.h"
 #include "config.h"
-#include <..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\numeric>
+
+#include <numeric>
 
 /*  This program measures p, r, g, and l of a BSP computer
     using bsp_put for communication.
@@ -46,23 +47,38 @@ void leastsquares( int h0, int h1, double *t, double *g, double *l )
         a = sumh / nh;
         /* subtract a times first eqn from second eqn */
         *g = ( sumth - a * sumt ) / ( sumhh - a * sumh );
-        *l = ( sumt - sumh * *g ) / nh;
+        *l = ( sumt - sumh **g ) / nh;
     }
     else
     {
         a = nh / sumh;
         /* subtract a times second eqn from first eqn */
         *g = ( sumt - a * sumth ) / ( sumh - a * sumhh );
-        *l = ( sumth - sumhh * *g ) / sumh;
+        *l = ( sumth - sumhh **g ) / sumh;
     }
 
 } /* end leastsquares */
+
+void ArmaLeastSquares( int h0, int h1, std::vector<double> &t, double &g, double &l )
+{
+    std::vector< double > endogenousv( t.begin() + h0, t.begin() + h1 + 1 );
+    vec endogenous = endogenousv;
+    vec exogenous = linspace( h0, h1, h1 - h0 + 1 );
+    double meanEnd = mean( endogenous );
+    double meanEx = mean( exogenous );
+
+    auto adjEx = exogenous - meanEx;
+    auto adjEnd = vec( endogenous ) - meanEnd;
+
+    l = as_scalar( sum( adjEx % adjEnd ) / sum( square( adjEx ) ) );
+    g = meanEnd - l * meanEx;
+}
 
 void bspbench()
 {
     void leastsquares( int h0, int h1, double * t, double * g, double * l );
     int p, s, s1, iter, i, n, h, destproc[MAXH], destindex[MAXH];
-    double alpha, beta, src[MAXH], *dest,
+    double alpha, beta, src[MAXH], *dest, x[MAXH], y[MAXH], z[MAXH],
            time0, time1, time, *Time, mintime, maxtime,
            nflops, r, g0, l0, g, l, t[MAXH + 1];
 
@@ -229,10 +245,27 @@ void bspbench()
     bsp_end();
 } /* end bspbench */
 
-void DetermineR( double &r, int &n, double &alpha, double &beta, int &i, int &iter, double &time,
-                 std::vector< double > &Time, int s, double &mintime, double &maxtime, double &nflops, int p )
+void BSPBenchModern()
 {
-    double x[MAXN], y[MAXN], z[MAXN];
+    //void leastsquares( int h0, int h1, double * t, double * g, double * l );
+    int p, s, s1, iter, i, n, h, destproc[MAXH], destindex[MAXH];
+    double alpha, beta, x[MAXN], y[MAXN], z[MAXN], src[MAXH],
+           time, mintime, maxtime,
+           nflops, r, g0, l0, g, l;
+
+    /**** Determine p ****/
+    p = BSPLib::NProcs(); /* p = number of processors obtained */
+    s = BSPLib::ProcId();   /* s = processor number */
+
+    //Time = vecallocd( p );
+    std::vector< double > Time( p );
+    BSPLib::PushContainer( Time );
+    //dest = vecallocd( 2 * MAXH + p );
+    std::vector< double > dest( 2 * MAXH + p );
+    std::vector< double > t( MAXH + 1 );
+    BSPLib::PushContainer( dest );
+    bsp_sync();
+
 
     /**** Determine r ****/
 
@@ -301,32 +334,6 @@ void DetermineR( double &r, int &n, double &alpha, double &beta, int &i, int &it
             fflush( stdout );
         }
     }
-}
-
-void BSPBenchModern()
-{
-    //void leastsquares( int h0, int h1, double * t, double * g, double * l );
-    int p, s, s1, iter, i, n, h, destproc[MAXH], destindex[MAXH];
-    double alpha, beta, x[MAXN], y[MAXN], z[MAXN], src[MAXH],
-           time, mintime, maxtime,
-           nflops, r, g0, l0, g, l;
-
-    /**** Determine p ****/
-    p = BSPLib::NProcs(); /* p = number of processors obtained */
-    s = BSPLib::ProcId();   /* s = processor number */
-
-    //Time = vecallocd( p );
-    std::vector< double > Time( p );
-    BSPLib::PushContainer( Time );
-    //dest = vecallocd( 2 * MAXH + p );
-    std::vector< double > dest( 2 * MAXH + p );
-    std::vector< double > t( MAXH + 1 );
-    BSPLib::PushContainer( dest );
-    bsp_sync();
-
-
-    DetermineR( r, n, alpha, beta, i, iter, time, Time, s, mintime, maxtime, nflops, p );
-
 
     /**** Determine g and l ****/
     for ( h = 0; h <= MAXH; h++ )
@@ -417,7 +424,7 @@ int main( int argc, char **argv )
     printf( "How many processors do you want to use?\n" );
     fflush( stdout );
     //scanf_s( "%d", &P );
-    P = 4;
+    P = 6;
 
     if ( P > bsp_nprocs() )
     {

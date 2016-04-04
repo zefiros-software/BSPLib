@@ -158,7 +158,7 @@ public:
 
         if ( accumulatedSize )
         {
-            for ( const auto &request : sendQueue )
+            for ( const auto & request : sendQueue )
             {
                 *accumulatedSize += request.bufferSize;
             }
@@ -251,7 +251,7 @@ public:
 #   endif
 #endif
 
-            for ( auto &thr : mThreads )
+            for ( auto & thr : mThreads )
             {
 #ifndef BSP_SUPPRESS_ABORT_WARNING
 #   ifndef DEBUG
@@ -317,6 +317,25 @@ public:
         SetThreadAffinityMask( GetCurrentThread(), 1 << ( ProcId() % std::thread::hardware_concurrency() ) );
         SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_HIGHEST );
 #endif // _WIN32
+
+#ifdef __GNUG__
+        /*sched_param sch;
+        int policy;
+        pthread_getschedparam(pthread_self(), &policy, &sch);
+        sch.sched_priority = sched_get_priority_max(SCHED_FIFO);
+        int shedErr = pthread_setschedparam(pthread_self(), SCHED_FIFO, &sch);
+        assert(shedErr == 0);
+        pthread_getschedparam(pthread_self(), &policy, &sch);*/
+        int num_cores = std::thread::hardware_concurrency();
+        int core_id = ProcId() % num_cores;
+
+        cpu_set_t cpuset;
+        CPU_ZERO( &cpuset );
+        CPU_SET( core_id, &cpuset );
+
+        pthread_t current_thread = pthread_self();
+        int o = pthread_setaffinity_np( current_thread, sizeof( cpu_set_t ), &cpuset );
+#endif
 
 
         if ( ProcId() )
@@ -506,7 +525,7 @@ public:
         assert( mProcessorsData.size() > pid );
 #endif
 
-        mProcessorsData[pid].pushRequests.emplace_back( BspInternal::PushRequest{ ident, { size, mProcessorsData[pid].registerCount++ } } );
+        mProcessorsData[pid].pushRequests.emplace_back( BspInternal::PushRequest { ident, { size, mProcessorsData[pid].registerCount++ } } );
     }
 
     /**
@@ -530,7 +549,7 @@ public:
         assert( mProcessorsData.size() > pid );
 #endif
 
-        mProcessorsData[pid].popRequests.emplace_back( BspInternal::PopRequest{ ident } );
+        mProcessorsData[pid].popRequests.emplace_back( BspInternal::PopRequest { ident } );
     }
 
     /**
@@ -575,7 +594,7 @@ public:
         //const char *dstBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
         ptrdiff_t bufferLocation = mProcessorsData[tpid].putBufferStack.Alloc( nbytes, srcBuff );
 
-        mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::PutRequest{ bufferLocation, globalId, offset, nbytes } );
+        mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::PutRequest { bufferLocation, globalId, offset, nbytes } );
     }
 
     /**
@@ -615,7 +634,7 @@ public:
 
         //const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
 
-        mGetRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::GetRequest{ dst, globalId, offset, nbytes } );
+        mGetRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::GetRequest { dst, globalId, offset, nbytes } );
     }
 
     /**
@@ -649,7 +668,7 @@ public:
         BspInternal::StackAllocator::StackLocation bufferLocation = tmpSendBuffer.Alloc( size, srcBuff );
         BspInternal::StackAllocator::StackLocation tagLocation = tmpSendBuffer.Alloc( mTagSize, tagBuff );
 
-        mTmpSendRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::SendRequest{ bufferLocation, size, tagLocation, mTagSize } );
+        mTmpSendRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::SendRequest { bufferLocation, size, tagLocation, mTagSize } );
     }
 
     /**
@@ -857,7 +876,7 @@ private:
 
         if ( !data.pushRequests.empty() )
         {
-            for ( const auto &pushRequest : data.pushRequests )
+            for ( const auto & pushRequest : data.pushRequests )
             {
                 data.registers[pushRequest.pushRegister] = pushRequest.registerInfo;
                 data.threadRegisterLocation.push_back( pushRequest.pushRegister );
@@ -943,7 +962,7 @@ private:
 
             if ( !tmpQueue.empty() )
             {
-                for ( auto &sendRequest : tmpQueue )
+                for ( auto & sendRequest : tmpQueue )
                 {
                     sendRequest.bufferLocation += offset;
                     sendRequest.tagLocation += offset;
@@ -968,9 +987,9 @@ private:
 
         if ( !data.popRequests.empty() )
         {
-            for ( const auto &popRequest : data.popRequests )
+            for ( const auto & popRequest : data.popRequests )
             {
-                data.registers.erase( popRequest.popRegister );
+                data.registers.erase(popRequest.popRegister );
             }
 
             data.popRequests.clear();
@@ -992,7 +1011,7 @@ private:
 
                 BspInternal::StackAllocator::StackLocation bufferLocation = data.getBufferStack.Alloc( request->size, srcBuff );
 
-                mBufferedGetRequests.GetQueueFromMe( owner, pid ).emplace_back( BspInternal::BufferedGetRequest{ bufferLocation, request->destination, request->size } );
+                mBufferedGetRequests.GetQueueFromMe( owner, pid ).emplace_back( BspInternal::BufferedGetRequest { bufferLocation, request->destination, request->size } );
             }
 
             getQueue.clear();

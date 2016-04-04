@@ -345,7 +345,7 @@ void triple2icrs( int n, int nz, int *ia,  int *ja, double *a,
               By convention, the column index of the -1'th nonzero is 0.
     */
 
-    void sort( int n, int nz, int *ia, int *ja, double * a,
+    void sort( int n, int nz, int * ia, int * ja, double * a,
                int radix, int keytype );
 
     int radix, i, iglob, iglob_last, j, jglob, jglob_last, k, inck,
@@ -640,20 +640,20 @@ void bspinputvec( int p, int s, const char *filename,
 
 void bspmv_test()
 {
-    void bspinput2triple( int p, int s, int *pnA, int *pnz,
+    void bspinput2triple( int p, int s, int * pnA, int * pnz,
                           int **pia, int **pja, double **pa );
-    void triple2icrs( int n, int nz, int *ia,  int *ja, double * a,
-                      int *pnrows, int *pncols,
+    void triple2icrs( int n, int nz, int * ia,  int * ja, double * a,
+                      int * pnrows, int * pncols,
                       int **prowindex, int **pcolindex );
-    void bspinputvec( int p, int s, const char *filename,
-                      int *pn, int *pnv, int **pvindex );
+    void bspinputvec( int p, int s, const char * filename,
+                      int * pn, int * pnv, int **pvindex );
     void bspmv_init( int p, int s, int n, int nrows, int ncols,
-                     int nv, int nu, int *rowindex, int *colindex,
-                     int *vindex, int *uindex,
-                     int *srcprocv, int *srcindv, int *destprocu, int *destindu );
+                     int nv, int nu, int * rowindex, int * colindex,
+                     int * vindex, int * uindex,
+                     int * srcprocv, int * srcindv, int * destprocu, int * destindu );
     void bspmv( int p, int s, int n, int nz, int nrows, int ncols,
-                double * a, int *inc,
-                int *srcprocv, int *srcindv, int *destprocu, int *destindu,
+                double * a, int * inc,
+                int * srcprocv, int * srcindv, int * destprocu, int * destindu,
                 int nv, int nu, double * v, double * u );
 
     int s, p, n, nz, i, iglob, nrows, ncols, nv, nu, iter,

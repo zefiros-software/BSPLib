@@ -35,7 +35,7 @@ uint32_t M, N;
 void bsplu_test()
 {
     int nloc( int p, int s, int n );
-    void bsplu( int M, int N, int s, int t, int n, int *pi, double **a );
+    void bsplu( int M, int N, int s, int t, int n, int * pi, double **a );
     int p, pid, q, s, t, n, nlr, nlc, i, j, iglob, jglob, *pi;
     double **a, time0, time1;
 

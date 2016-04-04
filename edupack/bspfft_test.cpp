@@ -23,9 +23,9 @@ uint32_t P;
 void bspfft_test()
 {
     void bspfft( double * x, int n, int p, int s, int sign, double * w0,
-                 double * w, double * tw, int *rho_np, int *rho_p );
+                 double * w, double * tw, int * rho_np, int * rho_p );
     void bspfft_init( int n, int p, int s, double * w0,
-                      double * w, double * tw, int *rho_np, int *rho_p );
+                      double * w, double * tw, int * rho_np, int * rho_p );
     int k1_init( int n, int p );
 
     int p, s, n, q, np, k1, j, jglob, it, *rho_np, *rho_p;
