@@ -1,8 +1,12 @@
 local root      = "../../"
 
-solution "bsp-library"
+newoption {
+   trigger     = "openmp",
+   description = "Enable openmp in the bechmark."
+}
 
-    location( root .. "bsp/" )
+function ConfigureBase( solutionDir )
+    location( root .. solutionDir )
     objdir( root .. "bin/obj/" )
 	debugdir( root .. "bin/" )
     
@@ -23,35 +27,74 @@ solution "bsp-library"
     configuration "x64"
         targetdir( root .. "bin/x64/" )
         architecture "x64"
-        
+end
+
+function ConfigureDebug()
     configuration "Debug"
         targetsuffix "d"
         defines "DEBUG"
         flags "Symbols"
         optimize "Off"
+end
 
+function ConfigureRelease()
     configuration "Release"     
-        flags "LinkTimeOptimization"
+        flags { "LinkTimeOptimization", "Symbols" }
         optimize "Full"
-			
+end
+
+function ConfigureGmake()
     configuration "gmake"
         linkoptions {
             "-Wl,--no-as-needed",
             "-pthread"
             }
-            
-        buildoptions {
-            "-std=c++11",
-            "-pthread"
-            }   
-        
+        if _OPTIONS["openmp"] then
+            buildoptions {
+                "-std=c++11",
+                "-pthread",
+                "-fopenmp-simd"
+                }
+        else
+            buildoptions {
+                "-std=c++11",
+                "-pthread"
+                }
+        end 
+end
+
+function ConfigureVS()
+    if _OPTIONS["openmp"] then
+        configuration "vs*"
+            buildoptions {
+                "/openmp"
+            }
+    end
+end
+
+function ConfigureCoverage()
     configuration "Coverage"
         targetsuffix "cd"
         flags "Symbols"
         links "gcov"
         buildoptions "-coverage -fno-inline"
-                             
-    configuration {}
+end
+
+function ConfigureSolution( solutionDir )
+    ConfigureBase( solutionDir )
+        
+    ConfigureDebug()
+
+    ConfigureRelease()
+			
+    ConfigureGmake()
+        
+    ConfigureCoverage()
+end
+
+solution "bsp-library"
+
+    ConfigureSolution( "bsp/" )
             
     project "bsp"
         kind "StaticLib"
@@ -109,50 +152,7 @@ solution "bsp-library"
           
 solution "bsp-edupack"
 
-    location( root .. "edupack/" )
-    objdir( root .. "bin/obj/" )
-	debugdir( root .. "bin/" )
-    
-    configurations { "Debug", "Release" }
-
-    platforms { "x64", "x32" }
-
-    vectorextensions "SSE2"
-
-    warnings "Extra"
-
-    flags "Unicode" 
-
-    configuration "x32"
-        targetdir( root .. "bin/x32/" )
-        architecture "x32"
-
-    configuration "x64"
-        targetdir( root .. "bin/x64/" )
-        architecture "x64"
-        
-    configuration "Debug"
-        targetsuffix "d"
-        defines "DEBUG"
-        flags "Symbols"
-        optimize "Off"
-
-    configuration "Release"     
-        flags "LinkTimeOptimization"
-        optimize "Speed"
-			
-    configuration "gmake"
-        linkoptions {
-            "-Wl,--no-as-needed",
-            "-pthread"
-            }
-            
-        buildoptions {
-            "-std=c++11",
-            "-pthread"
-            } 
-                             
-    configuration {}
+    ConfigureSolution( "edupack" )
             
     project "bench"                
         kind "ConsoleApp"
@@ -160,11 +160,14 @@ solution "bsp-edupack"
 
         includedirs {
             root .. "bsp/include/",
-            root .. "edupack/"
+            root .. "edupack/",
+            root .. "extern/plotting-library/plot/include/",
+            root .. "extern/plotting-library/extern/armadillo/include/"
             }   
             
         files { 
             root .. "edupack/bspedupack.h",
+            root .. "edupack/config.h",
             root .. "edupack/bspedupack.cpp",
             root .. "edupack/bspbench.cpp",
             }
