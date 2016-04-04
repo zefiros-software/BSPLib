@@ -40,102 +40,102 @@ namespace BSPLib
     {
         BSP_FORCEINLINE void Init( std::function< void() >spmd, int32_t argc, char **argv )
         {
-            BSP::GetInstance().Init( spmd, argc, argv );
+            gBSP.Init( spmd, argc, argv );
         }
 
         BSP_FORCEINLINE void Begin( uint32_t p )
         {
-            BSP::GetInstance().Begin( p );
+            gBSP.Begin( p );
         }
 
         BSP_FORCEINLINE void End()
         {
-            BSP::GetInstance().End();
+            gBSP.End();
         }
 
         BSP_FORCEINLINE uint32_t ProcId()
         {
-            return BSP::GetInstance().ProcId();
+            return gBSP.ProcId();
         }
 
         BSP_FORCEINLINE uint32_t NProcs()
         {
-            return BSP::GetInstance().NProcs();
+            return gBSP.NProcs();
         }
 
         inline void Abort( const char *errorMessage, ... )
         {
-            BSP::GetInstance().Abort( errorMessage );
+            gBSP.Abort( errorMessage );
         }
 
         BSP_FORCEINLINE void VAbort( const char *errorMessage, va_list args )
         {
-            BSP::GetInstance().VAbort( errorMessage, args );
+            gBSP.VAbort( errorMessage, args );
         }
 
         BSP_FORCEINLINE void Sync()
         {
-            BSP::GetInstance().Sync();
+            gBSP.Sync();
         }
 
         BSP_FORCEINLINE double Time()
         {
-            return BSP::GetInstance().Time();
+            return gBSP.Time();
         }
 
         BSP_FORCEINLINE void Push( const void *ident, size_t size )
         {
-            BSP::GetInstance().PushReg( ident, size );
+            gBSP.PushReg( ident, size );
         }
 
         BSP_FORCEINLINE void Pop( const void *ident )
         {
-            BSP::GetInstance().PopReg( ident );
+            gBSP.PopReg( ident );
         }
 
         BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
         {
-            BSP::GetInstance().Put( pid, src, dst, offset, nbytes );
+            gBSP.Put( pid, src, dst, offset, nbytes );
         }
 
         BSP_FORCEINLINE void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
         {
-            BSP::GetInstance().Get( pid, src, offset, dst, nbytes );
+            gBSP.Get( pid, src, offset, dst, nbytes );
         }
 
         BSP_FORCEINLINE void SetTagSize( size_t *size )
         {
-            BSP::GetInstance().SetTagsize( size );
+            gBSP.SetTagsize( size );
         }
 
         BSP_FORCEINLINE void Send( uint32_t pid, const void *tag, const void *payload, size_t size )
         {
-            BSP::GetInstance().Send( pid, tag, payload, size );
+            gBSP.Send( pid, tag, payload, size );
         }
 
         BSP_FORCEINLINE void HPSend( uint32_t pid, const void *tag, const void *payload, size_t size )
         {
-            BSP::GetInstance().Send( pid, tag, payload, size );
+            gBSP.Send( pid, tag, payload, size );
         }
 
         BSP_FORCEINLINE void QSize( size_t *packets, size_t *accumulatedSize )
         {
-            BSP::GetInstance().QSize( packets, accumulatedSize );
+            gBSP.QSize( packets, accumulatedSize );
         }
 
         BSP_FORCEINLINE void GetTag( size_t *status, void *tag )
         {
-            BSP::GetInstance().GetTag( status, tag );
+            gBSP.GetTag( status, tag );
         }
 
         BSP_FORCEINLINE void Move( void *payload, size_t maxCopySize )
         {
-            BSP::GetInstance().Move( payload, maxCopySize );
+            gBSP.Move( payload, maxCopySize );
         }
 
         BSP_FORCEINLINE size_t HPMove( void **tagPtr, void **payloadPtr )
         {
-            BSP &bsp = BSP::GetInstance();
+            BSP &bsp = gBSP;
             size_t status;
             bsp.GetTag( &status, *tagPtr );
             bsp.Move( *payloadPtr, status );
@@ -144,18 +144,28 @@ namespace BSPLib
 
         BSP_FORCEINLINE void HPPut( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
         {
-            BSP::GetInstance().Put( pid, src, dst, offset, nbytes );
+            gBSP.Put( pid, src, dst, offset, nbytes );
         }
 
         BSP_FORCEINLINE void HPGet( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
         {
-            BSP::GetInstance().Get( pid, src, offset, dst, nbytes );
+            gBSP.Get( pid, src, offset, dst, nbytes );
         }
     }
 
     BSP_FORCEINLINE void Sync()
     {
         Classic::Sync();
+    }
+
+    BSP_FORCEINLINE void SyncPutRequests()
+    {
+        gBSP.SyncPutRequests();
+    }
+
+    BSP_FORCEINLINE void SyncPoint()
+    {
+        gBSP.SyncPoint();
     }
 
     BSP_FORCEINLINE uint32_t ProcId()
@@ -171,6 +181,16 @@ namespace BSPLib
     BSP_FORCEINLINE double Time()
     {
         return Classic::Time();
+    }
+
+    BSP_FORCEINLINE void Tic()
+    {
+        gBSP.Tic();
+    }
+
+    BSP_FORCEINLINE double Toc()
+    {
+        return gBSP.Toc();
     }
 
     template< typename tPrimitive >
@@ -284,7 +304,7 @@ namespace BSPLib
     }
 
     template< typename tPrimitive >
-    void PutPtrs( uint32_t pid, tPrimitive *srcBegin, size_t count, tPrimitive *resultBegin, size_t offset )
+    BSP_FORCEINLINE void PutPtrs( uint32_t pid, tPrimitive *srcBegin, size_t count, tPrimitive *resultBegin, size_t offset )
     {
         Classic::Put( pid, srcBegin, resultBegin, offset * sizeof( tPrimitive ), count * sizeof( tPrimitive ) );
     }
@@ -478,7 +498,8 @@ namespace BSPLib
     }
 
     template< typename tIterator, typename tOutputIterator >
-    void PutIterator( uint32_t pid, tIterator srcBegin, size_t count, tOutputIterator resultBegin, size_t offset )
+    BSP_FORCEINLINE void PutIterator( uint32_t pid, tIterator srcBegin, size_t count, tOutputIterator resultBegin,
+                                      size_t offset )
     {
         PutPtrs( pid, &*srcBegin, count, &*resultBegin, offset );
     }

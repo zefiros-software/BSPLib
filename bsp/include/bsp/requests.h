@@ -36,7 +36,7 @@ namespace BspInternal
     struct PutRequest
     {
         StackAllocator::StackLocation bufferLocation;
-        const void *destination;
+        //const void *destination;
         size_t globalId;
         ptrdiff_t offset;
         size_t size;
@@ -47,6 +47,13 @@ namespace BspInternal
         const void *destination;
         size_t globalId;
         ptrdiff_t offset;
+        size_t size;
+    };
+
+    struct BufferedGetRequest
+    {
+        StackAllocator::StackLocation bufferLocation;
+        const void *destination;
         size_t size;
     };
 

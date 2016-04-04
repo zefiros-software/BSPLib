@@ -23,7 +23,7 @@
 #ifndef __BSPLIB_MIXEDBARRIER_H__
 #define __BSPLIB_MIXEDBARRIER_H__
 
-#define BSP_SPIN_ITERATIONS 10000
+#define BSP_SPIN_ITERATIONS 20000
 
 #include "bsp/bspAbort.h"
 
