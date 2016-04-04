@@ -36,9 +36,8 @@
 
 namespace EasyPlot
 {
-    Plot ResidualPlot( const Vec &exogenous, const Vec &endogenous, const Vec &fit )
+    void ResidualPlot( ::Plot &plot, const Vec &exogenous, const Vec &endogenous, const Vec &fit )
     {
-        ::Plot plot;
         plot.SubPlot( 1, 2, 1 )
         .AddPlot( LinePlot( exogenous, endogenous ) )
         .AddPlot( LinePlot( exogenous, fit ) )
@@ -62,8 +61,6 @@ namespace EasyPlot
         .SetYLabel( "Residual" )
         .SetLegend( { "Residual" } )
         .SetXLimit( exogenous.Min(), exogenous.Max() );
-
-        return plot;
     }
 }
 

@@ -273,7 +273,7 @@ public:
 
         ss.close();
 
-        system( "python plot.in" );
+        system( "python3.5 plot.in" );
 
         return *this;
     }
