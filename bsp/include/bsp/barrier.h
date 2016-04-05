@@ -96,6 +96,11 @@ namespace BspInternal
             }
         }
 
+        void NotifyAbort()
+        {
+            ++mGeneration;
+        }
+
     private:
 
         /// The amount of threads to wait for in total

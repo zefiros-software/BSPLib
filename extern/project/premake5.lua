@@ -39,7 +39,7 @@ end
 
 function ConfigureRelease()
     configuration "Release"     
-        flags { "LinkTimeOptimization", "Symbols" }
+        flags { "LinkTimeOptimization", "Symbols", "FloatStrict" }
         optimize "Full"
 end
 
@@ -53,12 +53,16 @@ function ConfigureGmake()
             buildoptions {
                 "-std=c++11",
                 "-pthread",
+                "-ggdb",
+                "-g",
                 "-fopenmp-simd"
                 }
         else
             buildoptions {
                 "-std=c++11",
-                "-pthread"
+                "-pthread",
+                "-ggdb",
+                "-g"
                 }
         end 
 end

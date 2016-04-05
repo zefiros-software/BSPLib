@@ -245,6 +245,45 @@ void bspbench()
     bsp_end();
 } /* end bspbench */
 
+#pragma GCC push_options
+#pragma GCC optimize("O0")
+inline void MeasureR( double *x, double *y, double *z, double beta, double alpha, int n )
+{
+    for ( uint32_t iter = 0; iter < NITERS; ++iter )
+    {
+        for ( uint32_t i = 0; i < n; ++i )
+        {
+            y[i] += alpha * x[i];
+        }
+
+        for ( uint32_t i = 0; i < n; ++i )
+        {
+            z[i] -= beta * x[i];
+        }
+    }
+}
+#pragma GCC pop_options
+
+inline void MeasureRSIMD( double *x, double *y, double *z, double beta, double alpha, int n )
+{
+    for ( uint32_t iter = 0; iter < NITERS; ++iter )
+    {
+#pragma GCC ivdep
+
+        for ( uint32_t i = 0; i < n; ++i )
+        {
+            y[i] += alpha * x[i];
+        }
+
+#pragma GCC ivdep
+
+        for ( uint32_t i = 0; i < n; ++i )
+        {
+            z[i] -= beta * x[i];
+        }
+    }
+}
+
 void BSPBenchModern()
 {
     //void leastsquares( int h0, int h1, double * t, double * g, double * l );
@@ -286,22 +325,7 @@ void BSPBenchModern()
         /* Measure time of 2*NITERS DAXPY operations of length n */
         BSPLib::Tic();
 
-        for ( iter = 0; iter < NITERS; iter++ )
-        {
-            #pragma omp simd
-
-            for ( i = 0; i < n; i++ )
-            {
-                y[i] += alpha * x[i];
-            }
-
-            #pragma omp simd
-
-            for ( i = 0; i < n; i++ )
-            {
-                z[i] -= beta * x[i];
-            }
-        }
+        MeasureR( x, y, z, beta, alpha, n );
 
         time = BSPLib::Toc();
 
@@ -398,13 +422,14 @@ void BSPBenchModern()
         printf( "Range h=p to HMAX: g= %.1lf, l= %.1lf\n", g, l );
 
         printf( "The bottom line for this BSP computer is:\n" );
-        printf( "p= %d, r= %.3lf Mflop/s, g= %.1lf, l= %.1lf\n", p, r / MEGA, g, l );
+        printf( "p= %d, r= %.3lf Mflop/s, g= %.1lf,\t\tl= %.1lf\n", p, r / MEGA, g, l );
+        printf( "p= %d, r= %.3lf Mflop/s, g= %.5lf r,\tl= %.5lf r\n", p, r / MEGA, g / r * MEGA, l / r * MEGA );
         fflush( stdout );
 
-        Plot().AddPlot( LinePlot( t ) ).AddPlot( LinePlot( Vec( 0, MAXH, MAXH, [g, l]( double h )
+        /*Plot().AddPlot( LinePlot( t ) ).AddPlot( LinePlot( Vec( 0, MAXH, MAXH, [g, l]( double h )
         {
             return g * h + l;
-        } ) ) ).SetTightLayout().Show();
+        } ) ) ).SetTightLayout().Show();*/
     }
 
     BSPLib::PopContainer( dest );
@@ -424,7 +449,7 @@ int main( int argc, char **argv )
     printf( "How many processors do you want to use?\n" );
     fflush( stdout );
     //scanf_s( "%d", &P );
-    P = 6;
+    P = 4;
 
     if ( P > bsp_nprocs() )
     {

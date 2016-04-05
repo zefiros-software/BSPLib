@@ -27,6 +27,7 @@
 
 #include "bsp/communicationQueues.h"
 #include "bsp/condVarBarrier.h"
+#include "bsp/pthreadBarrier.h"
 #include "bsp/mixedBarrier.h"
 #include "bsp/requests.h"
 #include "bsp/barrier.h"
@@ -836,7 +837,7 @@ private:
         std::vector< const void * > threadRegisterLocation;
     };
 
-    BspInternal::MixedBarrier mThreadBarrier;
+    BspInternal::Barrier mThreadBarrier;
 
     BspInternal::CommunicationQueues< std::vector< BspInternal::PutRequest > > mPutRequests;
     BspInternal::CommunicationQueues< std::vector< BspInternal::GetRequest > > mGetRequests;
@@ -989,7 +990,7 @@ private:
         {
             for ( const auto & popRequest : data.popRequests )
             {
-                data.registers.erase(popRequest.popRegister );
+                data.registers.erase( popRequest.popRegister );
             }
 
             data.popRequests.clear();
