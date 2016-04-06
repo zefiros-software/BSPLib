@@ -27,7 +27,6 @@
 
 #include "bsp/communicationQueues.h"
 #include "bsp/condVarBarrier.h"
-#include "bsp/pthreadBarrier.h"
 #include "bsp/mixedBarrier.h"
 #include "bsp/requests.h"
 #include "bsp/barrier.h"
@@ -74,7 +73,7 @@ public:
      * @see Abort( const char *format, ... )
      */
 
-    BSP_FORCEINLINE void VAbort( const char *format, va_list args )
+    inline void VAbort( const char *format, va_list args )
     {
         mAbort = true;
         vfprintf( stderr, format, args );
@@ -119,7 +118,7 @@ public:
      *      * Returns the number of physical threads available.
      */
 
-    BSP_FORCEINLINE uint32_t NProcs() const
+    inline uint32_t NProcs() const
     {
         return mProcCount > 0 ? mProcCount : std::thread::hardware_concurrency();
     }
@@ -141,7 +140,7 @@ public:
      *      The calculation of the accumulated size will be skipped.
      */
 
-    BSP_FORCEINLINE void QSize( size_t *packets, size_t *accumulatedSize )
+    inline void QSize( size_t *packets, size_t *accumulatedSize )
     {
 #ifndef BSP_SKIP_CHECKS
         assert( packets != nullptr );
@@ -174,7 +173,7 @@ public:
      * @pre Begin has been called, otherwise this will return 0xdeadbeef.
      */
 
-    BSP_FORCEINLINE uint32_t &ProcId()
+    inline uint32_t &ProcId()
     {
         //static thread_local uint32_t gPID = 0xdeadbeef;
         static BSP_TLS uint32_t gPID = 0xdeadbeef;
@@ -191,7 +190,7 @@ public:
      * @pre Begin has been called
      */
 
-    BSP_FORCEINLINE double Time()
+    inline double Time()
     {
         const std::chrono::time_point< std::chrono::high_resolution_clock > now =
             std::chrono::high_resolution_clock::now();
@@ -199,12 +198,12 @@ public:
         return diff.count();
     }
 
-    BSP_FORCEINLINE void Tic()
+    inline void Tic()
     {
         mProcessorsData[ProcId()].ticTime = std::chrono::high_resolution_clock::now();
     }
 
-    BSP_FORCEINLINE double Toc()
+    inline double Toc()
     {
         const std::chrono::time_point< std::chrono::high_resolution_clock > now =
             std::chrono::high_resolution_clock::now();
@@ -230,7 +229,7 @@ public:
      *  * For the main thread, ProcId() == 0.
      */
 
-    BSP_FORCEINLINE void Init( std::function< void() > entry, int32_t, char ** )
+    inline void Init( std::function< void() > entry, int32_t, char ** )
     {
         mEntry = entry;
         mTagSize = 0;
@@ -305,7 +304,7 @@ public:
      *      Starts the timer for the current thread.
      */
 
-    void Begin( uint32_t maxProcs )
+    inline void Begin( uint32_t maxProcs )
     {
         //fprintf( stderr, "Begin %ld-%ld\n", PID(), std::this_thread::get_id() );
         if ( !mEntry )
@@ -408,7 +407,7 @@ public:
      *  * The main thread releases all threads.
      */
 
-    void End()
+    inline void End()
     {
         mEnded = true;
 
@@ -422,7 +421,7 @@ public:
         }
     }
 
-    void SyncPoint()
+    inline void SyncPoint()
     {
         mThreadBarrier.Wait( mAbort );
     }
@@ -442,7 +441,7 @@ public:
      *  * Push requests have been processed, registers will be available in the next superstep.
      */
 
-    BSP_FORCEINLINE void Sync()
+    inline void Sync()
     {
         CheckAborted();
 
@@ -476,7 +475,7 @@ public:
         SyncPoint();
     }
 
-    void SyncPutRequests()
+    inline void SyncPutRequests()
     {
         uint32_t &pid = ProcId();
 
@@ -489,7 +488,7 @@ public:
         mProcessorsData[pid].putBufferStack.Clear();
     }
 
-    void SyncGetRequests()
+    inline void SyncGetRequests()
     {
         uint32_t &pid = ProcId();
 
@@ -517,7 +516,7 @@ public:
      *  * In the next superstep, this register will be available for Put/Get.
      */
 
-    BSP_FORCEINLINE void PushReg( const void *ident, size_t size )
+    inline void PushReg( const void *ident, size_t size )
     {
         uint32_t &pid = ProcId();
 
@@ -571,7 +570,7 @@ public:
      * * A Sync has happened between PushReg and this call.
      */
 
-    void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
+    BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
     {
         uint32_t &tpid = ProcId();
         //mHasPutRequests[mProcessorsData[tpid].syncBoolIndex] = true;
@@ -595,7 +594,7 @@ public:
         //const char *dstBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
         ptrdiff_t bufferLocation = mProcessorsData[tpid].putBufferStack.Alloc( nbytes, srcBuff );
 
-        mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::PutRequest { bufferLocation, globalId, offset, nbytes } );
+        mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::PutRequest { bufferLocation, offset, globalId, nbytes } );
     }
 
     /**
@@ -616,7 +615,7 @@ public:
      * * A Sync has happened between PushReg and this call.
      */
 
-    BSP_FORCEINLINE void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
+    inline void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
     {
         uint32_t &tpid = ProcId();
 
@@ -651,7 +650,7 @@ public:
      * * Tagsize is equal on all threads.
      */
 
-    BSP_FORCEINLINE void Send( uint32_t pid, const void *tag, const void *payload, const size_t size )
+    inline void Send( uint32_t pid, const void *tag, const void *payload, const size_t size )
     {
         uint32_t &tpid = ProcId();
 
@@ -689,7 +688,7 @@ public:
      * @post The queue cursor for the send queue is moved to the next message.
      */
 
-    BSP_FORCEINLINE void Move( void *payload, size_t max_copy_size_in )
+    inline void Move( void *payload, size_t max_copy_size_in )
     {
         uint32_t &pid = ProcId();
         ProcessorData &data = mProcessorsData[pid];
@@ -717,7 +716,7 @@ public:
      * * size != nullptr.
      */
 
-    BSP_FORCEINLINE void SetTagsize( size_t *size )
+    inline void SetTagsize( size_t *size )
     {
         uint32_t &pid = ProcId();
         assert( size );
@@ -743,7 +742,7 @@ public:
      * @post The queue is in the same state as before.
      */
 
-    BSP_FORCEINLINE void GetTag( size_t *status, void *tag )
+    inline void GetTag( size_t *status, void *tag )
     {
         uint32_t &pid = ProcId();
         *status = ( size_t ) - 1;
@@ -773,7 +772,7 @@ public:
      * @return true if ended, false if not.
      */
 
-    BSP_FORCEINLINE bool IsEnded() const
+    inline bool IsEnded() const
     {
         return mEnded;
     }
@@ -784,7 +783,7 @@ public:
      * @return The instance.
      */
 
-    static BSP_FORCEINLINE BSP &GetInstance()
+    static inline BSP &GetInstance()
     {
         static BSP mBSP;
         return mBSP;
@@ -856,13 +855,13 @@ private:
     bool mEnded;
     std::atomic_bool mAbort;
 
-    void StartTiming()
+    inline void StartTiming()
     {
         assert( ProcId() != 0xdeadbeef );
         mProcessorsData[ProcId()].startTime = std::chrono::high_resolution_clock::now();
     }
 
-    void CheckAborted()
+    inline void CheckAborted()
     {
         if ( mAbort )
         {
@@ -871,7 +870,7 @@ private:
         }
     }
 
-    BSP_FORCEINLINE void ProcessPushRequests( size_t pid )
+    inline void ProcessPushRequests( size_t pid )
     {
         ProcessorData &data = mProcessorsData[pid];
 
@@ -887,7 +886,7 @@ private:
         }
     }
 
-    BSP_FORCEINLINE void ProcessPutRequests( uint32_t pid )
+    inline void ProcessPutRequests( uint32_t pid )
     {
         for ( size_t owner = pid; owner < mProcCount; ++owner )
         {
@@ -926,7 +925,7 @@ private:
         }
     }
 
-    BSP_FORCEINLINE void ProcessGetRequests( uint32_t pid )
+    inline void ProcessGetRequests( uint32_t pid )
     {
         for ( size_t owner = 0; owner < mProcCount; ++owner )
         {
@@ -946,7 +945,7 @@ private:
         }
     }
 
-    BSP_FORCEINLINE void ProcessSendRequests( size_t pid )
+    inline void ProcessSendRequests( size_t pid )
     {
         ProcessorData &data = mProcessorsData[pid];
         data.sendRequests.clear();
@@ -982,7 +981,7 @@ private:
         }
     }
 
-    BSP_FORCEINLINE void ProcessPopRequests( size_t pid )
+    inline void ProcessPopRequests( size_t pid )
     {
         ProcessorData &data = mProcessorsData[pid];
 
@@ -997,7 +996,7 @@ private:
         }
     }
 
-    BSP_FORCEINLINE void BufferGetRequests( uint32_t pid )
+    inline void BufferGetRequests( uint32_t pid )
     {
         ProcessorData &data = mProcessorsData[pid];
 
@@ -1019,7 +1018,7 @@ private:
         }
     }
 
-    BSP_FORCEINLINE size_t LocalToGlobal( uint32_t pid, const void *reg )
+    inline size_t LocalToGlobal( uint32_t pid, const void *reg )
     {
 #ifndef BSP_SKIP_CHECKS
         assert( mProcessorsData[pid].registers.find( reg ) != mProcessorsData[pid].registers.end() );
@@ -1027,7 +1026,7 @@ private:
         return ( *mProcessorsData[pid].registers.find( reg ) ).second.registerCount;
     }
 
-    BSP_FORCEINLINE const void *GlobalToLocal( uint32_t pid, size_t globalId )
+    inline const void *GlobalToLocal( uint32_t pid, size_t globalId )
     {
         return mProcessorsData[pid].threadRegisterLocation[globalId];
     }

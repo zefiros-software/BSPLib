@@ -449,7 +449,7 @@ int main( int argc, char **argv )
     printf( "How many processors do you want to use?\n" );
     fflush( stdout );
     //scanf_s( "%d", &P );
-    P = 4;
+    P = 2;
 
     if ( P > bsp_nprocs() )
     {
