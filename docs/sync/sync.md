@@ -38,7 +38,7 @@ void main( int32_t, const char ** )
     const uint32_t nProcs = BSPLib::NProcs();
     // Waits for all threads to print the first line, 
     // before printing the second line.
-      BSPLib::Excute( []
+      BSPLib::Execute( []
     {            
         std::cout << "Thread " <<  BSPLib::ProcId() 
                   << " waiting on barrier 1" << std::endl;
@@ -62,7 +62,7 @@ void main( int32_t, const char ** )
     const uint32_t nProcs = BSPLib::NProcs();
     // Waits for all threads to print the first line, 
     // before printing the second line.
-      BSPLib::Excute( []
+      BSPLib::Execute( []
     {            
         std::cout << "Thread " <<  BSPLib::Classic::ProcId() 
                   << " waiting on barrier 1" << std::endl;
@@ -86,7 +86,7 @@ void main( int32_t, const char ** )
     const uint32_t nProcs = bsp_nprocs();
     // Waits for all threads to print the first line, 
     // before printing the second line.
-      BSPLib::Excute( []
+      BSPLib::Execute( []
     {            
         std::cout << "Thread " <<  bsp_pid() 
                   << " waiting on barrier 1" << std::endl;

@@ -36,13 +36,13 @@ void main( int32_t, const char ** )
 {
     // The total amount of physical processors available
     const uint32_t nProcs = BSPLib::NProcs();
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "The amount of processors we started with equals " <<  BSPLib::NProcs() << std::endl;
     }, nProcs );
     
     // prints: "The amount of processors we started with equals 3", 3 times
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "The amount of processors we started with equals " <<  BSPLib::NProcs() << std::endl;
     }, 3 );
@@ -56,13 +56,13 @@ void main( int32_t, const char ** )
 {
     // The total amount of physical processors available
     const uint32_t nProcs = BSPLib::Classic::NProcs();
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "The amount of processors we started with equals " <<  BSPLib::Classic::NProcs() << std::endl;
     }, nProcs );
     
     // prints: "The amount of processors we started with equals 3", 3 times
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "The amount of processors we started with equals " <<  BSPLib::Classic::NProcs() << std::endl;
     }, 3 );
@@ -76,13 +76,13 @@ void main( int32_t, const char ** )
 {
     // The total amount of physical processors available
     const uint32_t nProcs = bsp_nprocs();
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "The amount of processors we started with equals " <<  bsp_nprocs() << std::endl;
     }, nProcs );
     
     // prints: "The amount of processors we started with equals 3", 3 times
-    BSPLib::Excute( []
+    BSPLib::Execute( []
     {
         std::cout << "The amount of processors we started with equals " <<  bsp_nprocs() << std::endl;
     }, 3 );
