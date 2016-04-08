@@ -20,65 +20,47 @@
  * THE SOFTWARE.
  */
 #pragma once
-#ifndef __BSPLIB_REQUESTS_H__
-#define __BSPLIB_REQUESTS_H__
+#ifndef __BSPLIB_THREADREGISTERMAP_H__
+#define __BSPLIB_THREADREGISTERMAP_H__
 
-#include "bsp/stackAllocator.h"
+#include "bsp/requests.h"
 
-#include <stdint.h>
+#include <vector>
+#include <map>
 
 namespace BspInternal
 {
-    struct RegisterInfo
+    class ThreadRegisterMap
     {
-        size_t size;
-        size_t registerCount;
+    public:
+
+        inline size_t LocalToGlobal( const void *reg )
+        {
+            return mRegisters.find( reg )->second.registerCount;
+        }
+
+        inline const void *GlobalToLocal( size_t globalId )
+        {
+            return mThreadRegisterLocations[globalId];
+        }
+
+        inline void Insert( const void *reg, const BspInternal::RegisterInfo &registerInfo )
+        {
+            mRegisters[reg] = registerInfo;
+            mThreadRegisterLocations.push_back( reg );
+        }
+
+        inline void Erase( const void *reg )
+        {
+            //mThreadRegisterLocations[LocalToGlobal( reg )] = nullptr;
+            mRegisters.erase( reg );
+        }
+
+    private:
+
+        std::map< const void *, RegisterInfo > mRegisters;
+        std::vector< const void * > mThreadRegisterLocations;
     };
-
-    struct PutRequest
-    {
-        StackAllocator::StackLocation bufferLocation;
-        //const void *destination;
-        ptrdiff_t offset;
-        uint32_t globalId;
-        uint32_t size;
-    };
-
-    struct GetRequest
-    {
-        const void *destination;
-        uint32_t globalId;
-        ptrdiff_t offset;
-        uint32_t size;
-    };
-
-    struct BufferedGetRequest
-    {
-        StackAllocator::StackLocation bufferLocation;
-        const void *destination;
-        uint32_t size;
-    };
-
-    struct SendRequest
-    {
-        StackAllocator::StackLocation bufferLocation;
-        size_t bufferSize;
-
-        StackAllocator::StackLocation tagLocation;
-        size_t tagSize;
-    };
-
-    struct PushRequest
-    {
-        const void *pushRegister;
-        RegisterInfo registerInfo;
-    };
-
-    struct PopRequest
-    {
-        const void *popRegister;
-    };
-
 }
 
 #endif

@@ -105,6 +105,7 @@ solution "bsp-library"
 
         includedirs {
             root .. "bsp/include/",
+            root .. "extern/sparsehash/src/"
             }   
             
         files { 
@@ -124,7 +125,8 @@ solution "bsp-library"
             root .. "extern/gtest/",
             
             root .. "bsp/include/",
-            root .. "test/"
+            root .. "test/",
+            root .. "extern/sparsehash/src/"
             }   
         
         files { 
@@ -166,7 +168,8 @@ solution "bsp-edupack"
             root .. "bsp/include/",
             root .. "edupack/",
             root .. "extern/plotting-library/plot/include/",
-            root .. "extern/plotting-library/extern/armadillo/include/"
+            root .. "extern/plotting-library/extern/armadillo/include/",
+            root .. "extern/sparsehash/src/"
             }   
             
         files { 

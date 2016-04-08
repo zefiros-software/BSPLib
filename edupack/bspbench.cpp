@@ -247,22 +247,35 @@ void bspbench()
 
 #pragma GCC push_options
 #pragma GCC optimize("O0")
-inline void MeasureR( double *x, double *y, double *z, double beta, double alpha, int n )
+void __attribute__( ( noinline ) ) MeasureR( double *x, double *y, double *z, double beta, double alpha, int n )
 {
-    for ( uint32_t iter = 0; iter < NITERS; ++iter )
+    for ( volatile uint32_t i = 0; i < n; ++i )
     {
-        for ( uint32_t i = 0; i < n; ++i )
+        y[i] += alpha * x[i];
+    }
+
+    for ( volatile uint32_t i = 0; i < n; ++i )
+    {
+        z[i] -= beta * x[i];
+    }
+}
+#pragma GCC pop_options
+
+BSP_FORCEINLINE void MeasureROpt( double *x, double *y, double *z, double beta, double alpha, int n )
+{
+    for ( volatile uint32_t iter = 0; iter < NITERS; ++iter )
+    {
+        for ( volatile uint32_t i = 0; i < n; ++i )
         {
             y[i] += alpha * x[i];
         }
 
-        for ( uint32_t i = 0; i < n; ++i )
+        for ( volatile uint32_t i = 0; i < n; ++i )
         {
             z[i] -= beta * x[i];
         }
     }
 }
-#pragma GCC pop_options
 
 inline void MeasureRSIMD( double *x, double *y, double *z, double beta, double alpha, int n )
 {
@@ -283,6 +296,22 @@ inline void MeasureRSIMD( double *x, double *y, double *z, double beta, double a
         }
     }
 }
+
+#pragma GCC push_options
+#pragma GCC optimize("O0")
+void __attribute__( ( noinline ) ) EmptyFunction( int n )
+{
+    for ( volatile uint32_t i = 0; i < n; ++i )
+    {
+        //y[i] += alpha * x[i];
+    }
+
+    for ( volatile uint32_t i = 0; i < n; ++i )
+    {
+        //z[i] -= beta * x[i];
+    }
+}
+#pragma GCC pop_options
 
 void BSPBenchModern()
 {
@@ -325,12 +354,24 @@ void BSPBenchModern()
         /* Measure time of 2*NITERS DAXPY operations of length n */
         BSPLib::Tic();
 
-        MeasureR( x, y, z, beta, alpha, n );
+        for ( uint32_t iter = 0; iter < NITERS; ++iter )
+        {
+            MeasureR( x, y, z, beta, alpha, n );
+        }
 
         time = BSPLib::Toc();
 
+        BSPLib::Tic();
+
+        for ( uint32_t iter = 0; iter < NITERS; ++iter )
+        {
+            EmptyFunction( n );
+        }
+
+        time -= BSPLib::Toc();
+
         BSPLib::PutIterator( 0, &time, 1, Time.begin(), s );
-        BSPLib::SyncPutRequests();
+        BSPLib::Sync();
 
         /* Processor 0 determines minimum, maximum, average computing rate */
         if ( s == 0 )
@@ -382,7 +423,7 @@ void BSPBenchModern()
         }
 
         /* Measure time of NITERS h-relations */
-        BSPLib::SyncPoint();
+        BSPLib::SyncPutRequests();
 
         BSPLib::Tic();
 
@@ -449,7 +490,7 @@ int main( int argc, char **argv )
     printf( "How many processors do you want to use?\n" );
     fflush( stdout );
     //scanf_s( "%d", &P );
-    P = 2;
+    P = 4;
 
     if ( P > bsp_nprocs() )
     {

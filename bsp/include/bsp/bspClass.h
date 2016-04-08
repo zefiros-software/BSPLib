@@ -25,10 +25,12 @@
 
 #define BSP_SKIP_CHECKS
 
+#include "bsp/threadRegisterDenseHash.h"
+#include "bsp/threadRegisterVector.h"
 #include "bsp/communicationQueues.h"
+#include "bsp/threadRegisterMap.h"
 #include "bsp/condVarBarrier.h"
 #include "bsp/mixedBarrier.h"
-#include "bsp/requests.h"
 #include "bsp/barrier.h"
 
 #include <algorithm>
@@ -50,12 +52,24 @@
 // E.G. Legacy behaviour of the MulticoreBSP library.
 extern int main( int argc, char **argv );
 
+#ifndef BSP_BARRIER_TYPE
+typedef BspInternal::MixedBarrier tBarrier;
+#else
+typedef BSP_BARRIER_TYPE tBarrier;
+#endif
+
+#ifndef BSP_REGISTERMAP_TYPE
+typedef BspInternal::ThreadRegisterDenseHash tRegisterMap;
+#else
+typedef BSP_REGISTERMAP_TYPE tRegisterMap;
+#endif
+
 /**
  * The BSP implementation class. By using this class as singleton, we avoid global memory declarations, cross source
  * problems with static variables and ensure proper usage from a header only library.
  */
 
-static class BSP
+class BSP
 {
 public:
 
@@ -447,32 +461,65 @@ public:
 
         uint32_t &pid = ProcId();
 
+        ProcessorData &data = mProcessorsData[pid];
+
+        CheckSyncBools( pid );
+
         SyncPoint();
 
-        if ( mProcessorsData[0].newTagSize != mTagSize )
+        CollectSyncBools( pid );
+
+        if ( data.syncBools.hasTagSizeUpdate )
         {
-            mTagSize = mProcessorsData[0].newTagSize;
+            ProcessTagSizeUpdate( pid );
         }
 
-        BufferGetRequests( pid );
+        if ( data.syncBools.hasGetRequests )
+        {
+            BufferGetRequests( pid );
+        }
 
-        SyncPoint();
+        if ( data.syncBools.hasTagSizeUpdate || data.syncBools.hasGetRequests )
+        {
+            SyncPoint();
+        }
 
-        ProcessPopRequests( pid );
+        if ( data.syncBools.hasPopRequests )
+        {
+            ProcessPopRequests( pid );
+        }
 
-        ProcessSendRequests( pid );
+        if ( data.syncBools.hasSendRequests )
+        {
+            ProcessSendRequests( pid );
+        }
 
-        ProcessPutRequests( pid );
-        ProcessGetRequests( pid );
+        if ( data.syncBools.hasPutRequests )
+        {
+            ProcessPutRequests( pid );
+        }
 
-        SyncPoint();
+        if ( data.syncBools.hasGetRequests )
+        {
+            ProcessGetRequests( pid );
+        }
 
-        mProcessorsData[pid].putBufferStack.Clear();
-        mProcessorsData[pid].getBufferStack.Clear();
+        if ( data.syncBools.hasSendRequests || data.syncBools.hasPopRequests || data.syncBools.hasPutRequests ||
+                data.syncBools.hasGetRequests )
+        {
+            SyncPoint();
+        }
 
-        ProcessPushRequests( pid );
+        if ( data.syncBools.hasPutRequests )
+        {
+            data.putBufferStack.Clear();
+        }
 
-        SyncPoint();
+        if ( data.syncBools.hasPushRequests )
+        {
+            ProcessPushRequests( pid );
+            SyncPoint();
+        }
     }
 
     inline void SyncPutRequests()
@@ -499,8 +546,17 @@ public:
         SyncPoint();
 
         ProcessGetRequests( pid );
+    }
 
-        mProcessorsData[pid].getBufferStack.Clear();
+    inline void SyncSendRequests()
+    {
+        uint32_t &pid = ProcId();
+
+        SyncPoint();
+
+        ProcessSendRequests( pid );
+
+        SyncPoint();
     }
 
     /**
@@ -516,7 +572,7 @@ public:
      *  * In the next superstep, this register will be available for Put/Get.
      */
 
-    inline void PushReg( const void *ident, size_t size )
+    void PushReg( const void *ident, size_t size )
     {
         uint32_t &pid = ProcId();
 
@@ -582,13 +638,14 @@ public:
 #endif
 
         const char *srcBuff = reinterpret_cast<const char *>( src );
-        const size_t globalId = LocalToGlobal( tpid, dst ); //mRegisters[tpid][dst].registerCount;
+        const size_t globalId = mProcessorsData[tpid].threadRegisters.LocalToGlobal(
+                                    dst ); //mRegisters[tpid][dst].registerCount;
 
 #ifndef BSP_SKIP_CHECKS
         assert( mProcessorsData[pid].threadRegisterLocation.size() > globalId );
 
         /*mThreadRegisterLocation[pid][globalId]*/
-        assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
+        //assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
         //const char *dstBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
@@ -625,11 +682,12 @@ public:
         assert( src && dst );
 #endif
 
-        const size_t globalId = LocalToGlobal( tpid, src ); //mRegisters[tpid][src].registerCount;
+        const size_t globalId = mProcessorsData[tpid].threadRegisters.LocalToGlobal(
+                                    src ); //mRegisters[tpid][src].registerCount;
 
 #ifndef BSP_SKIP_CHECKS
         assert( mProcessorsData[pid].threadRegisterLocation.size() > globalId );
-        assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
+        //assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
         //const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
@@ -657,8 +715,8 @@ public:
 #ifndef BSP_SKIP_CHECKS
         assert( pid < mProcCount );
         assert( tpid < mProcCount );
-        assert( mProcessorsData[tpid].newTagSize == mTagSize );
 #endif // !BSP_SKIP_CHECKS
+        assert( mProcessorsData[tpid].newTagSize == mTagSize );
 
         const char *srcBuff = reinterpret_cast<const char *>( payload );
         const char *tagBuff = reinterpret_cast<const char *>( tag );
@@ -832,11 +890,20 @@ private:
         std::vector< BspInternal::SendRequest > sendRequests;
         std::vector< BspInternal::PushRequest > pushRequests;
         std::vector< BspInternal::PopRequest > popRequests;
-        std::map< const void *, BspInternal::RegisterInfo > registers;
-        std::vector< const void * > threadRegisterLocation;
+        tRegisterMap threadRegisters;
+
+        struct
+        {
+            bool hasPutRequests;
+            bool hasGetRequests;
+            bool hasPushRequests;
+            bool hasPopRequests;
+            bool hasSendRequests;
+            bool hasTagSizeUpdate;
+        } syncBools;
     };
 
-    BspInternal::Barrier mThreadBarrier;
+    tBarrier mThreadBarrier;
 
     BspInternal::CommunicationQueues< std::vector< BspInternal::PutRequest > > mPutRequests;
     BspInternal::CommunicationQueues< std::vector< BspInternal::GetRequest > > mGetRequests;
@@ -870,6 +937,37 @@ private:
         }
     }
 
+    inline void CheckSyncBools( size_t pid )
+    {
+        CheckHasGetRequests( pid );
+        CheckHasPopRequests( pid );
+        CheckHasPushRequests( pid );
+        CheckHasPutRequests( pid );
+        CheckHasSendRequests( pid );
+        CheckHasTagSizeUpdate( pid );
+    }
+
+    inline void CollectSyncBools( size_t pid )
+    {
+        ProcessorData &data = mProcessorsData[pid];
+
+        for ( uint32_t owner = 0; owner < mProcCount; ++owner )
+        {
+            data.syncBools.hasGetRequests |= mProcessorsData[owner].syncBools.hasGetRequests;
+            data.syncBools.hasPopRequests |= mProcessorsData[owner].syncBools.hasPopRequests;
+            data.syncBools.hasPushRequests |= mProcessorsData[owner].syncBools.hasPushRequests;
+            data.syncBools.hasPutRequests |= mProcessorsData[owner].syncBools.hasPutRequests;
+            data.syncBools.hasSendRequests |= mProcessorsData[owner].syncBools.hasSendRequests;
+            data.syncBools.hasTagSizeUpdate |= mProcessorsData[owner].syncBools.hasTagSizeUpdate;
+        }
+    }
+
+    inline void CheckHasPushRequests( size_t pid )
+    {
+        ProcessorData &data = mProcessorsData[pid];
+        data.syncBools.hasPushRequests = !data.pushRequests.empty();
+    }
+
     inline void ProcessPushRequests( size_t pid )
     {
         ProcessorData &data = mProcessorsData[pid];
@@ -878,11 +976,23 @@ private:
         {
             for ( const auto & pushRequest : data.pushRequests )
             {
-                data.registers[pushRequest.pushRegister] = pushRequest.registerInfo;
-                data.threadRegisterLocation.push_back( pushRequest.pushRegister );
+                data.threadRegisters.Insert( pushRequest.pushRegister, pushRequest.registerInfo );
+                // data.registers[pushRequest.pushRegister] = pushRequest.registerInfo;
+                // data.threadRegisterLocation.push_back( pushRequest.pushRegister );
             }
 
             data.pushRequests.clear();
+        }
+    }
+
+    inline void CheckHasPutRequests( uint32_t pid )
+    {
+        bool &hasPutRequests = mProcessorsData[pid].syncBools.hasPutRequests;
+        hasPutRequests = false;
+
+        for ( size_t target = 0; !hasPutRequests && target < mProcCount; ++target )
+        {
+            hasPutRequests = !mPutRequests.GetQueueFromMe( target, pid ).empty();
         }
     }
 
@@ -896,7 +1006,8 @@ private:
             {
                 for ( auto putRequest = putQueue.rbegin(), end = putQueue.rend(); putRequest != end; ++putRequest )
                 {
-                    char *dstBuff = static_cast<char *>( const_cast<void *>( GlobalToLocal( pid, putRequest->globalId ) ) )
+                    char *dstBuff = static_cast<char *>( const_cast<void *>( mProcessorsData[pid].threadRegisters.GlobalToLocal(
+                                                                                 putRequest->globalId ) ) )
                                     + putRequest->offset;
 
                     mProcessorsData[owner].putBufferStack.Extract( putRequest->bufferLocation, putRequest->size, dstBuff );
@@ -914,7 +1025,8 @@ private:
             {
                 for ( auto putRequest = putQueue.rbegin(), end = putQueue.rend(); putRequest != end; ++putRequest )
                 {
-                    char *dstBuff = static_cast<char *>( const_cast<void *>( GlobalToLocal( pid, putRequest->globalId ) ) )
+                    char *dstBuff = static_cast<char *>( const_cast<void *>( mProcessorsData[pid].threadRegisters.GlobalToLocal(
+                                                                                 putRequest->globalId ) ) )
                                     + putRequest->offset;
 
                     mProcessorsData[owner].putBufferStack.Extract( putRequest->bufferLocation, putRequest->size, dstBuff );
@@ -922,6 +1034,41 @@ private:
 
                 putQueue.clear();
             }
+        }
+    }
+
+    inline void CheckHasGetRequests( uint32_t pid )
+    {
+        bool &hasGetRequests = mProcessorsData[pid].syncBools.hasGetRequests;
+        hasGetRequests = false;
+
+        for ( size_t target = 0; !hasGetRequests && target < mProcCount; ++target )
+        {
+            hasGetRequests = !mGetRequests.GetQueueFromMe( target, pid ).empty();
+        }
+    }
+
+    inline void BufferGetRequests( uint32_t pid )
+    {
+        ProcessorData &data = mProcessorsData[pid];
+        data.getBufferStack.Clear();
+
+        for ( uint32_t owner = 0; owner < mProcCount; ++owner )
+        {
+            std::vector< BspInternal::GetRequest > &getQueue = mGetRequests.GetQueueToMe( owner, pid );
+
+            for ( auto request = getQueue.rbegin(), end = getQueue.rend(); request != end; ++request )
+            {
+                //const char *srcBuff = reinterpret_cast<const char *>( request->source );
+                const char *srcBuff = reinterpret_cast<const char *>( mProcessorsData[pid].threadRegisters.GlobalToLocal(
+                                                                          request->globalId ) ) + request->offset;
+
+                BspInternal::StackAllocator::StackLocation bufferLocation = data.getBufferStack.Alloc( request->size, srcBuff );
+
+                mBufferedGetRequests.GetQueueFromMe( owner, pid ).emplace_back( BspInternal::BufferedGetRequest { bufferLocation, request->destination, request->size } );
+            }
+
+            getQueue.clear();
         }
     }
 
@@ -942,6 +1089,17 @@ private:
 
                 getQueue.clear();
             }
+        }
+    }
+
+    inline void CheckHasSendRequests( size_t pid )
+    {
+        bool &hasSendRequests = mProcessorsData[pid].syncBools.hasSendRequests;
+        hasSendRequests = false;
+
+        for ( size_t target = 0; !hasSendRequests && target < mProcCount; ++target )
+        {
+            hasSendRequests = !mTmpSendRequests.GetQueueFromMe( target, pid ).empty();
         }
     }
 
@@ -981,6 +1139,12 @@ private:
         }
     }
 
+    inline void CheckHasPopRequests( size_t pid )
+    {
+        ProcessorData &data = mProcessorsData[pid];
+        data.syncBools.hasPopRequests = !data.popRequests.empty();
+    }
+
     inline void ProcessPopRequests( size_t pid )
     {
         ProcessorData &data = mProcessorsData[pid];
@@ -989,48 +1153,26 @@ private:
         {
             for ( const auto & popRequest : data.popRequests )
             {
-                data.registers.erase( popRequest.popRegister );
+                data.threadRegisters.Erase( popRequest.popRegister );
             }
 
             data.popRequests.clear();
         }
     }
 
-    inline void BufferGetRequests( uint32_t pid )
+    inline void CheckHasTagSizeUpdate( size_t pid )
     {
         ProcessorData &data = mProcessorsData[pid];
+        data.syncBools.hasTagSizeUpdate = data.newTagSize != mTagSize;
+    }
 
-        for ( uint32_t owner = 0; owner < mProcCount; ++owner )
+    inline void ProcessTagSizeUpdate( size_t pid )
+    {
+        if ( pid == 0 )
         {
-            std::vector< BspInternal::GetRequest > &getQueue = mGetRequests.GetQueueToMe( owner, pid );
-
-            for ( auto request = getQueue.rbegin(), end = getQueue.rend(); request != end; ++request )
-            {
-                //const char *srcBuff = reinterpret_cast<const char *>( request->source );
-                const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, request->globalId ) ) + request->offset;
-
-                BspInternal::StackAllocator::StackLocation bufferLocation = data.getBufferStack.Alloc( request->size, srcBuff );
-
-                mBufferedGetRequests.GetQueueFromMe( owner, pid ).emplace_back( BspInternal::BufferedGetRequest { bufferLocation, request->destination, request->size } );
-            }
-
-            getQueue.clear();
+            mTagSize = mProcessorsData[0].newTagSize;
         }
     }
-
-    inline size_t LocalToGlobal( uint32_t pid, const void *reg )
-    {
-#ifndef BSP_SKIP_CHECKS
-        assert( mProcessorsData[pid].registers.find( reg ) != mProcessorsData[pid].registers.end() );
-#endif
-        return ( *mProcessorsData[pid].registers.find( reg ) ).second.registerCount;
-    }
-
-    inline const void *GlobalToLocal( uint32_t pid, size_t globalId )
-    {
-        return mProcessorsData[pid].threadRegisterLocation[globalId];
-    }
-
-} gBSP;
+};
 
 #endif
