@@ -36,10 +36,11 @@
 #include <algorithm>
 #include <assert.h>
 #include <iterator>
-#include <map>
 #include <stdarg.h>
+#include <atomic>
 #include <chrono>
 #include <future>
+#include <map>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -348,7 +349,7 @@ public:
         CPU_SET( core_id, &cpuset );
 
         pthread_t current_thread = pthread_self();
-        int o = pthread_setaffinity_np( current_thread, sizeof( cpu_set_t ), &cpuset );
+        pthread_setaffinity_np( current_thread, sizeof( cpu_set_t ), &cpuset );
 #endif
 
 
@@ -947,7 +948,7 @@ private:
     std::vector< std::future< void > > mThreads;
     std::function< void() > mEntry;
     uint32_t mProcCount;
-    std::atomic_uint32_t mTagSize;
+    std::atomic< uint32_t > mTagSize;
 
     bool mEnded;
     std::atomic_bool mAbort;
