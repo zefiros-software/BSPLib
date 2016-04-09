@@ -23,7 +23,7 @@ void bsp_broadcast( double *x, int n, int src, int s0, int stride, int p0,
         for ( t = 0; t < p0; t++ )
         {
             dest = s0 + t * stride;
-            nbytes = MIN( b, n - t * b ) * SZDBL;
+            nbytes = std::min( b, n - t * b ) * SZDBL;
 
             if ( nbytes > 0 )
             {
@@ -38,7 +38,7 @@ void bsp_broadcast( double *x, int n, int src, int s0, int stride, int p0,
 
         if ( 0 <= t && t < p0 )
         {
-            nbytes = MIN( b, n - t * b ) * SZDBL;
+            nbytes = std::min( b, n - t * b ) * SZDBL;
 
             if ( nbytes > 0 )
             {

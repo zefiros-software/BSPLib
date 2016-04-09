@@ -143,8 +143,8 @@ void bspbench()
 
             for ( s1 = 1; s1 < p; s1++ )
             {
-                mintime = MIN( mintime, Time[s1] );
-                maxtime = MAX( maxtime, Time[s1] );
+                mintime = std::min( mintime, Time[s1] );
+                maxtime = std::max( maxtime, Time[s1] );
             }
 
             if ( mintime > 0.0 )
@@ -247,14 +247,14 @@ void bspbench()
 
 #pragma GCC push_options
 #pragma GCC optimize("O0")
-void __attribute__( ( noinline ) ) MeasureR( double *x, double *y, double *z, double beta, double alpha, int n )
+void  MeasureR( double *x, double *y, double *z, double beta, double alpha, int n )
 {
-    for ( volatile uint32_t i = 0; i < n; ++i )
+    for ( volatile int i = 0; i < n; ++i )
     {
         y[i] += alpha * x[i];
     }
 
-    for ( volatile uint32_t i = 0; i < n; ++i )
+    for ( volatile int i = 0; i < n; ++i )
     {
         z[i] -= beta * x[i];
     }
@@ -265,12 +265,12 @@ BSP_FORCEINLINE void MeasureROpt( double *x, double *y, double *z, double beta, 
 {
     for ( volatile uint32_t iter = 0; iter < NITERS; ++iter )
     {
-        for ( volatile uint32_t i = 0; i < n; ++i )
+        for ( volatile int i = 0; i < n; ++i )
         {
             y[i] += alpha * x[i];
         }
 
-        for ( volatile uint32_t i = 0; i < n; ++i )
+        for ( volatile int i = 0; i < n; ++i )
         {
             z[i] -= beta * x[i];
         }
@@ -283,14 +283,14 @@ inline void MeasureRSIMD( double *x, double *y, double *z, double beta, double a
     {
 #pragma GCC ivdep
 
-        for ( uint32_t i = 0; i < n; ++i )
+        for ( int i = 0; i < n; ++i )
         {
             y[i] += alpha * x[i];
         }
 
 #pragma GCC ivdep
 
-        for ( uint32_t i = 0; i < n; ++i )
+        for ( int i = 0; i < n; ++i )
         {
             z[i] -= beta * x[i];
         }
@@ -299,14 +299,14 @@ inline void MeasureRSIMD( double *x, double *y, double *z, double beta, double a
 
 #pragma GCC push_options
 #pragma GCC optimize("O0")
-void __attribute__( ( noinline ) ) EmptyFunction( int n )
+void EmptyFunction( int n )
 {
-    for ( volatile uint32_t i = 0; i < n; ++i )
+    for ( volatile int i = 0; i < n; ++i )
     {
         //y[i] += alpha * x[i];
     }
 
-    for ( volatile uint32_t i = 0; i < n; ++i )
+    for ( volatile int i = 0; i < n; ++i )
     {
         //z[i] -= beta * x[i];
     }
@@ -332,6 +332,8 @@ void BSPBenchModern()
     std::vector< double > dest( 2 * MAXH + p );
     std::vector< double > t( MAXH + 1 );
     BSPLib::PushContainer( dest );
+    std::vector< std::vector< double > > procTimes;
+    procTimes.resize( p );
     bsp_sync();
 
 
@@ -434,7 +436,7 @@ void BSPBenchModern()
                 BSPLib::PutIterator( destproc[i], &src[i], 1, dest.begin(), destindex[i] );
             }
 
-            BSPLib::SyncPutRequests();
+            BSPLib::Sync();
         }
 
         time = BSPLib::Toc();
@@ -448,6 +450,12 @@ void BSPBenchModern()
         {
             time = mean( arma::conv_to<vec>::from( Time ) );
             t[h] = ( time * r ) / NITERS;
+
+            for ( uint32_t i = 0; i < p; ++i )
+            {
+                procTimes[i].push_back( Time[i] * r / NITERS );
+            }
+
             printf( "Time of %5d-relation= %lf sec= %8.0lf flops\n",
                     h, time / NITERS, t[h] );
             fflush( stdout );
@@ -501,7 +509,6 @@ int main( int argc, char **argv )
     BSPLib::Execute( BSPBenchModern, P );
 
     //BSPBenchModern();
-    //system( "pause" );
     exit( 0 );
 
 } /* end main */

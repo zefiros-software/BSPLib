@@ -31,8 +31,8 @@ namespace BspInternal
 {
     struct RegisterInfo
     {
-        size_t size;
-        size_t registerCount;
+        uint32_t size;
+        uint32_t registerCount;
     };
 
     struct PutRequest
@@ -62,10 +62,10 @@ namespace BspInternal
     struct SendRequest
     {
         StackAllocator::StackLocation bufferLocation;
-        size_t bufferSize;
+        uint32_t bufferSize;
 
         StackAllocator::StackLocation tagLocation;
-        size_t tagSize;
+        uint32_t tagSize;
     };
 
     struct PushRequest

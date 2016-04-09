@@ -283,7 +283,7 @@ void bspredistr( double *x, int n, int p, int s, int c0, int c1,
 
     np = n / p;
     ratio = c1 / c0;
-    size = MAX( np / ratio, 1 );
+    size = std::max( np / ratio, 1 );
     npackets = np / size;
     tmp = vecallocd( 2 * size );
 

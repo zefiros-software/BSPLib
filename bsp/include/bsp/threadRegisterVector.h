@@ -25,6 +25,7 @@
 
 #include "bsp/requests.h"
 
+#include <algorithm>
 #include <vector>
 #include <map>
 
@@ -34,42 +35,43 @@ namespace BspInternal
     {
     public:
 
-        inline size_t LocalToGlobal( const void *reg )
+        ThreadRegisterVector()
+            : mRegisterCache( nullptr ),
+              mLocationCache( ( uint32_t )( -1 ) )
         {
-            size_t left = 0;
-            size_t right = mRegisters.size();
 
-            while ( left < right )
-            {
-                size_t pivot = ( left + right ) >> 1;
-
-                if ( mRegisters[pivot] > reg )
-                {
-                    right = pivot;
-                }
-                else if ( mRegisters[pivot] < reg )
-                {
-                    left = pivot;
-                }
-                else
-                {
-                    return mRegistersInfo[pivot].registerCount;
-                }
-            }
-
-            return mRegistersInfo[left].registerCount;
         }
 
-        inline const void *GlobalToLocal( size_t globalId )
+        inline uint32_t LocalToGlobal( const void *reg )
         {
-            return mThreadRegisterLocations[globalId];
+            if ( reg == mRegisterCache )
+            {
+                return mLocationCache;
+            }
+
+            auto l = std::lower_bound( mRegisters.begin(), mRegisters.end(), reg );
+
+            mRegisterCache = reg;
+            mLocationCache = mRegistersInfo[l - mRegisters.begin()].registerCount;
+
+            return mLocationCache;
+        }
+
+        inline const void *GlobalToLocal( uint32_t globalId )
+        {
+            if ( mLocationCache == globalId )
+            {
+                return mRegisterCache;
+            }
+
+            mLocationCache = globalId;
+            mRegisterCache = mThreadRegisterLocations[globalId];
+
+            return mRegisterCache;
         }
 
         inline void Insert( const void *reg, const BspInternal::RegisterInfo &registerInfo )
         {
-            /*mRegisters[reg] = registerInfo;
-            mThreadRegisterLocations.push_back( reg );*/
-
             if ( mRegisters.empty() )
             {
                 mRegisters.push_back( reg );
@@ -78,32 +80,30 @@ namespace BspInternal
                 return;
             }
 
-            size_t left = 0;
-            size_t right = mRegisters.size() - 1;
+            auto l = std::lower_bound( mRegisters.begin(), mRegisters.end(), reg );
 
-            while ( left != right )
+            if ( l != mRegisters.end() && *l == reg )
             {
-                size_t pivot = ( left + right ) >> 1;
-
-                if ( mRegisters[pivot] > reg )
-                {
-                    right = pivot;
-                }
-                else
-                {
-                    left = pivot;
-                }
+                mRegistersInfo[l - mRegisters.begin()] = registerInfo;
+                mThreadRegisterLocations.push_back( reg );
             }
-
-            mRegisters.insert( mRegisters.begin() + left + 1, reg );
-            mRegistersInfo.insert( mRegistersInfo.begin() + left + 1, registerInfo );
-            mThreadRegisterLocations.push_back( reg );
+            else
+            {
+                mRegistersInfo.insert( mRegistersInfo.begin() + ( l - mRegisters.begin() ), registerInfo );
+                mRegisters.insert( l, reg );
+                mThreadRegisterLocations.push_back( reg );
+            }
         }
 
         inline void Erase( const void *reg )
         {
-            //mThreadRegisterLocations[LocalToGlobal( reg )] = nullptr;
-            //mRegisters.erase( reg );
+            auto regIt = std::find( mRegisters.begin(), mRegisters.end(), reg );
+
+            if ( regIt != mRegisters.end() )
+            {
+                mRegistersInfo.erase( mRegistersInfo.begin() + ( regIt - mRegisters.begin() ) );
+                mRegisters.erase( regIt );
+            }
         }
 
     private:
@@ -112,6 +112,9 @@ namespace BspInternal
         std::vector< RegisterInfo > mRegistersInfo;
 
         std::vector< const void * > mThreadRegisterLocations;
+
+        const void *mRegisterCache;
+        uint32_t mLocationCache;
     };
 }
 

@@ -147,6 +147,11 @@ namespace BspInternal
             return mCursor;
         }
 
+        inline bool Empty() const
+        {
+            return mCursor == 0;
+        }
+
     private:
 
         /// The stack buffer

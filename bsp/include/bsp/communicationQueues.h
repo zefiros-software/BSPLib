@@ -67,9 +67,14 @@ namespace BspInternal
 
         void ResetResize( std::size_t maxProcs )
         {
-            std::size_t maxProcsSqr = maxProcs * maxProcs;
+            //std::size_t maxProcsSqr = maxProcs * maxProcs;
             mQueues.clear();
-            mQueues.resize( maxProcsSqr );
+            mQueues.resize( maxProcs );
+
+            for ( auto &queue : mQueues )
+            {
+                queue.resize( maxProcs );
+            }
 
             mProcCount = maxProcs;
         }
@@ -104,17 +109,14 @@ namespace BspInternal
 
     private:
 
-        /// an abomination we have to live with,
-        /// a flattened std::vector< std::vector <> > but without
-        /// inneficient cache thrashing.
-        std::vector< tQueue > mQueues;
+        std::vector< std::vector< tQueue > > mQueues;
 
         /// The amount of processors that may use the queue
         std::size_t mProcCount;
 
         tQueue &GetQueue( std::size_t owner, std::size_t target )
         {
-            return mQueues[owner * mProcCount + target];
+            return mQueues[owner][target];
         }
     };
 }

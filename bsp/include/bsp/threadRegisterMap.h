@@ -34,12 +34,12 @@ namespace BspInternal
     {
     public:
 
-        inline size_t LocalToGlobal( const void *reg )
+        inline uint32_t LocalToGlobal( const void *reg )
         {
             return mRegisters.find( reg )->second.registerCount;
         }
 
-        inline const void *GlobalToLocal( size_t globalId )
+        inline const void *GlobalToLocal( uint32_t globalId )
         {
             return mThreadRegisterLocations[globalId];
         }
