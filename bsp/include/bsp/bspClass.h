@@ -30,6 +30,7 @@
 #include "bsp/communicationQueues.h"
 #include "bsp/threadRegisterMap.h"
 #include "bsp/condVarBarrier.h"
+#include "bsp/requestVector.h"
 #include "bsp/mixedBarrier.h"
 #include "bsp/barrier.h"
 
@@ -54,7 +55,7 @@
 extern int main( int argc, char **argv );
 
 #ifndef BSP_BARRIER_TYPE
-typedef BspInternal::MixedBarrier tBarrier;
+typedef BspInternal::Barrier tBarrier;
 #else
 typedef BSP_BARRIER_TYPE tBarrier;
 #endif
@@ -681,8 +682,12 @@ public:
 
         //const char *dstBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
         ptrdiff_t bufferLocation = mProcessorsData[tpid].putBufferStack.Alloc( nbytes, srcBuff );
-
-        mPutRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::PutRequest { bufferLocation, offset, globalId, ( uint32_t )nbytes } );
+        
+        auto &putRequest = mPutRequests.GetQueueFromMe( pid, tpid ).InitRequest();
+        putRequest.bufferLocation = bufferLocation;
+        putRequest.globalId = globalId;
+        putRequest.offset = offset;
+        putRequest.size = (uint32_t)nbytes;
     }
 
     /**
@@ -936,7 +941,7 @@ private:
 
     tBarrier mThreadBarrier;
 
-    BspInternal::CommunicationQueues< std::vector< BspInternal::PutRequest > > mPutRequests;
+    BspInternal::CommunicationQueues< BspInternal::RequestVector< BspInternal::PutRequest > > mPutRequests;
     BspInternal::CommunicationQueues< std::vector< BspInternal::GetRequest > > mGetRequests;
     BspInternal::CommunicationQueues< std::vector< BspInternal::BufferedGetRequest > > mBufferedGetRequests;
 
@@ -1041,7 +1046,7 @@ private:
 
         for ( size_t target = 0; !hasPutRequests && target < mProcCount; ++target )
         {
-            hasPutRequests = !mPutRequests.GetQueueFromMe( target, pid ).empty();
+            hasPutRequests = !mPutRequests.GetQueueFromMe( target, pid ).Empty();
         }
     }
 
@@ -1049,11 +1054,11 @@ private:
     {
         for ( size_t owner = pid; owner < mProcCount; ++owner )
         {
-            std::vector< BspInternal::PutRequest > &putQueue = mPutRequests.GetQueueToMe( owner, pid );
+            BspInternal::RequestVector< BspInternal::PutRequest > &putQueue = mPutRequests.GetQueueToMe( owner, pid );
 
-            if ( !putQueue.empty() )
+            if ( !putQueue.Empty() )
             {
-                for ( auto putRequest = putQueue.rbegin(), end = putQueue.rend(); putRequest != end; ++putRequest )
+                for ( auto putRequest = putQueue.RBegin(), end = putQueue.REnd(); putRequest != end; ++putRequest )
                 {
                     char *dstBuff = static_cast<char *>( const_cast<void *>( mProcessorsData[pid].threadRegisters.GlobalToLocal(
                                                                                  putRequest->globalId ) ) )
@@ -1062,17 +1067,17 @@ private:
                     mProcessorsData[owner].putBufferStack.Extract( putRequest->bufferLocation, putRequest->size, dstBuff );
                 }
 
-                putQueue.clear();
+                putQueue.Clear();
             }
         }
-
+        
         for ( size_t owner = 0; owner < pid; ++owner )
         {
-            std::vector< BspInternal::PutRequest > &putQueue = mPutRequests.GetQueueToMe( owner, pid );
+            BspInternal::RequestVector< BspInternal::PutRequest > &putQueue = mPutRequests.GetQueueToMe( owner, pid );
 
-            if ( !putQueue.empty() )
+            if ( !putQueue.Empty() )
             {
-                for ( auto putRequest = putQueue.rbegin(), end = putQueue.rend(); putRequest != end; ++putRequest )
+                for ( auto putRequest = putQueue.RBegin(), end = putQueue.REnd(); putRequest != end; ++putRequest )
                 {
                     char *dstBuff = static_cast<char *>( const_cast<void *>( mProcessorsData[pid].threadRegisters.GlobalToLocal(
                                                                                  putRequest->globalId ) ) )
@@ -1081,7 +1086,7 @@ private:
                     mProcessorsData[owner].putBufferStack.Extract( putRequest->bufferLocation, putRequest->size, dstBuff );
                 }
 
-                putQueue.clear();
+                putQueue.Clear();
             }
         }
     }

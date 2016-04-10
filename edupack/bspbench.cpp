@@ -436,7 +436,7 @@ void BSPBenchModern()
                 BSPLib::PutIterator( destproc[i], &src[i], 1, dest.begin(), destindex[i] );
             }
 
-            BSPLib::Sync();
+            BSPLib::SyncPutRequests();
         }
 
         time = BSPLib::Toc();
@@ -456,8 +456,8 @@ void BSPBenchModern()
                 procTimes[i].push_back( Time[i] * r / NITERS );
             }
 
-            printf( "Time of %5d-relation= %lf sec= %8.0lf flops\n",
-                    h, time / NITERS, t[h] );
+            printf( "Time of %5d-relation= %lf ms= %8.0lf flops\n",
+                    h, time * 1000 / NITERS, t[h] );
             fflush( stdout );
         }
     }

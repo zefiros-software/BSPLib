@@ -48,7 +48,8 @@ namespace BspInternal
 
         StackAllocator()
             : mStack( 10, '@' ),
-              mCursor( 0 )
+              mCursor( 0 ),
+              mSize(10)
         {
         }
 
@@ -60,7 +61,8 @@ namespace BspInternal
 
         StackAllocator( size_t size )
             : mStack( size, '@' ),
-              mCursor( 0 )
+              mCursor( 0 ),
+              mSize(size)
         {
         }
 
@@ -74,7 +76,7 @@ namespace BspInternal
 
         BSP_FORCEINLINE bool FitsInStack( size_t size ) const
         {
-            return mCursor + size < mStack.size();
+            return mCursor + size < mSize;
         }
 
         /**
@@ -158,6 +160,7 @@ namespace BspInternal
         std::vector< char > mStack;
         /// The current size of the stack
         StackLocation mCursor;
+        size_t mSize;
 
         /**
          * Grows the stack with a rate of phi, which is mathematically the most efficient
@@ -168,7 +171,8 @@ namespace BspInternal
 
         BSP_FORCEINLINE void Grow( size_t size )
         {
-            mStack.resize( static_cast<size_t>( mStack.size() * 1.6f ) + size, '~' );
+            mStack.resize( static_cast<size_t>( mSize * 1.6f ) + size, '~' );
+            mSize = mStack.size();
         }
     };
 }
