@@ -55,7 +55,7 @@
 extern int main( int argc, char **argv );
 
 #ifndef BSP_BARRIER_TYPE
-typedef BspInternal::Barrier tBarrier;
+typedef BspInternal::MixedBarrier tBarrier;
 #else
 typedef BSP_BARRIER_TYPE tBarrier;
 #endif
