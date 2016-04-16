@@ -47,4 +47,21 @@
 #  endif
 #endif
 
+namespace BSPUtil
+{
+    template< typename tLoopIterator, typename tFunc>
+    BSP_FORCEINLINE void SplitFor( tLoopIterator begin, tLoopIterator end, tLoopIterator start, const tFunc &body )
+    {
+        for ( tLoopIterator it = start; it < end; ++it )
+        {
+            body( it );
+        }
+
+        for ( tLoopIterator it = begin; it < start; ++it )
+        {
+            body( it );
+        }
+    }
+}
+
 #endif

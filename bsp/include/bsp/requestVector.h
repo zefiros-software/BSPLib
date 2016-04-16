@@ -29,17 +29,17 @@
 #include <vector>
 #include <map>
 
-namespace BspInternal
+namespace BSPInternal
 {
     template< typename tRequest >
     class RequestVector
     {
     public:
-    
+
         RequestVector()
             : mRequests( 10 ),
               mCursor( 0 ),
-              mSize(10)
+              mSize( 10 )
         {
         }
 
@@ -52,57 +52,115 @@ namespace BspInternal
         RequestVector( size_t size )
             : mRequests( size ),
               mCursor( 0 ),
-              mSize(size)
+              mSize( size )
         {
         }
-        
-        tRequest &GetRequest(size_t index)
+
+        tRequest &GetRequest( size_t index )
         {
             return mRequests[index];
         }
-        
+
         tRequest &InitRequest()
         {
-            if(mCursor >= mSize )
+            if ( mCursor >= mSize )
             {
                 Grow();
             }
-            
+
             return mRequests[mCursor++];
         }
-        
-        size_t GetSize()
+
+        tRequest &operator[]( size_t index )
+        {
+            return mRequests[index];
+        }
+
+        const tRequest &operator[]( size_t index ) const
+        {
+            return mRequests[index];
+        }
+
+        size_t GetSize() const
         {
             return mCursor;
         }
-        
+
+        void Reserve( size_t size )
+        {
+            if ( size > mSize - mCursor )
+            {
+                mRequests.resize( mCursor + size );
+            }
+        }
+
         void Clear()
         {
             mCursor = 0;
         }
-        
-        bool Empty()
+
+        bool Empty() const
         {
             return mCursor == 0;
         }
-        
+
         typename std::vector< tRequest >::reverse_iterator RBegin()
         {
             return mRequests.rbegin();
         }
-        
+
         typename std::vector< tRequest >::reverse_iterator REnd()
         {
             return mRequests.rend();
         }
 
+        typename std::vector< tRequest >::iterator Begin()
+        {
+            return mRequests.begin();
+        }
+
+        typename std::vector< tRequest >::iterator End()
+        {
+            return mRequests.begin() + mCursor;
+        }
+
+        typename std::vector< tRequest >::const_reverse_iterator CRBegin() const
+        {
+            return mRequests.crbegin();
+        }
+
+        typename std::vector< tRequest >::const_reverse_iterator CREnd() const
+        {
+            return mRequests.crend();
+        }
+
+        typename std::vector< tRequest >::const_iterator CBegin() const
+        {
+            return mRequests.cbegin();
+        }
+
+        typename std::vector< tRequest >::const_iterator CEnd() const
+        {
+            return mRequests.cbegin() + mCursor;
+        }
+
+        template< typename tIterator >
+        void Append( tIterator begin, tIterator end )
+        {
+            Reserve( end - begin );
+
+            std::copy( begin, end, End() );
+
+            mCursor += end - begin;
+        }
+
     private:
-    
+
         std::vector< tRequest > mRequests;
-        
+
         size_t mCursor;
         size_t mSize;
-        
+
         void Grow()
         {
             mRequests.resize( static_cast<size_t>( mSize * 1.6f ) + 1 );

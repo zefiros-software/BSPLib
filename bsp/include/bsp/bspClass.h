@@ -23,7 +23,7 @@
 #ifndef __BSPLIB_BSPCLASS_H__
 #define __BSPLIB_BSPCLASS_H__
 
-#define BSP_SKIP_CHECKS
+//#define BSP_SKIP_CHECKS
 
 #include "bsp/threadRegisterDenseHash.h"
 #include "bsp/threadRegisterVector.h"
@@ -55,13 +55,13 @@
 extern int main( int argc, char **argv );
 
 #ifndef BSP_BARRIER_TYPE
-typedef BspInternal::MixedBarrier tBarrier;
+typedef BSPInternal::MixedBarrier tBarrier;
 #else
 typedef BSP_BARRIER_TYPE tBarrier;
 #endif
 
 #ifndef BSP_REGISTERMAP_TYPE
-typedef BspInternal::ThreadRegisterVector tRegisterMap;
+typedef BSPInternal::ThreadRegisterVector tRegisterMap;
 #else
 typedef BSP_REGISTERMAP_TYPE tRegisterMap;
 #endif
@@ -169,14 +169,14 @@ public:
             *accumulatedSize = 0;
         }
 
-        const std::vector< BspInternal::SendRequest > &sendQueue = mProcessorsData[ProcId()].sendRequests;
-        *packets += sendQueue.size();
+        const BSPInternal::RequestVector< BSPInternal::SendRequest > &sendQueue = mProcessorsData[ProcId()].sendRequests;
+        *packets += sendQueue.GetSize();
 
         if ( accumulatedSize )
         {
-            for ( const auto &request : sendQueue )
+            for ( auto request = sendQueue.CBegin(), end = sendQueue.CEnd(); request != end; ++request )
             {
-                *accumulatedSize += request.bufferSize;
+                *accumulatedSize += request->bufferSize;
             }
         }
     }
@@ -267,7 +267,7 @@ public:
 #   endif
 #endif
 
-            for ( auto &thr : mThreads )
+            for ( auto & thr : mThreads )
             {
 #ifndef BSP_SUPPRESS_ABORT_WARNING
 #   ifndef DEBUG
@@ -402,7 +402,7 @@ public:
                 {
                     mEntry();
                 }
-                catch ( BspInternal::BspAbort & )
+                catch ( BSPInternal::BspAbort & )
                 {
 
                 }
@@ -526,12 +526,6 @@ public:
             ClearSendRequests( pid );
         }
 
-        for ( uint32_t target = 0; target < mProcCount; ++target )
-        {
-            assert( mTmpSendBuffers.GetQueueFromMe( target, pid ).Empty() );
-            assert( mTmpSendRequests.GetQueueFromMe( target, pid ).empty() );
-        }
-
         if ( syncBools.hasPutRequests )
         {
             //printf( "%d clears put\n", pid );
@@ -614,7 +608,10 @@ public:
         assert( mProcessorsData.size() > pid );
 #endif
 
-        mProcessorsData[pid].pushRequests.emplace_back( BspInternal::PushRequest { ident, { ( uint32_t )size, mProcessorsData[pid].registerCount++ } } );
+        BSPInternal::PushRequest &pushRequest = mProcessorsData[pid].pushRequests.InitRequest();
+        pushRequest.pushRegister = ident;
+        pushRequest.registerInfo.size = ( uint32_t )size;
+        pushRequest.registerInfo.registerCount = mProcessorsData[pid].registerCount++;
     }
 
     /**
@@ -638,7 +635,8 @@ public:
         assert( mProcessorsData.size() > pid );
 #endif
 
-        mProcessorsData[pid].popRequests.emplace_back( BspInternal::PopRequest { ident } );
+        BSPInternal::PopRequest &popRequest = mProcessorsData[pid].popRequests.InitRequest();
+        popRequest.popRegister = ident;
     }
 
     /**
@@ -674,20 +672,19 @@ public:
         const uint32_t globalId = mProcessorsData[tpid].threadRegisters.LocalToGlobal( dst );
 
 #ifndef BSP_SKIP_CHECKS
-        assert( mProcessorsData[pid].threadRegisterLocation.size() > globalId );
+        assert( mProcessorsData[pid].threadRegisters.GetSize() > globalId );
 
         /*mThreadRegisterLocation[pid][globalId]*/
         //assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
-        //const char *dstBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
         ptrdiff_t bufferLocation = mProcessorsData[tpid].putBufferStack.Alloc( nbytes, srcBuff );
-        
+
         auto &putRequest = mPutRequests.GetQueueFromMe( pid, tpid ).InitRequest();
         putRequest.bufferLocation = bufferLocation;
         putRequest.globalId = globalId;
         putRequest.offset = offset;
-        putRequest.size = (uint32_t)nbytes;
+        putRequest.size = ( uint32_t )nbytes;
     }
 
     /**
@@ -722,13 +719,17 @@ public:
                                       src ); //mRegisters[tpid][src].registerCount;
 
 #ifndef BSP_SKIP_CHECKS
-        assert( mProcessorsData[pid].threadRegisterLocation.size() > globalId );
+        assert( mProcessorsData[pid].threadRegisters.GetSize() > globalId );
         //assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
         //const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
 
-        mGetRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::GetRequest { dst, globalId, offset, ( uint32_t )nbytes } );
+        BSPInternal::GetRequest &getRequest = mGetRequests.GetQueueFromMe( pid, tpid ).InitRequest();
+        getRequest.destination = dst;
+        getRequest.globalId = globalId;
+        getRequest.offset = offset;
+        getRequest.size = ( uint32_t )nbytes;
     }
 
     /**
@@ -757,12 +758,16 @@ public:
         const char *srcBuff = reinterpret_cast<const char *>( payload );
         const char *tagBuff = reinterpret_cast<const char *>( tag );
 
-        BspInternal::StackAllocator &tmpSendBuffer = mTmpSendBuffers.GetQueueFromMe( pid, tpid );
+        BSPInternal::StackAllocator &tmpSendBuffer = mTmpSendBuffers.GetQueueFromMe( pid, tpid );
 
-        BspInternal::StackAllocator::StackLocation bufferLocation = tmpSendBuffer.Alloc( size, srcBuff );
-        BspInternal::StackAllocator::StackLocation tagLocation = tmpSendBuffer.Alloc( mTagSize, tagBuff );
+        BSPInternal::StackAllocator::StackLocation bufferLocation = tmpSendBuffer.Alloc( size, srcBuff );
+        BSPInternal::StackAllocator::StackLocation tagLocation = tmpSendBuffer.Alloc( mTagSize, tagBuff );
 
-        mTmpSendRequests.GetQueueFromMe( pid, tpid ).emplace_back( BspInternal::SendRequest { bufferLocation, ( uint32_t )size, tagLocation, mTagSize } );
+        BSPInternal::SendRequest &sendRequest = mTmpSendRequests.GetQueueFromMe( pid, tpid ).InitRequest();
+        sendRequest.bufferLocation = bufferLocation;
+        sendRequest.bufferSize = ( uint32_t )size;
+        sendRequest.tagLocation = tagLocation;
+        sendRequest.tagSize = mTagSize;
     }
 
     /**
@@ -787,14 +792,14 @@ public:
         uint32_t &pid = ProcId();
         ProcessorData &data = mProcessorsData[pid];
 
-        if ( data.sendRequests.empty() || data.sendReceivedIndex >= data.sendRequests.size() )
+        if ( data.sendRequests.Empty() || data.sendReceivedIndex >= data.sendRequests.GetSize() )
         {
             return;
         }
 
         assert( payload );
 
-        BspInternal::SendRequest &request = data.sendRequests[data.sendReceivedIndex++];
+        BSPInternal::SendRequest &request = data.sendRequests[data.sendReceivedIndex++];
 
         const size_t copySize = std::min( ( uint32_t )max_copy_size_in, request.bufferSize );
         data.sendBuffers.Extract( request.bufferLocation, copySize, ( char * )payload );
@@ -843,11 +848,11 @@ public:
         ProcessorData &data = mProcessorsData[pid];
 
         size_t index = data.sendReceivedIndex;
-        const std::vector< BspInternal::SendRequest > &sendQueue = data.sendRequests;
+        const BSPInternal::RequestVector< BSPInternal::SendRequest > &sendQueue = data.sendRequests;
 
-        if ( !sendQueue.empty() && index < sendQueue.size() )
+        if ( !sendQueue.Empty() && index < sendQueue.GetSize() )
         {
-            const BspInternal::SendRequest &sendRequest = sendQueue[index];
+            const BSPInternal::SendRequest &sendRequest = sendQueue[index];
             *status = sendRequest.bufferSize;
 
             char *tagBuff = reinterpret_cast<char *>( tag );
@@ -907,9 +912,9 @@ private:
               getBufferStack( 9064 ),
               sendBuffers( 9064 )
         {
-            sendRequests.reserve( 9064 );
-            pushRequests.reserve( 9064 );
-            popRequests.reserve( 9064 );
+            sendRequests.Reserve( 9064 );
+            pushRequests.Reserve( 9064 );
+            popRequests.Reserve( 9064 );
         }
 
         uint32_t sendReceivedIndex;
@@ -918,14 +923,14 @@ private:
         uint32_t sendRequestsSize;
         uint32_t pushRequestsSize;
         uint32_t popRequestsSize;
-        BspInternal::StackAllocator putBufferStack;
-        BspInternal::StackAllocator getBufferStack;
-        BspInternal::StackAllocator sendBuffers;
+        BSPInternal::StackAllocator putBufferStack;
+        BSPInternal::StackAllocator getBufferStack;
+        BSPInternal::StackAllocator sendBuffers;
         std::chrono::time_point< std::chrono::high_resolution_clock > startTime;
         std::chrono::time_point< std::chrono::high_resolution_clock > ticTime;
-        std::vector< BspInternal::SendRequest > sendRequests;
-        std::vector< BspInternal::PushRequest > pushRequests;
-        std::vector< BspInternal::PopRequest > popRequests;
+        BSPInternal::RequestVector< BSPInternal::SendRequest > sendRequests;
+        BSPInternal::RequestVector< BSPInternal::PushRequest > pushRequests;
+        BSPInternal::RequestVector< BSPInternal::PopRequest > popRequests;
         tRegisterMap threadRegisters;
 
         struct
@@ -941,12 +946,12 @@ private:
 
     tBarrier mThreadBarrier;
 
-    BspInternal::CommunicationQueues< BspInternal::RequestVector< BspInternal::PutRequest > > mPutRequests;
-    BspInternal::CommunicationQueues< std::vector< BspInternal::GetRequest > > mGetRequests;
-    BspInternal::CommunicationQueues< std::vector< BspInternal::BufferedGetRequest > > mBufferedGetRequests;
+    BSPInternal::CommunicationQueues< BSPInternal::RequestVector< BSPInternal::PutRequest > > mPutRequests;
+    BSPInternal::CommunicationQueues< BSPInternal::RequestVector< BSPInternal::GetRequest > > mGetRequests;
+    BSPInternal::CommunicationQueues< BSPInternal::RequestVector< BSPInternal::BufferedGetRequest > > mBufferedGetRequests;
 
-    BspInternal::CommunicationQueues< std::vector< BspInternal::SendRequest > > mTmpSendRequests;
-    BspInternal::CommunicationQueues< BspInternal::StackAllocator > mTmpSendBuffers;
+    BSPInternal::CommunicationQueues< BSPInternal::RequestVector< BSPInternal::SendRequest > > mTmpSendRequests;
+    BSPInternal::CommunicationQueues< BSPInternal::StackAllocator > mTmpSendBuffers;
 
     std::vector< ProcessorData > mProcessorsData;
 
@@ -970,7 +975,7 @@ private:
         if ( mAbort )
         {
             mThreadBarrier.NotifyAbort();
-            throw BspInternal::BspAbort( "Aborted" );
+            throw BSPInternal::BspAbort( "Aborted" );
         }
     }
 
@@ -990,11 +995,6 @@ private:
 
         for ( uint32_t owner = 0; owner < mProcCount; ++owner )
         {
-            if ( !syncBools.hasSendRequests && mProcessorsData[owner].syncBools.hasSendRequests )
-            {
-                printf( "%d has no send, but %d does\n", pid, owner );
-            }
-
             syncBools.hasGetRequests |= mProcessorsData[owner].syncBools.hasGetRequests;
             syncBools.hasPopRequests |= mProcessorsData[owner].syncBools.hasPopRequests;
             syncBools.hasPushRequests |= mProcessorsData[owner].syncBools.hasPushRequests;
@@ -1021,21 +1021,21 @@ private:
     inline void CheckHasPushRequests( size_t pid )
     {
         ProcessorData &data = mProcessorsData[pid];
-        data.syncBools.hasPushRequests = !data.pushRequests.empty();
+        data.syncBools.hasPushRequests = !data.pushRequests.Empty();
     }
 
     inline void ProcessPushRequests( size_t pid )
     {
         ProcessorData &data = mProcessorsData[pid];
 
-        if ( !data.pushRequests.empty() )
+        if ( !data.pushRequests.Empty() )
         {
-            for ( const auto &pushRequest : data.pushRequests )
+            for ( auto pushRequest = data.pushRequests.Begin(), end = data.pushRequests.End(); pushRequest != end; ++pushRequest )
             {
-                data.threadRegisters.Insert( pushRequest.pushRegister, pushRequest.registerInfo );
+                data.threadRegisters.Insert( pushRequest->pushRegister, pushRequest->registerInfo );
             }
 
-            data.pushRequests.clear();
+            data.pushRequests.Clear();
         }
     }
 
@@ -1052,43 +1052,23 @@ private:
 
     inline void ProcessPutRequests( uint32_t pid )
     {
-        for ( size_t owner = pid; owner < mProcCount; ++owner )
+        BSPUtil::SplitFor( 0u, mProcCount, pid, [this, pid]( uint32_t owner )
         {
-            BspInternal::RequestVector< BspInternal::PutRequest > &putQueue = mPutRequests.GetQueueToMe( owner, pid );
+            BSPInternal::RequestVector< BSPInternal::PutRequest > &putQueue = mPutRequests.GetQueueToMe( owner, pid );
 
             if ( !putQueue.Empty() )
             {
                 for ( auto putRequest = putQueue.RBegin(), end = putQueue.REnd(); putRequest != end; ++putRequest )
                 {
                     char *dstBuff = static_cast<char *>( const_cast<void *>( mProcessorsData[pid].threadRegisters.GlobalToLocal(
-                                                                                 putRequest->globalId ) ) )
-                                    + putRequest->offset;
+                                                                                 putRequest->globalId ) ) ) + putRequest->offset;
 
                     mProcessorsData[owner].putBufferStack.Extract( putRequest->bufferLocation, putRequest->size, dstBuff );
                 }
 
                 putQueue.Clear();
             }
-        }
-        
-        for ( size_t owner = 0; owner < pid; ++owner )
-        {
-            BspInternal::RequestVector< BspInternal::PutRequest > &putQueue = mPutRequests.GetQueueToMe( owner, pid );
-
-            if ( !putQueue.Empty() )
-            {
-                for ( auto putRequest = putQueue.RBegin(), end = putQueue.REnd(); putRequest != end; ++putRequest )
-                {
-                    char *dstBuff = static_cast<char *>( const_cast<void *>( mProcessorsData[pid].threadRegisters.GlobalToLocal(
-                                                                                 putRequest->globalId ) ) )
-                                    + putRequest->offset;
-
-                    mProcessorsData[owner].putBufferStack.Extract( putRequest->bufferLocation, putRequest->size, dstBuff );
-                }
-
-                putQueue.Clear();
-            }
-        }
+        } );
     }
 
     inline void CheckHasGetRequests( uint32_t pid )
@@ -1098,7 +1078,7 @@ private:
 
         for ( size_t target = 0; !hasGetRequests && target < mProcCount; ++target )
         {
-            hasGetRequests = !mGetRequests.GetQueueFromMe( target, pid ).empty();
+            hasGetRequests = !mGetRequests.GetQueueFromMe( target, pid ).Empty();
         }
     }
 
@@ -1107,43 +1087,47 @@ private:
         ProcessorData &data = mProcessorsData[pid];
         data.getBufferStack.Clear();
 
-        for ( uint32_t owner = 0; owner < mProcCount; ++owner )
+        BSPUtil::SplitFor( 0u, mProcCount, pid, [this, pid, &data]( uint32_t owner )
         {
-            std::vector< BspInternal::GetRequest > &getQueue = mGetRequests.GetQueueToMe( owner, pid );
+            BSPInternal::RequestVector< BSPInternal::GetRequest > &getQueue = mGetRequests.GetQueueToMe( owner, pid );
 
-            for ( auto request = getQueue.rbegin(), end = getQueue.rend(); request != end; ++request )
+            for ( auto request = getQueue.RBegin(), end = getQueue.REnd(); request != end; ++request )
             {
                 //const char *srcBuff = reinterpret_cast<const char *>( request->source );
                 const char *srcBuff = reinterpret_cast<const char *>( mProcessorsData[pid].threadRegisters.GlobalToLocal(
                                                                           request->globalId ) ) + request->offset;
 
-                BspInternal::StackAllocator::StackLocation bufferLocation = data.getBufferStack.Alloc( request->size, srcBuff );
+                BSPInternal::StackAllocator::StackLocation bufferLocation = data.getBufferStack.Alloc( request->size, srcBuff );
 
-                mBufferedGetRequests.GetQueueFromMe( owner, pid ).emplace_back( BspInternal::BufferedGetRequest { bufferLocation, request->destination, request->size } );
+                BSPInternal::BufferedGetRequest &bufferedGetRequest = mBufferedGetRequests.GetQueueFromMe( owner, pid ).InitRequest();
+                bufferedGetRequest.bufferLocation = bufferLocation;
+                bufferedGetRequest.destination = request->destination;
+                bufferedGetRequest.size = request->size;
             }
 
-            getQueue.clear();
-        }
+            getQueue.Clear();
+        } );
     }
 
     inline void ProcessGetRequests( uint32_t pid )
     {
-        for ( size_t owner = 0; owner < mProcCount; ++owner )
+        BSPUtil::SplitFor( 0u, mProcCount, pid, [this, pid]( uint32_t owner )
         {
-            std::vector< BspInternal::BufferedGetRequest > &getQueue = mBufferedGetRequests.GetQueueToMe( owner, pid );
+            BSPInternal::RequestVector< BSPInternal::BufferedGetRequest > &getQueue = mBufferedGetRequests.GetQueueToMe( owner,
+                                                                                                                         pid );
 
-            if ( !getQueue.empty() )
+            if ( !getQueue.Empty() )
             {
-                for ( auto getRequest = getQueue.rbegin(), end = getQueue.rend(); getRequest != end; ++getRequest )
+                for ( auto getRequest = getQueue.RBegin(), end = getQueue.REnd(); getRequest != end; ++getRequest )
                 {
                     char *dstBuff = static_cast< char * >( const_cast< void * >( getRequest->destination ) );
 
                     mProcessorsData[owner].getBufferStack.Extract( getRequest->bufferLocation, getRequest->size, dstBuff );
                 }
 
-                getQueue.clear();
+                getQueue.Clear();
             }
-        }
+        } );
     }
 
     inline void CheckHasSendRequests( uint32_t pid )
@@ -1163,19 +1147,19 @@ private:
     {
         ProcessorData &data = mProcessorsData[pid];
 
-        BspInternal::StackAllocator::StackLocation offset = 0;
-        BspInternal::StackAllocator &sendBuffer = data.sendBuffers;
-        std::vector< BspInternal::SendRequest > &sendQueue = data.sendRequests;
-        sendQueue.clear();
+        BSPInternal::StackAllocator::StackLocation offset = 0;
+        BSPInternal::StackAllocator &sendBuffer = data.sendBuffers;
+        BSPInternal::RequestVector< BSPInternal::SendRequest > &sendQueue = data.sendRequests;
+        sendQueue.Clear();
         sendBuffer.Clear();
         data.sendReceivedIndex = 0;
 
-        for ( uint32_t owner = 0; owner < mProcCount; ++owner )
+        BSPUtil::SplitFor( 0u, mProcCount, pid, [this, pid, &sendBuffer, &sendQueue, &data, &offset]( uint32_t owner )
         {
-            std::vector< BspInternal::SendRequest > &tmpQueue = mTmpSendRequests.GetQueueToMe( owner, pid );
-            BspInternal::StackAllocator &tmpBuffer = mTmpSendBuffers.GetQueueToMe( owner, pid );
+            BSPInternal::RequestVector< BSPInternal::SendRequest > &tmpQueue = mTmpSendRequests.GetQueueToMe( owner, pid );
+            BSPInternal::StackAllocator &tmpBuffer = mTmpSendBuffers.GetQueueToMe( owner, pid );
 
-            for ( auto request = tmpQueue.rbegin(), end = tmpQueue.rend(); request != end; ++request )
+            for ( auto request = tmpQueue.Begin(), end = tmpQueue.End(); request != end; ++request )
             {
                 request->bufferLocation += offset;
                 request->tagLocation += offset;
@@ -1183,8 +1167,8 @@ private:
 
             offset += tmpBuffer.Size();
             sendBuffer.Merge( tmpBuffer );
-            sendQueue.insert( sendQueue.end(), tmpQueue.begin(), tmpQueue.end() );
-        }
+            sendQueue.Append( tmpQueue.Begin(), tmpQueue.End() );
+        } );
     }
 
     inline void ClearSendRequests( uint32_t pid )
@@ -1192,28 +1176,28 @@ private:
         for ( uint32_t target = 0; target < mProcCount; ++target )
         {
             mTmpSendBuffers.GetQueueFromMe( target, pid ).Clear();
-            mTmpSendRequests.GetQueueFromMe( target, pid ).clear();
+            mTmpSendRequests.GetQueueFromMe( target, pid ).Clear();
         }
     }
 
     inline void CheckHasPopRequests( size_t pid )
     {
         ProcessorData &data = mProcessorsData[pid];
-        data.syncBools.hasPopRequests = !data.popRequests.empty();
+        data.syncBools.hasPopRequests = !data.popRequests.Empty();
     }
 
     inline void ProcessPopRequests( size_t pid )
     {
         ProcessorData &data = mProcessorsData[pid];
 
-        if ( !data.popRequests.empty() )
+        if ( !data.popRequests.Empty() )
         {
-            for ( const auto &popRequest : data.popRequests )
+            for ( auto popRequest = data.popRequests.Begin(), end = data.popRequests.End(); popRequest != end; ++popRequest )
             {
-                data.threadRegisters.Erase( popRequest.popRegister );
+                data.threadRegisters.Erase( popRequest->popRegister );
             }
 
-            data.popRequests.clear();
+            data.popRequests.Clear();
         }
     }
 
