@@ -84,7 +84,7 @@ inline void BSPAbortMessageTest()
 {
     for ( uint32_t i = 0; i < 100; ++i )
     {
-        EXPECT_EQ( "testing " + std::to_string( i ), BspInternal::BspAbort( "testing " + std::to_string( i ) ).what() );
+        EXPECT_EQ( "testing " + std::to_string( i ), BSPInternal::BspAbort( "testing " + std::to_string( i ) ).what() );
     }
 }
 

@@ -26,7 +26,7 @@
 #include <exception>
 #include <string>
 
-namespace BspInternal
+namespace BSPInternal
 {
     /**
      * A bsp abort exception. By inherriting from std::exception we can throw

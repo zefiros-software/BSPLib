@@ -30,7 +30,7 @@
 #include <atomic>
 #include <mutex>
 
-namespace BspInternal
+namespace BSPInternal
 {
     /**
      * A mixed barrier implementation. Since the lock free barrier is instable, and the condition variable barrier is

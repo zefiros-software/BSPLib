@@ -29,7 +29,7 @@
 #include <atomic>
 #include <mutex>
 
-namespace BspInternal
+namespace BSPInternal
 {
     /**
      * A condition variable barrier implementation. This barrier

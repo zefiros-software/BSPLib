@@ -29,7 +29,7 @@
 #include <vector>
 #include <map>
 
-namespace BspInternal
+namespace BSPInternal
 {
     class ThreadRegisterVector
     {
@@ -42,22 +42,20 @@ namespace BspInternal
 
         }
 
-        inline uint32_t LocalToGlobal( const void *reg )
+        BSP_FORCEINLINE uint32_t LocalToGlobal( const void *reg )
         {
-            if ( reg == mRegisterCache )
+            if ( reg != mRegisterCache )
             {
-                return mLocationCache;
+                auto l = std::lower_bound( mRegisters.begin(), mRegisters.end(), reg );
+
+                mRegisterCache = reg;
+                mLocationCache = mRegistersInfo[l - mRegisters.begin()].registerCount;
             }
-
-            auto l = std::lower_bound( mRegisters.begin(), mRegisters.end(), reg );
-
-            mRegisterCache = reg;
-            mLocationCache = mRegistersInfo[l - mRegisters.begin()].registerCount;
 
             return mLocationCache;
         }
 
-        inline const void *GlobalToLocal( uint32_t globalId )
+        BSP_FORCEINLINE const void *GlobalToLocal( uint32_t globalId )
         {
             if ( mLocationCache == globalId )
             {
@@ -70,7 +68,7 @@ namespace BspInternal
             return mRegisterCache;
         }
 
-        inline void Insert( const void *reg, const BspInternal::RegisterInfo &registerInfo )
+        inline void Insert( const void *reg, const BSPInternal::RegisterInfo &registerInfo )
         {
             if ( mRegisters.empty() )
             {
@@ -104,6 +102,11 @@ namespace BspInternal
                 mRegistersInfo.erase( mRegistersInfo.begin() + ( regIt - mRegisters.begin() ) );
                 mRegisters.erase( regIt );
             }
+        }
+
+        size_t GetSize() const
+        {
+            return mThreadRegisterLocations.size();
         }
 
     private:

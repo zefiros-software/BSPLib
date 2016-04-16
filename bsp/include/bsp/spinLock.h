@@ -25,7 +25,7 @@
 
 #include <atomic>
 
-namespace BspInternal
+namespace BSPInternal
 {
     class SpinLock
     {

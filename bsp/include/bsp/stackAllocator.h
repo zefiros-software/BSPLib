@@ -29,7 +29,7 @@
 #include <cstddef>
 #include <vector>
 
-namespace BspInternal
+namespace BSPInternal
 {
     /**
      * A stack allocator implementation, that will allocate memory in contiguous memory on the stack,
@@ -49,7 +49,7 @@ namespace BspInternal
         StackAllocator()
             : mStack( 10, '@' ),
               mCursor( 0 ),
-              mSize(10)
+              mSize( 10 )
         {
         }
 
@@ -62,7 +62,7 @@ namespace BspInternal
         StackAllocator( size_t size )
             : mStack( size, '@' ),
               mCursor( 0 ),
-              mSize(size)
+              mSize( size )
         {
         }
 

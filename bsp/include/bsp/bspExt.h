@@ -852,7 +852,7 @@ namespace BSPLib
         {
             spmd();
         }
-        catch ( BspInternal::BspAbort & )
+        catch ( BSPInternal::BspAbort & )
         {
             return false;
         }

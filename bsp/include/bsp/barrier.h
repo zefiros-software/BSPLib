@@ -25,7 +25,7 @@
 
 #include "bsp/bspAbort.h"
 
-namespace BspInternal
+namespace BSPInternal
 {
     /**
      * A lock free barrier implementation. It spins until all threads reach the barrier.

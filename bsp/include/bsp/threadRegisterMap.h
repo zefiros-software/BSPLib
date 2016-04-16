@@ -28,7 +28,7 @@
 #include <vector>
 #include <map>
 
-namespace BspInternal
+namespace BSPInternal
 {
     class ThreadRegisterMap
     {
@@ -44,7 +44,7 @@ namespace BspInternal
             return mThreadRegisterLocations[globalId];
         }
 
-        inline void Insert( const void *reg, const BspInternal::RegisterInfo &registerInfo )
+        inline void Insert( const void *reg, const BSPInternal::RegisterInfo &registerInfo )
         {
             mRegisters[reg] = registerInfo;
             mThreadRegisterLocations.push_back( reg );

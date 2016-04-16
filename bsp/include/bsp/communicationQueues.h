@@ -26,7 +26,7 @@
 #include <vector>
 
 
-namespace BspInternal
+namespace BSPInternal
 {
     /**
      * A communication queue implementation. Allows easier
@@ -71,7 +71,7 @@ namespace BspInternal
             mQueues.clear();
             mQueues.resize( maxProcs );
 
-            for ( auto &queue : mQueues )
+            for ( auto & queue : mQueues )
             {
                 queue.resize( maxProcs );
             }

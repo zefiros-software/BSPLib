@@ -27,7 +27,7 @@
 
 #include <stdint.h>
 
-namespace BspInternal
+namespace BSPInternal
 {
     struct RegisterInfo
     {
