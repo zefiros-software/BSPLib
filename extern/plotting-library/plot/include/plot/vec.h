@@ -36,11 +36,12 @@
 #endif
 
 #include <initializer_list>
+#include <functional>
 #include <algorithm>
 #include <stdint.h>
+#include <valarray>
 #include <vector>
 #include <map>
-#include <functional>
 
 class Vec
 {
@@ -53,6 +54,12 @@ public:
     {
     }
 
+    template< typename tContainer >
+    Vec( const tContainer &data )
+        : mData( std::begin( data ), std::end( data ) )
+    {
+    }
+
     Vec( const std::vector< std::string > &data )
         : mStrData( data )
     {
@@ -60,7 +67,7 @@ public:
 
     Vec( const std::vector< int64_t > &data, const std::map< int64_t, std::string > &map )
     {
-        for ( auto &val : data )
+        for ( auto & val : data )
         {
             mStrData.push_back( map.at( val ) );
         }
@@ -78,7 +85,7 @@ public:
 
     Vec( const Vec &x, std::function< double( double ) > function )
     {
-        for ( const auto &val : x.GetData() )
+        for ( const auto & val : x.GetData() )
         {
             mData.push_back( function( val ) );
         }
@@ -133,13 +140,13 @@ private:
         double delta = ( end - start ) / ( num - 1 );
 
         std::vector<double> linspaced( num );
+        linspaced[0] = start;
 
-        for ( int i = 0; i < num; ++i )
+        for ( size_t i = 1; i < num; ++i )
         {
-            linspaced[i] = start + delta * i;
+            linspaced[i] = start + delta * static_cast<int>( i );
         }
 
-        linspaced.push_back( end );
         return linspaced;
     }
 };

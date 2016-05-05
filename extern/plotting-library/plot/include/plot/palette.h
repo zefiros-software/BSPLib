@@ -280,23 +280,23 @@ public:
     {
     }
 
-    Palette( const std::string &type )
+    Palette( const std::string &type, Type typeEnum = Type::Custom )
         : mCustomType( type ),
-          mType( Type::Custom )
+          mType( typeEnum )
     {
     }
 
     template< typename tT >
-    Palette( tT colour, int32_t amount = 8, ColourType type = ColourType::None )
+    Palette( tT colour, int32_t amount, ColourType type = ColourType::None )
         : mCustomType( "sns.color_palette( '" + GetColour( colour, type ) +
                        "', " + std::to_string( amount ) + " )" ),
-          mType( Type::ColorPallette )
+        mType( Type::ColorPallette )
     {
     }
 
     template< typename tT >
     Palette( tT colour, ColourType type = ColourType::None )
-        : Palette( "sns.color_palette( '" + GetColour( colour, type ) + "'" )
+        : Palette( "sns.color_palette( '" + GetColour( colour, type ) + "' )", Type::ColorPallette )
     {
     }
 

@@ -73,10 +73,34 @@ public:
         mStream << ", color = '" << colour << "'";
         return *this;
     }
+    
+    LinePlot &UseColourCycler( const std::string &colourCycler )
+    {
+        mStream << ", color = next(" << colourCycler << ")";
+        return *this;
+    }
 
     LinePlot &SetLabel( const std::string &label )
     {
         mStream << ", label='" << label << "'";
+        return *this;
+    }
+    
+    LinePlot &SetMarker( const std::string &marker )
+    {
+        mStream << ", marker='" << marker << "'";
+        return *this;
+    }
+    
+    LinePlot &SetWidth( double width )
+    {
+        mStream << ", linewidth=" << width;
+        return *this;
+    }
+    
+    LinePlot &SetLineStyle( const std::string &style )
+    {
+        mStream << ", linestyle='" << style << "'";
         return *this;
     }
 

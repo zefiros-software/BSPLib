@@ -29,6 +29,7 @@
 #define __PLOT_H__
 
 #include "plot/abstractPlot.h"
+#include "plot/customLegend.h"
 #include "plot/palette.h"
 
 #include <sstream>
@@ -85,11 +86,14 @@ public:
     }
 
     Plot( Context context )
+        : mHasColourCycler( false )
     {
         mInitStream << "import seaborn as sns\n"
                     "import numpy as np\n"
                     "import pandas as pd\n"
-                    "import matplotlib.pyplot as plt\n";
+                    "import matplotlib.pyplot as plt\n"
+                    "import itertools\n"
+                    "import matplotlib.patches as mpatches\n";
 
         Set( context, 1.2 );
     }
@@ -158,6 +162,13 @@ public:
         return *this;
     }
 
+    Plot &SetSupTitle( const std::string &title, size_t fontSize )
+    {
+        mStream << "plt.suptitle('" << title << "',fontsize=" << fontSize << ")\n";
+
+        return *this;
+    }
+
     Plot &SetLegend( const std::vector<std::string> &titles, size_t fontSize )
     {
         mStream << "plt.legend(" << AbstractPlot::ToArray( titles ) << ", fontsize=" << fontSize << ")\n";
@@ -186,8 +197,30 @@ public:
         return *this;
     }
 
+    Plot &SetSupTitle( const std::string &title )
+    {
+        mStream << "plt.suptitle('" << title << "')\n";
+
+        return *this;
+    }
+
     Plot &SetLegend( const std::vector<std::string> &titles )
     {
+        SetLegend( titles, Location::Best );
+
+        return *this;
+    }
+
+    template< typename tT, typename tFunc >
+    Plot &SetLegend( const std::vector<tT> &titleData, const tFunc &titleFunc )
+    {
+        std::vector<std::string> titles;
+        
+        for( const tT &title : titleData )
+        {
+            titles.push_back( titleFunc( title ) );
+        }
+        
         SetLegend( titles, Location::Best );
 
         return *this;
@@ -196,6 +229,13 @@ public:
     Plot &SetLegend( const std::vector<std::string> &titles, Location location )
     {
         mStream << "plt.legend(" << AbstractPlot::ToArray( titles ) << ", loc='" << GetLocation( location ) << "')\n";
+
+        return *this;
+    }
+
+    Plot &SetLegend( Location location )
+    {
+        mStream << "plt.legend( loc='" << GetLocation( location ) << "')\n";
 
         return *this;
     }
@@ -249,6 +289,25 @@ public:
         return *this;
     }
 
+    Plot &AddColourCycler( const Palette &palette )
+    {
+        mHasColourCycler = true;
+        mStream << "colour_cycler = itertools.cycle( " << palette.ToString() << " )\n";
+        return *this;
+    }
+    
+    std::string GetColourCycler() const
+    {
+        assert( mHasColourCycler );
+        return "colour_cycler";
+    }
+
+    Plot &AddCustomLegend( const CustomLegend &legend )
+    {
+        mStream << "\n" << legend.ToString() << "\n";
+        return *this;
+    }
+
     Plot &SetSize( size_t width, size_t height )
     {
         mStream << "\nfig = plt.gcf()\ndpi = fig.get_dpi()\nfig.set_size_inches("
@@ -267,7 +326,6 @@ public:
     Plot &Show()
     {
         std::ofstream ss( "plot.in" );
-        SetTightLayout();
 
         ss << mInitStream.str() << mStream.str() <<  "\nplt.show()";
 
@@ -280,7 +338,7 @@ public:
 
     Plot &SetTightLayout()
     {
-        mStream << "\ntry:\n\tplt.tight_layout()\nexcept: \n\tpass";
+        mStream << "\ntry:\n\tplt.tight_layout(pad=1)\nexcept: \n\tpass";
 
         return *this;
     }
@@ -305,9 +363,16 @@ public:
         return *this;
     }
 
+    Plot &Figure()
+    {
+        mStream << "\nplt.figure()\n";
+
+        return *this;
+    }
+
     Plot &SubPlot( size_t y, size_t x, size_t n )
     {
-        mStream << "\nplt.subplot( " << x << ", " << y << ", " << n << " )\n";
+        mStream << "\nplt.subplot( " << y << ", " << x << ", " << n << " )\n";
 
         return *this;
     }
@@ -316,6 +381,8 @@ protected:
 
     std::stringstream mInitStream;
     std::stringstream mStream;
+    
+    bool mHasColourCycler;
 
     static std::string GetContext( Context context )
     {

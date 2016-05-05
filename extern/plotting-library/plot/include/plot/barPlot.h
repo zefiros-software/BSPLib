@@ -55,14 +55,14 @@ public:
         mStream << "x = []\ny = []\n";
         mStream << "x = x ";
 
-        for ( auto &tup : data )
+        for ( auto & tup : data )
         {
             mStream << "+ " << ToArray( tup.first );
         }
 
         mStream << "\ny = y ";
 
-        for ( auto &tup : data )
+        for ( auto & tup : data )
         {
             mStream << "+ " << ToArray( tup.second );
         }
@@ -75,7 +75,7 @@ public:
         mStream << "x = []\ny = []\nh = []\n";
         mStream << "x = x ";
 
-        for ( auto &tup : data )
+        for ( auto & tup : data )
         {
             assert( tup.first.GetSize() == tup.second.GetSize() );
             mStream << "+ " << ToArray( tup.first );
@@ -83,7 +83,7 @@ public:
 
         mStream << "\ny = y ";
 
-        for ( auto &tup : data )
+        for ( auto & tup : data )
         {
             mStream << "+ " << ToArray( tup.second );
         }
@@ -92,12 +92,27 @@ public:
 
         mStream << "\nh = h ";
 
-        for ( auto &tup : data )
+        for ( auto & tup : data )
         {
             mStream << "+ " << ToArray( std::vector< std::string >( tup.first.GetSize(), hue[i++] ) );
         }
 
         mStream << "\nsns.barplot( x, y, h";
+    }
+
+    template< typename tT, typename tFunc >
+    BarPlot( const std::vector< std::pair< Vec, Vec > > &data, const std::vector< tT > &hueData, const tFunc &hueFunc )
+    {
+        std::vector< std::string > hue;
+
+        for ( const auto & hueValue : hueData )
+        {
+            hue.emplace_back( hueFunc( hueValue ) );
+        }
+
+        InitData( data );
+        InitHue( data, hue );
+        PlotDataHue();
     }
 
     virtual std::string ToString() const override
@@ -140,8 +155,14 @@ public:
         mStream << ", color = '" << colour << "'";
         return *this;
     }
+    
+    BarPlot &UseColourCycler( const std::string &colourCycler )
+    {
+        mStream << ", color = next(" << colourCycler << ")";
+        return *this;
+    }
 
-    BarPlot &SetColourMap( Palette pallet )
+    BarPlot &SetColourMap( const Palette &pallet )
     {
         mStream << ", palette = " << pallet.ToString();
         return *this;
@@ -158,10 +179,60 @@ public:
         mStream << ", errcolor = '" << colour << "'";
         return *this;
     }
+    
+    BarPlot &SetHatch( const std::string &hatch )
+    {
+        mStream << ", hatch = '" << hatch << "'";
+        return *this;
+    }
 
 private:
 
     std::stringstream mStream;
+
+    void InitData( const std::vector< std::pair< Vec, Vec > > &data )
+    {
+        mStream << "x = []\ny = []\n";
+        mStream << "x = x ";
+
+        for ( auto & tup : data )
+        {
+            assert( tup.first.GetSize() == tup.second.GetSize() );
+            mStream << "+ " << ToArray( tup.first );
+        }
+
+        mStream << "\ny = y ";
+
+        for ( auto & tup : data )
+        {
+            mStream << "+ " << ToArray( tup.second );
+        }
+    }
+
+    void InitHue( const std::vector< std::pair< Vec, Vec > > &data, const std::vector< std::string > &hue )
+    {
+        size_t i = 0;
+
+        mStream << "\nh = []\n";
+        mStream << "\nh = h ";
+
+        for ( auto & tup : data )
+        {
+            mStream << "+ " << ToArray( std::vector< std::string >( tup.first.GetSize(), hue[i++] ) );
+        }
+    }
+
+    void PlotData()
+    {
+        mStream << "\nsns.barplot( x, y";
+    }
+
+    void PlotDataHue()
+    {
+        PlotData();
+
+        mStream << ", h";
+    }
 };
 
 #endif

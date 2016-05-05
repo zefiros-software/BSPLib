@@ -25,47 +25,56 @@
  */
 
 #pragma once
-#ifndef __PLOTTING_H__
-#define __PLOTTING_H__
+#ifndef __SUBPLOTS_H__
+#define __SUBPLOTS_H__
 
-#include "plot/autoCorrelationPlot.h"
-#include "plot/angleSpectrumPlot.h"
-#include "plot/distancedBarPlot.h"
-#include "plot/clusterMapPlot.h"
-#include "plot/regressionPlot.h"
-#include "plot/histogramPlot.h"
-#include "plot/factorBarPlot.h"
-#include "plot/residualPlot.h"
-#include "plot/interactPlot.h"
-#include "plot/annotatePlot.h"
+
+#include "plot/abstractPlot.h"
 #include "plot/heatMapPlot.h"
-#include "plot/scatterPlot.h"
-#include "plot/palettePlot.h"
-#include "plot/logLogPlot.h"
-#include "plot/violinPlot.h"
-#include "plot/hexBinPlot.h"
-#include "plot/jointPlot.h"
-#include "plot/distrPlot.h"
-#include "plot/countPlot.h"
-#include "plot/plotVLine.h"
-#include "plot/plotHLine.h"
-#include "plot/pointPlot.h"
-#include "plot/stripPlot.h"
-#include "plot/arrowPlot.h"
-#include "plot/semiLogX.h"
-#include "plot/semiLogY.h"
-#include "plot/linePlot.h"
-#include "plot/easyPlot.h"
-#include "plot/pairPlot.h"
-#include "plot/subPlots.h"
-#include "plot/boxPlot.h"
-#include "plot/palette.h"
-#include "plot/palette.h"
-#include "plot/kdePlot.h"
-#include "plot/rugPlot.h"
-#include "plot/barPlot.h"
-#include "plot/spyPlot.h"
-#include "plot/plot.h"
 
+#include <string>
+
+class SubPlots
+    : public AbstractPlot
+{
+public:
+
+    SubPlots( uint32_t rows, uint32_t columns )
+        : mPlotCount( 0 )
+    {
+        mStream << "fig, axn = plt.subplots(" << rows <<"," << columns << ", sharex=True, sharey=True, squeeze=True, subplot_kw={'axisbg': 'w'})\n"
+                << "fig.subplots_adjust(hspace=0.5,wspace=0.5)\n";
+    }
+
+    virtual std::string ToString() const override
+    {
+        return mStream.str() + "\n" + mPlots.str() + "\nfig.tight_layout(rect=[0, 0, .85, .9],pad=0.1)\n";
+    }
+    
+    void AddHeatMapPlot( HeatMapPlot &plot )
+    {
+        if(mPlotCount == 0)
+        {
+            mStream << "cbar_ax = fig.add_axes([.86, .05, .03, .9])\n"
+                    << "ax_cycler = itertools.cycle(axn.flat)\n";
+            plot.mStream << ", cbar_ax= cbar_ax";
+        }
+        else
+        {
+            plot.SetColourBar( false );
+        }
+        
+        plot.mStream << ", ax=next(ax_cycler)";
+        mPlots << "\n" << plot.ToString() << "\n";
+        ++mPlotCount;
+    }
+
+private:
+
+    std::stringstream mStream;
+    std::stringstream mPlots;
+    
+    uint32_t mPlotCount;
+};
 
 #endif
