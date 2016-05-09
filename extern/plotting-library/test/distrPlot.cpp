@@ -8,8 +8,8 @@ TEST( PX( DirectOLS ), Simple )
     mat ran = randn( 3, 200 );
     mat ran2 = randn( 3, 200 );
     Plot()
-    .AddPlot( FactorBarPlot( {{3, 4, 5}, {1, 2, 3} } ) )
+    .AddPlot( FactorBarPlot( { {3, 4, 5}, {1, 2, 3} } ) )
     .SetXLabel( "LOL" )
-    .SetLegend( {"X", "Y"} )
-    .Show();
+    .SetLegend( { "X", "Y" } )
+    ;// .Show();
 }

@@ -122,12 +122,12 @@ public:
 
     double Min() const
     {
-        return *std::min( mData.begin(), mData.end() );
+        return *std::min_element( mData.begin(), mData.end() );
     }
 
     double Max() const
     {
-        return *std::max( mData.begin(), mData.end() );
+        return *std::max_element( mData.begin(), mData.end() );
     }
 
 private:
