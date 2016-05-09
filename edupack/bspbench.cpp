@@ -59,31 +59,16 @@ void leastsquares( int h0, int h1, double *t, double *g, double *l )
 
 } /* end leastsquares */
 
-void ArmaLeastSquares( int h0, int h1, std::vector<double> &t, double &g, double &l )
-{
-    std::vector< double > endogenousv( t.begin() + h0, t.begin() + h1 + 1 );
-    vec endogenous = endogenousv;
-    vec exogenous = linspace( h0, h1, h1 - h0 + 1 );
-    double meanEnd = mean( endogenous );
-    double meanEx = mean( exogenous );
-
-    auto adjEx = exogenous - meanEx;
-    auto adjEnd = vec( endogenous ) - meanEnd;
-
-    l = as_scalar( sum( adjEx % adjEnd ) / sum( square( adjEx ) ) );
-    g = meanEnd - l * meanEx;
-}
-
 void bspbench()
 {
     void leastsquares( int h0, int h1, double * t, double * g, double * l );
     int p, s, s1, iter, i, n, h, destproc[MAXH], destindex[MAXH];
-    double alpha, beta, src[MAXH], *dest, x[MAXH], y[MAXH], z[MAXH],
+    double alpha, beta, src[MAXH], *dest, x[MAXN], y[MAXN], z[MAXN],
            time0, time1, time, *Time, mintime, maxtime,
            nflops, r, g0, l0, g, l, t[MAXH + 1];
 
     /**** Determine p ****/
-    bsp_begin( P );
+    //bsp_begin( P );
     p = bsp_nprocs(); /* p = number of processors obtained */
     s = bsp_pid();   /* s = processor number */
 
@@ -217,8 +202,8 @@ void bspbench()
         if ( s == 0 )
         {
             t[h] = ( time * r ) / NITERS;
-            printf( "Time of %5d-relation= %lf sec= %8.0lf flops\n",
-                    h, time / NITERS, t[h] );
+            printf( "Time of %5d-relation= %lf ms= %8.0lf flops\n",
+                    h, time / NITERS * 1000, t[h] );
             fflush( stdout );
         }
     }
@@ -232,8 +217,8 @@ void bspbench()
         printf( "Range h=p to HMAX: g= %.1lf, l= %.1lf\n", g, l );
 
         printf( "The bottom line for this BSP computer is:\n" );
-        printf( "p= %d, r= %.3lf Mflop/s, g= %.1lf, l= %.1lf\n",
-                p, r / MEGA, g, l );
+        printf( "p= %d, r= %.3lf Mflop/s, g= %.1lf, l= %.1lf\n", p, r / MEGA, g, l );
+        printf( "p= %d, r= %.3lf Mflop/s, g= %.5lf r,\tl= %.5lf r\n", p, r / MEGA, g / r * MEGA, l / r * MEGA );
         fflush( stdout );
     }
 
@@ -242,247 +227,7 @@ void bspbench()
     bsp_pop_reg( Time );
     vecfreed( Time );
 
-    bsp_end();
-} /* end bspbench */
-
-#pragma GCC push_options
-#pragma GCC optimize("O0")
-void  MeasureR( double *x, double *y, double *z, double beta, double alpha, int n )
-{
-    for ( volatile int i = 0; i < n; ++i )
-    {
-        y[i] += alpha * x[i];
-    }
-
-    for ( volatile int i = 0; i < n; ++i )
-    {
-        z[i] -= beta * x[i];
-    }
-}
-#pragma GCC pop_options
-
-BSP_FORCEINLINE void MeasureROpt( double *x, double *y, double *z, double beta, double alpha, int n )
-{
-    for ( volatile uint32_t iter = 0; iter < NITERS; ++iter )
-    {
-        for ( volatile int i = 0; i < n; ++i )
-        {
-            y[i] += alpha * x[i];
-        }
-
-        for ( volatile int i = 0; i < n; ++i )
-        {
-            z[i] -= beta * x[i];
-        }
-    }
-}
-
-inline void MeasureRSIMD( double *x, double *y, double *z, double beta, double alpha, int n )
-{
-    for ( uint32_t iter = 0; iter < NITERS; ++iter )
-    {
-#pragma GCC ivdep
-
-        for ( int i = 0; i < n; ++i )
-        {
-            y[i] += alpha * x[i];
-        }
-
-#pragma GCC ivdep
-
-        for ( int i = 0; i < n; ++i )
-        {
-            z[i] -= beta * x[i];
-        }
-    }
-}
-
-#pragma GCC push_options
-#pragma GCC optimize("O0")
-void EmptyFunction( int n )
-{
-    for ( volatile int i = 0; i < n; ++i )
-    {
-        //y[i] += alpha * x[i];
-    }
-
-    for ( volatile int i = 0; i < n; ++i )
-    {
-        //z[i] -= beta * x[i];
-    }
-}
-#pragma GCC pop_options
-
-void BSPBenchModern()
-{
-    //void leastsquares( int h0, int h1, double * t, double * g, double * l );
-    int p, s, s1, iter, i, n, h, destproc[MAXH], destindex[MAXH];
-    double alpha, beta, x[MAXN], y[MAXN], z[MAXN], src[MAXH],
-           time, mintime, maxtime,
-           nflops, r, g0, l0, g, l;
-
-    /**** Determine p ****/
-    p = BSPLib::NProcs(); /* p = number of processors obtained */
-    s = BSPLib::ProcId();   /* s = processor number */
-
-    //Time = vecallocd( p );
-    std::vector< double > Time( p );
-    BSPLib::PushContainer( Time );
-    //dest = vecallocd( 2 * MAXH + p );
-    std::vector< double > dest( 2 * MAXH + p );
-    std::vector< double > t( MAXH + 1 );
-    BSPLib::PushContainer( dest );
-    std::vector< std::vector< double > > procTimes;
-    procTimes.resize( p );
-    bsp_sync();
-
-
-    /**** Determine r ****/
-
-    /* Set default rate of 0 */
-    r = 0;
-
-    for ( n = 1; n <= MAXN; n *= 2 )
-    {
-        /* Initialize scalars and vectors */
-        alpha = 1.0 / 3.0;
-        beta = 4.0 / 9.0;
-
-        for ( i = 0; i < n; i++ )
-        {
-            z[i] = y[i] = x[i] = ( double )i;
-        }
-
-        /* Measure time of 2*NITERS DAXPY operations of length n */
-        BSPLib::Tic();
-
-        for ( uint32_t iter = 0; iter < NITERS; ++iter )
-        {
-            MeasureR( x, y, z, beta, alpha, n );
-        }
-
-        time = BSPLib::Toc();
-
-        BSPLib::Tic();
-
-        for ( uint32_t iter = 0; iter < NITERS; ++iter )
-        {
-            EmptyFunction( n );
-        }
-
-        time -= BSPLib::Toc();
-
-        BSPLib::PutIterator( 0, &time, 1, Time.begin(), s );
-        BSPLib::Sync();
-
-        /* Processor 0 determines minimum, maximum, average computing rate */
-        if ( s == 0 )
-        {
-            mintime = *std::min_element( Time.begin(), Time.end() );
-            maxtime = *std::max_element( Time.begin(), Time.end() );
-
-            if ( mintime > 0.0 )
-            {
-                /* Compute r = average computing rate in flop/s */
-                nflops = 4 * NITERS * n;
-                r = sum( nflops / arma::conv_to<vec>::from( Time ) ) / p;
-
-                printf( "n= %5d min= %7.3lf max= %7.3lf av= %7.3lf Mflop/s ",
-                        n, nflops / ( maxtime * MEGA ), nflops / ( mintime * MEGA ), r / MEGA );
-                fflush( stdout );
-                /* Output for fooling benchmark-detecting compilers */
-                printf( " fool=%7.1lf\n", y[n - 1] + z[n - 1] );
-            }
-            else
-            {
-                printf( "minimum time is 0\n" );
-            }
-
-            fflush( stdout );
-        }
-    }
-
-    /**** Determine g and l ****/
-    for ( h = 0; h <= MAXH; h++ )
-    {
-        /* Initialize communication pattern */
-        for ( i = 0; i < h; i++ )
-        {
-            src[i] = ( double )i;
-
-            if ( p == 1 )
-            {
-                destproc[i] = 0;
-                destindex[i] = i;
-            }
-            else
-            {
-                /* destination processor is one of the p-1 others */
-                destproc[i] = ( s + 1 + i % ( p - 1 ) ) % p;
-                /* destination index is in my own part of dest */
-                destindex[i] = s + ( i / ( p - 1 ) ) * p;
-            }
-        }
-
-        /* Measure time of NITERS h-relations */
-        BSPLib::SyncPutRequests();
-
-        BSPLib::Tic();
-
-        for ( iter = 0; iter < NITERS; iter++ )
-        {
-            for ( i = 0; i < h; i++ )
-            {
-                BSPLib::PutIterator( destproc[i], &src[i], 1, dest.begin(), destindex[i] );
-            }
-
-            BSPLib::SyncPutRequests();
-        }
-
-        time = BSPLib::Toc();
-
-        //bsp_put( 0, &time, Time, s * SZDBL, SZDBL );
-        BSPLib::PutIterator( 0, &time, 1, Time.begin(), s );
-        BSPLib::SyncPutRequests();
-
-        /* Compute time of one h-relation */
-        if ( s == 0 )
-        {
-            time = mean( arma::conv_to<vec>::from( Time ) );
-            t[h] = ( time * r ) / NITERS;
-
-            for ( uint32_t i = 0; i < p; ++i )
-            {
-                procTimes[i].push_back( Time[i] * r / NITERS );
-            }
-
-            printf( "Time of %5d-relation= %lf ms= %8.0lf flops\n",
-                    h, time * 1000 / NITERS, t[h] );
-            fflush( stdout );
-        }
-    }
-
-    if ( s == 0 )
-    {
-        printf( "size of double = %d bytes\n", ( int )SZDBL );
-        leastsquares( 0, p, t.data(), &g0, &l0 );
-        printf( "Range h=0 to p   : g= %.1lf, l= %.1lf\n", g0, l0 );
-        leastsquares( p, MAXH, t.data(), &g, &l );
-        printf( "Range h=p to HMAX: g= %.1lf, l= %.1lf\n", g, l );
-
-        printf( "The bottom line for this BSP computer is:\n" );
-        printf( "p= %d, r= %.3lf Mflop/s, g= %.1lf,\t\tl= %.1lf\n", p, r / MEGA, g, l );
-        printf( "p= %d, r= %.3lf Mflop/s, g= %.5lf r,\tl= %.5lf r\n", p, r / MEGA, g / r * MEGA, l / r * MEGA );
-        fflush( stdout );
-
-        /*Plot().AddPlot( LinePlot( t ) ).AddPlot( LinePlot( Vec( 0, MAXH, MAXH, [g, l]( double h )
-        {
-            return g * h + l;
-        } ) ) ).SetTightLayout().Show();*/
-    }
-
-    BSPLib::PopContainer( dest );
-    BSPLib::PopContainer( Time );
+    //bsp_end();
 } /* end bspbench */
 
 int main( int argc, char **argv )

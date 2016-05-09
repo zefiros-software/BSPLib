@@ -24,22 +24,26 @@
 #define __BSPLIB_BSPCLASS_H__
 
 //#define BSP_SKIP_CHECKS
+//#define BSP_USE_PROFILER
 
 #include "bsp/threadRegisterDenseHash.h"
 #include "bsp/threadRegisterVector.h"
 #include "bsp/communicationQueues.h"
+#include "bsp/historyRecorderType.h"
 #include "bsp/threadRegisterMap.h"
 #include "bsp/condVarBarrier.h"
+#include "bsp/processorData.h"
 #include "bsp/requestVector.h"
 #include "bsp/mixedBarrier.h"
 #include "bsp/barrier.h"
+#include "bsp/util.h"
 
 #include <algorithm>
 #include <assert.h>
 #include <iterator>
 #include <stdarg.h>
+#include <valarray>
 #include <atomic>
-#include <chrono>
 #include <future>
 #include <map>
 
@@ -53,18 +57,6 @@
 // so we can start this if no other function is given.
 // E.G. Legacy behaviour of the MulticoreBSP library.
 extern int main( int argc, char **argv );
-
-#ifndef BSP_BARRIER_TYPE
-typedef BSPInternal::MixedBarrier tBarrier;
-#else
-typedef BSP_BARRIER_TYPE tBarrier;
-#endif
-
-#ifndef BSP_REGISTERMAP_TYPE
-typedef BSPInternal::ThreadRegisterVector tRegisterMap;
-#else
-typedef BSP_REGISTERMAP_TYPE tRegisterMap;
-#endif
 
 /**
  * The BSP implementation class. By using this class as singleton, we avoid global memory declarations, cross source
@@ -208,23 +200,18 @@ public:
 
     inline double Time()
     {
-        const std::chrono::time_point< std::chrono::high_resolution_clock > now =
-            std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> diff = now - mProcessorsData[ProcId()].startTime;
-        return diff.count();
+        return mProcessorsData[ProcId()].startTimer.Toc();
     }
 
-    inline void Tic()
+    BSPUtil::TicTimer Tic()
     {
-        mProcessorsData[ProcId()].ticTime = std::chrono::high_resolution_clock::now();
+        mProcessorsData[ProcId()].ticTimer.Tic();
+        return mProcessorsData[ProcId()].ticTimer;
     }
 
     inline double Toc()
     {
-        const std::chrono::time_point< std::chrono::high_resolution_clock > now =
-            std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> diff = now - mProcessorsData[ProcId()].ticTime;
-        return diff.count();
+        return mProcessorsData[ProcId()].ticTimer.Toc();
     }
 
     /**
@@ -369,6 +356,7 @@ public:
 #endif
 
             StartTiming();
+            mHistoryRecorder.InitSyncTimer( ProcId() );
             return;
         }
 
@@ -379,18 +367,22 @@ public:
         mProcessorsData.clear();
         mProcessorsData.resize( maxProcs );
 
-        mPutRequests.ResetResize( maxProcs );
-
-        mGetRequests.ResetResize( maxProcs );
-        mBufferedGetRequests.ResetResize( maxProcs );
-
-        mTmpSendRequests.ResetResize( maxProcs );
-        mTmpSendBuffers.ResetResize( maxProcs );
+        for ( uint32_t i = 0; i < maxProcs; ++i )
+        {
+            ProcessorData &data = mProcessorsData[i];
+            data.putRequests.resize( maxProcs );
+            data.getRequests.resize( maxProcs );
+            data.bufferedGetRequests.resize( maxProcs );
+            data.tmpSendRequests.resize( maxProcs );
+            data.tmpSendBufferStacks.resize( maxProcs );
+        }
 
         mThreadBarrier.SetSize( maxProcs );
 
         mThreads.clear();
         mThreads.reserve( maxProcs );
+
+        mHistoryRecorder.ResetResize( maxProcs );
 
         for ( uint32_t i = 1; i < mProcCount; ++i )
         {
@@ -410,6 +402,7 @@ public:
         }
 
         StartTiming();
+        mHistoryRecorder.InitSyncTimer( 0 );
     }
 
     /**
@@ -434,6 +427,7 @@ public:
             mThreads.clear();
 
             mProcCount = 0;
+            mHistoryRecorder.PlotData();
         }
     }
 
@@ -460,8 +454,8 @@ public:
     inline void Sync()
     {
         CheckAborted();
-
         uint32_t &pid = ProcId();
+        mHistoryRecorder.RecordPreSync( pid );
 
         ProcessorData &data = mProcessorsData[pid];
         auto &syncBools = data.syncBools;
@@ -469,6 +463,7 @@ public:
         CheckSyncBools( pid );
 
         SyncPoint();
+        mHistoryRecorder.RecordProcessorsData( pid, mProcessorsData );
 
         bool anySync = CollectSyncBools( pid );
 
@@ -545,45 +540,62 @@ public:
         {
             SyncPoint();
         }
+
+        mHistoryRecorder.RecordPostSync( pid );
     }
 
     inline void SyncPutRequests()
     {
         uint32_t &pid = ProcId();
+        mHistoryRecorder.RecordPreSync( pid );
 
         SyncPoint();
+
+        mHistoryRecorder.RecordProcessorsData( pid, mProcessorsData );
 
         ProcessPutRequests( pid );
 
         SyncPoint();
 
         mProcessorsData[pid].putBufferStack.Clear();
+
+        mHistoryRecorder.RecordPostSync( pid );
     }
 
     inline void SyncGetRequests()
     {
         uint32_t &pid = ProcId();
+        mHistoryRecorder.RecordPreSync( pid );
 
         SyncPoint();
+
+        mHistoryRecorder.RecordProcessorsData( pid, mProcessorsData );
 
         BufferGetRequests( pid );
 
         SyncPoint();
 
         ProcessGetRequests( pid );
+
+        mHistoryRecorder.RecordPostSync( pid );
     }
 
     inline void SyncSendRequests()
     {
         uint32_t &pid = ProcId();
+        mHistoryRecorder.RecordPreSync( pid );
 
         SyncPoint();
+
+        mHistoryRecorder.RecordProcessorsData( pid, mProcessorsData );
 
         ProcessSendRequests( pid );
 
         SyncPoint();
 
         ClearSendRequests( pid );
+
+        mHistoryRecorder.RecordPostSync( pid );
     }
 
     /**
@@ -660,6 +672,7 @@ public:
     BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
     {
         uint32_t &tpid = ProcId();
+        mHistoryRecorder.InitCommunication( tpid );
         //mHasPutRequests[mProcessorsData[tpid].syncBoolIndex] = true;
 
 #ifndef BSP_SKIP_CHECKS
@@ -680,11 +693,13 @@ public:
 
         ptrdiff_t bufferLocation = mProcessorsData[tpid].putBufferStack.Alloc( nbytes, srcBuff );
 
-        auto &putRequest = mPutRequests.GetQueueFromMe( pid, tpid ).InitRequest();
+        auto &putRequest = mProcessorsData[tpid].putRequests[pid].InitRequest();
         putRequest.bufferLocation = bufferLocation;
         putRequest.globalId = globalId;
         putRequest.offset = offset;
         putRequest.size = ( uint32_t )nbytes;
+
+        mHistoryRecorder.FinishCommunication( tpid );
     }
 
     /**
@@ -725,7 +740,7 @@ public:
 
         //const char *srcBuff = reinterpret_cast<const char *>( GlobalToLocal( pid, globalId ) );
 
-        BSPInternal::GetRequest &getRequest = mGetRequests.GetQueueFromMe( pid, tpid ).InitRequest();
+        BSPInternal::GetRequest &getRequest = mProcessorsData[tpid].getRequests[pid].InitRequest();
         getRequest.destination = dst;
         getRequest.globalId = globalId;
         getRequest.offset = offset;
@@ -758,12 +773,12 @@ public:
         const char *srcBuff = reinterpret_cast<const char *>( payload );
         const char *tagBuff = reinterpret_cast<const char *>( tag );
 
-        BSPInternal::StackAllocator &tmpSendBuffer = mTmpSendBuffers.GetQueueFromMe( pid, tpid );
+        BSPInternal::StackAllocator &tmpSendBuffer = mProcessorsData[tpid].tmpSendBufferStacks[pid];
 
         BSPInternal::StackAllocator::StackLocation bufferLocation = tmpSendBuffer.Alloc( size, srcBuff );
         BSPInternal::StackAllocator::StackLocation tagLocation = tmpSendBuffer.Alloc( mTagSize, tagBuff );
 
-        BSPInternal::SendRequest &sendRequest = mTmpSendRequests.GetQueueFromMe( pid, tpid ).InitRequest();
+        BSPInternal::SendRequest &sendRequest = mProcessorsData[tpid].tmpSendRequests[pid].InitRequest();
         sendRequest.bufferLocation = bufferLocation;
         sendRequest.bufferSize = ( uint32_t )size;
         sendRequest.tagLocation = tagLocation;
@@ -802,7 +817,7 @@ public:
         BSPInternal::SendRequest &request = data.sendRequests[data.sendReceivedIndex++];
 
         const size_t copySize = std::min( ( uint32_t )max_copy_size_in, request.bufferSize );
-        data.sendBuffers.Extract( request.bufferLocation, copySize, ( char * )payload );
+        data.sendBufferStack.Extract( request.bufferLocation, copySize, ( char * )payload );
     }
 
     /**
@@ -861,7 +876,7 @@ public:
             assert( sendQueue[index].tagSize == mTagSize );
 #endif // !BSP_SKIP_CHECKS
 
-            data.sendBuffers.Extract( sendRequest.tagLocation, sendRequest.tagSize, tagBuff );
+            data.sendBufferStack.Extract( sendRequest.tagLocation, sendRequest.tagSize, tagBuff );
         }
     }
 
@@ -897,65 +912,41 @@ public:
     {
     }
 
+    void MarkSuperstep()
+    {
+        mHistoryRecorder.MarkSuperstep( ProcId() );
+    }
+
+    void PauseRecording()
+    {
+        mHistoryRecorder.PauseRecording( ProcId() );
+    }
+
+    void ResumeRecording()
+    {
+        mHistoryRecorder.ResumeRecording( ProcId() );
+    }
+
+    void InitCommunication()
+    {
+        mHistoryRecorder.ManualInitCommunicaion( ProcId() );
+    }
+
+    void FinishCommunication()
+    {
+        mHistoryRecorder.ManualFinishCommunicaion( ProcId() );
+    }
+
 private:
 
-    struct ProcessorData
-    {
-        ProcessorData()
-            : sendReceivedIndex( 0 ),
-              registerCount( 0 ),
-              newTagSize( 0 ),
-              sendRequestsSize( 0 ),
-              pushRequestsSize( 0 ),
-              popRequestsSize( 0 ),
-              putBufferStack( 9064 ),
-              getBufferStack( 9064 ),
-              sendBuffers( 9064 )
-        {
-            sendRequests.Reserve( 9064 );
-            pushRequests.Reserve( 9064 );
-            popRequests.Reserve( 9064 );
-        }
-
-        uint32_t sendReceivedIndex;
-        uint32_t registerCount;
-        uint32_t newTagSize;
-        uint32_t sendRequestsSize;
-        uint32_t pushRequestsSize;
-        uint32_t popRequestsSize;
-        BSPInternal::StackAllocator putBufferStack;
-        BSPInternal::StackAllocator getBufferStack;
-        BSPInternal::StackAllocator sendBuffers;
-        std::chrono::time_point< std::chrono::high_resolution_clock > startTime;
-        std::chrono::time_point< std::chrono::high_resolution_clock > ticTime;
-        BSPInternal::RequestVector< BSPInternal::SendRequest > sendRequests;
-        BSPInternal::RequestVector< BSPInternal::PushRequest > pushRequests;
-        BSPInternal::RequestVector< BSPInternal::PopRequest > popRequests;
-        tRegisterMap threadRegisters;
-
-        struct
-        {
-            bool hasPutRequests = false;
-            bool hasGetRequests = false;
-            bool hasPushRequests = false;
-            bool hasPopRequests = false;
-            bool hasSendRequests = false;
-            bool hasTagSizeUpdate = false;
-        } syncBools;
-    };
-
     tBarrier mThreadBarrier;
-
-    BSPInternal::CommunicationQueues< BSPInternal::RequestVector< BSPInternal::PutRequest > > mPutRequests;
-    BSPInternal::CommunicationQueues< BSPInternal::RequestVector< BSPInternal::GetRequest > > mGetRequests;
-    BSPInternal::CommunicationQueues< BSPInternal::RequestVector< BSPInternal::BufferedGetRequest > > mBufferedGetRequests;
-
-    BSPInternal::CommunicationQueues< BSPInternal::RequestVector< BSPInternal::SendRequest > > mTmpSendRequests;
-    BSPInternal::CommunicationQueues< BSPInternal::StackAllocator > mTmpSendBuffers;
 
     std::vector< ProcessorData > mProcessorsData;
 
     std::vector< std::future< void > > mThreads;
+
+    tHistoryRecorder mHistoryRecorder;
+
     std::function< void() > mEntry;
     uint32_t mProcCount;
     std::atomic< uint32_t > mTagSize;
@@ -966,8 +957,8 @@ private:
     inline void StartTiming()
     {
         assert( ProcId() != 0xdeadbeef );
-        mProcessorsData[ProcId()].startTime = std::chrono::high_resolution_clock::now();
         SyncPoint();
+        mProcessorsData[ProcId()].startTimer.Tic();
     }
 
     inline void CheckAborted()
@@ -1046,7 +1037,7 @@ private:
 
         for ( size_t target = 0; !hasPutRequests && target < mProcCount; ++target )
         {
-            hasPutRequests = !mPutRequests.GetQueueFromMe( target, pid ).Empty();
+            hasPutRequests = !mProcessorsData[pid].putRequests[target].Empty();
         }
     }
 
@@ -1054,7 +1045,7 @@ private:
     {
         BSPUtil::SplitFor( 0u, mProcCount, pid, [this, pid]( uint32_t owner )
         {
-            BSPInternal::RequestVector< BSPInternal::PutRequest > &putQueue = mPutRequests.GetQueueToMe( owner, pid );
+            BSPInternal::RequestVector< BSPInternal::PutRequest > &putQueue = mProcessorsData[owner].putRequests[pid];
 
             if ( !putQueue.Empty() )
             {
@@ -1078,7 +1069,7 @@ private:
 
         for ( size_t target = 0; !hasGetRequests && target < mProcCount; ++target )
         {
-            hasGetRequests = !mGetRequests.GetQueueFromMe( target, pid ).Empty();
+            hasGetRequests = !mProcessorsData[pid].getRequests[target].Empty();
         }
     }
 
@@ -1089,7 +1080,7 @@ private:
 
         BSPUtil::SplitFor( 0u, mProcCount, pid, [this, pid, &data]( uint32_t owner )
         {
-            BSPInternal::RequestVector< BSPInternal::GetRequest > &getQueue = mGetRequests.GetQueueToMe( owner, pid );
+            BSPInternal::RequestVector< BSPInternal::GetRequest > &getQueue = mProcessorsData[owner].getRequests[pid];
 
             for ( auto request = getQueue.RBegin(), end = getQueue.REnd(); request != end; ++request )
             {
@@ -1099,7 +1090,7 @@ private:
 
                 BSPInternal::StackAllocator::StackLocation bufferLocation = data.getBufferStack.Alloc( request->size, srcBuff );
 
-                BSPInternal::BufferedGetRequest &bufferedGetRequest = mBufferedGetRequests.GetQueueFromMe( owner, pid ).InitRequest();
+                BSPInternal::BufferedGetRequest &bufferedGetRequest = mProcessorsData[pid].bufferedGetRequests[owner].InitRequest();
                 bufferedGetRequest.bufferLocation = bufferLocation;
                 bufferedGetRequest.destination = request->destination;
                 bufferedGetRequest.size = request->size;
@@ -1113,8 +1104,8 @@ private:
     {
         BSPUtil::SplitFor( 0u, mProcCount, pid, [this, pid]( uint32_t owner )
         {
-            BSPInternal::RequestVector< BSPInternal::BufferedGetRequest > &getQueue = mBufferedGetRequests.GetQueueToMe( owner,
-                                                                                                                         pid );
+            BSPInternal::RequestVector< BSPInternal::BufferedGetRequest > &getQueue =
+                mProcessorsData[owner].bufferedGetRequests[pid];
 
             if ( !getQueue.Empty() )
             {
@@ -1137,7 +1128,7 @@ private:
 
         for ( size_t target = 0; !hasSendRequests && target < mProcCount; ++target )
         {
-            hasSendRequests = !mTmpSendBuffers.GetQueueFromMe( target, pid ).Empty();
+            hasSendRequests = !mProcessorsData[pid].tmpSendBufferStacks[target].Empty();
         }
     }
 
@@ -1148,7 +1139,7 @@ private:
         ProcessorData &data = mProcessorsData[pid];
 
         BSPInternal::StackAllocator::StackLocation offset = 0;
-        BSPInternal::StackAllocator &sendBuffer = data.sendBuffers;
+        BSPInternal::StackAllocator &sendBuffer = data.sendBufferStack;
         BSPInternal::RequestVector< BSPInternal::SendRequest > &sendQueue = data.sendRequests;
         sendQueue.Clear();
         sendBuffer.Clear();
@@ -1156,8 +1147,8 @@ private:
 
         BSPUtil::SplitFor( 0u, mProcCount, pid, [this, pid, &sendBuffer, &sendQueue, &data, &offset]( uint32_t owner )
         {
-            BSPInternal::RequestVector< BSPInternal::SendRequest > &tmpQueue = mTmpSendRequests.GetQueueToMe( owner, pid );
-            BSPInternal::StackAllocator &tmpBuffer = mTmpSendBuffers.GetQueueToMe( owner, pid );
+            BSPInternal::RequestVector< BSPInternal::SendRequest > &tmpQueue = mProcessorsData[owner].tmpSendRequests[pid];
+            BSPInternal::StackAllocator &tmpBuffer = mProcessorsData[owner].tmpSendBufferStacks[pid];
 
             for ( auto request = tmpQueue.Begin(), end = tmpQueue.End(); request != end; ++request )
             {
@@ -1175,8 +1166,8 @@ private:
     {
         for ( uint32_t target = 0; target < mProcCount; ++target )
         {
-            mTmpSendBuffers.GetQueueFromMe( target, pid ).Clear();
-            mTmpSendRequests.GetQueueFromMe( target, pid ).Clear();
+            mProcessorsData[pid].tmpSendBufferStacks[target].Clear();
+            mProcessorsData[pid].tmpSendRequests[target].Clear();
         }
     }
 

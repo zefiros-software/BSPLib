@@ -106,7 +106,7 @@ namespace BSPInternal
 
         typename std::vector< tRequest >::reverse_iterator RBegin()
         {
-            return mRequests.rbegin();
+            return mRequests.rend() - mCursor;
         }
 
         typename std::vector< tRequest >::reverse_iterator REnd()
@@ -126,7 +126,7 @@ namespace BSPInternal
 
         typename std::vector< tRequest >::const_reverse_iterator CRBegin() const
         {
-            return mRequests.crbegin();
+            return mRequests.crend() - mCursor;
         }
 
         typename std::vector< tRequest >::const_reverse_iterator CREnd() const

@@ -24,6 +24,7 @@
 #define __BSPLIB_BSPEXT_H__
 
 #include "bsp/bspClass.h"
+#include "bsp/bspProf.h"
 #include "bsp/util.h"
 
 #include <cstdint>
@@ -193,9 +194,9 @@ namespace BSPLib
         return Classic::Time();
     }
 
-    BSP_FORCEINLINE void Tic()
+    BSP_FORCEINLINE BSPUtil::TicTimer Tic()
     {
-        BSP::GetInstance().Tic();
+        return BSP::GetInstance().Tic();
     }
 
     BSP_FORCEINLINE double Toc()

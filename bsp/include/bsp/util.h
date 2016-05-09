@@ -47,6 +47,8 @@
 #  endif
 #endif
 
+#include <chrono>
+
 namespace BSPUtil
 {
     template< typename tLoopIterator, typename tFunc>
@@ -62,6 +64,108 @@ namespace BSPUtil
             body( it );
         }
     }
+
+    template< bool tCondition >
+    class StaticIfUnreached
+    {
+    public:
+
+        template< typename tFuncIf >
+        StaticIfUnreached( const tFuncIf & )
+        {
+        }
+
+        template< bool tElseIfCondition, typename tFuncElseIf >
+        StaticIfUnreached< tElseIfCondition > ElseIf( const tFuncElseIf &elseIfBody )
+        {
+            return StaticIfUnreached< tElseIfCondition >( elseIfBody );
+        }
+
+        template< typename tFuncElse >
+        void Else( const tFuncElse & )
+        {
+        }
+    };
+
+    template< bool tCondition >
+    class StaticIf
+    {
+    public:
+
+        template< typename tFuncIf >
+        StaticIf( const tFuncIf &ifBody )
+        {
+            ifBody();
+        }
+
+        template< bool tElseIfCondition, typename tFuncElseIf >
+        StaticIfUnreached< tElseIfCondition > ElseIf( const tFuncElseIf &elseIfBody )
+        {
+            return StaticIfUnreached< tElseIfCondition >( elseIfBody );
+        }
+
+        template< typename tFuncElse >
+        void Else( const tFuncElse & )
+        {
+        }
+    };
+
+    template<>
+    class StaticIf<false>
+    {
+    public:
+
+        template< typename tFuncIf >
+        StaticIf( const tFuncIf & )
+        {
+        }
+
+        template< bool tElseIfCondition, typename tFuncElseIf >
+        StaticIf< tElseIfCondition > ElseIf( const tFuncElseIf &elseIfBody )
+        {
+            return StaticIf< tElseIfCondition >( elseIfBody );
+        }
+
+        template< typename tFuncElse >
+        void Else( const tFuncElse &elseBody )
+        {
+            elseBody();
+        }
+    };
+
+    class TicTimer
+    {
+    public:
+
+        TicTimer()
+            : mTicTime( std::chrono::high_resolution_clock::now() )
+        {
+
+        }
+
+        void Tic()
+        {
+            mTicTime = std::chrono::high_resolution_clock::now();
+        }
+
+        double Toc()
+        {
+            const std::chrono::time_point< std::chrono::high_resolution_clock > now = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> diff = now - mTicTime;
+            return diff.count();
+        }
+
+        double TocTic()
+        {
+            double diff = Toc();
+            Tic();
+            return diff;
+        }
+
+    private:
+
+        std::chrono::time_point< std::chrono::high_resolution_clock > mTicTime;
+    };
 }
 
 #endif

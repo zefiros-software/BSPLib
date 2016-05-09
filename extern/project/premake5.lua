@@ -179,6 +179,26 @@ solution "bsp-edupack"
             root .. "edupack/bspbench.cpp",
             }
             
+    project "bench-modern"                
+        kind "ConsoleApp"
+        flags "WinMain"
+
+        includedirs {
+            root .. "bsp/include/",
+            root .. "edupack/",
+            root .. "extern/plotting-library/plot/include/",
+            root .. "extern/plotting-library/extern/armadillo/include/",
+            root .. "extern/sparsehash/src/"
+            }   
+            
+        files { 
+            root .. "edupack/bspedupack.h",
+            root .. "edupack/config.h",
+            root .. "edupack/bspedupack.cpp",
+            root .. "edupack/bspBenchModern.cpp",
+            root .. "edupack/bench.h"
+            }
+            
     project "fft"                
         kind "ConsoleApp"
         flags "WinMain"
@@ -197,6 +217,27 @@ solution "bsp-edupack"
             root .. "edupack/bspfft_test.cpp",
             }
             
+    project "fft-modern"                
+        kind "ConsoleApp"
+        flags "WinMain"
+        
+        defines "M_PI=3.14159265358979323846"
+
+        includedirs {
+            root .. "bsp/include/",
+            root .. "edupack/",
+            root .. "extern/plotting-library/plot/include/",
+            root .. "extern/plotting-library/extern/armadillo/include/",
+            root .. "extern/sparsehash/src/"
+            }   
+            
+        files { 
+            root .. "edupack/bspedupack.h",
+            root .. "edupack/bspedupack.cpp",
+            root .. "edupack/modernFft.h",
+            root .. "edupack/modernFftTest.cpp",
+            }
+            
     project "lu"                
         kind "ConsoleApp"
         flags "WinMain"
@@ -205,7 +246,10 @@ solution "bsp-edupack"
 
         includedirs {
             root .. "bsp/include/",
-            root .. "edupack/"
+            root .. "edupack/",
+            root .. "extern/plotting-library/plot/include/",
+            root .. "extern/plotting-library/extern/armadillo/include/",
+            root .. "extern/sparsehash/src/"
             }   
             
         files { 
