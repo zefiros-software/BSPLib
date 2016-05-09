@@ -33,10 +33,14 @@
 
 #include <string>
 
+class SubPlots;
+
 class HeatMapPlot
     : public AbstractPlot
 {
 public:
+
+    friend class SubPlots;
 
     HeatMapPlot( const Mat &map )
     {
@@ -135,9 +139,27 @@ public:
         return *this;
     }
 
+    HeatMapPlot &SetXTickLabel( bool enable )
+    {
+        mStream << ", xticklabels = " << GetBool( enable );
+        return *this;
+    }
+
+    HeatMapPlot &SetYTickLabel( bool enable )
+    {
+        mStream << ", yticklabels = " << GetBool( enable );
+        return *this;
+    }
+
     HeatMapPlot &SetMask( const std::vector< bool > &mask )
     {
         mStream << ", mask = " << ToArray( mask );
+        return *this;
+    }
+    
+    HeatMapPlot &SetColourBar( bool enable )
+    {
+        mStream << ", cbar = " << GetBool( enable );
         return *this;
     }
 

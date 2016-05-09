@@ -12,3 +12,5 @@ My Amplifier XE Results*
 *.sdf
 *.VC.opendb
 docs/out/*
+*.chi
+*.chm

@@ -36,11 +36,12 @@
 #endif
 
 #include <initializer_list>
+#include <functional>
 #include <algorithm>
 #include <stdint.h>
+#include <valarray>
 #include <vector>
 #include <map>
-#include <functional>
 
 class Vec
 {
@@ -50,6 +51,12 @@ public:
     template< typename tT >
     Vec( const std::vector< tT > &data )
         : mData( data.begin(), data.end() )
+    {
+    }
+
+    template< typename tContainer >
+    Vec( const tContainer &data )
+        : mData( std::begin( data ), std::end( data ) )
     {
     }
 
@@ -115,12 +122,12 @@ public:
 
     double Min() const
     {
-        return *std::min( mData.begin(), mData.end() );
+        return *std::min_element( mData.begin(), mData.end() );
     }
 
     double Max() const
     {
-        return *std::max( mData.begin(), mData.end() );
+        return *std::max_element( mData.begin(), mData.end() );
     }
 
 private:
@@ -133,13 +140,13 @@ private:
         double delta = ( end - start ) / ( num - 1 );
 
         std::vector<double> linspaced( num );
+        linspaced[0] = start;
 
-        for ( int i = 0; i < num; ++i )
+        for ( size_t i = 1; i < num; ++i )
         {
-            linspaced[i] = start + delta * i;
+            linspaced[i] = start + delta * static_cast<int>( i );
         }
 
-        linspaced.push_back( end );
         return linspaced;
     }
 };

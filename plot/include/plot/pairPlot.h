@@ -57,7 +57,7 @@ public:
         mStream << "data = pd.DataFrame()\n";
         size_t i = 0;
 
-        for ( const auto &column : mat.GetData() )
+        for ( const auto & column : mat.GetData() )
         {
             mStream << "data['" << names[i++] << "'] = " << ToArray( column ) << "\n";
         }
@@ -71,22 +71,20 @@ public:
         assert( hue.size() == mats.size() );
         mStream << "data = pd.DataFrame()\nhue = []\n";
 
-        size_t k = 0;
-
-        for ( const auto &name : names )
+        for ( size_t k = 0, kEnd = names.size(); k < kEnd; )
         {
-            mStream << "x" << k++ << " = []\n";
+            mStream << "x" << k << " = []\n";
         }
 
         size_t j = 0;
 
-        for ( const auto &mat : mats )
+        for ( const auto & mat : mats )
         {
             assert( names.size() == mat.GetData().size() );
 
             size_t i = 0;
 
-            for ( const auto &column : mat.GetData() )
+            for ( const auto & column : mat.GetData() )
             {
                 mStream << "x" << i << " = x" << i << " + " << ToArray( column ) << "\n";
                 ++i;
@@ -98,7 +96,7 @@ public:
 
         size_t l = 0;
 
-        for ( const auto &name : names )
+        for ( const auto & name : names )
         {
             mStream << "data['" << name << "']" << " = x" << l << "\n";
             ++l;
