@@ -917,6 +917,11 @@ public:
         mHistoryRecorder.MarkSuperstep( ProcId() );
     }
 
+    void MarkSuperstep( uint32_t superstep )
+    {
+        mHistoryRecorder.MarkSuperstep( ProcId(), superstep );
+    }
+
     void PauseRecording()
     {
         mHistoryRecorder.PauseRecording( ProcId() );

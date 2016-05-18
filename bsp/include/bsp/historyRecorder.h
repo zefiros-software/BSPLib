@@ -215,6 +215,14 @@ public:
         } );
     }
 
+    void MarkSuperstep( uint32_t pid, uint32_t superstep )
+    {
+        BSPUtil::StaticIf< ( tHistoryType &HistoryType::AnyData ) == HistoryType::AnyData >( [&]
+        {
+            mIndices[pid] = superstep;
+        } );
+    }
+
     void RecordProcessorsData( uint32_t pid, const std::vector<ProcessorData> &processorsData )
     {
         constexpr bool barOrMatrixData = EitherOr( tHistoryType, HistoryType::BarData, HistoryType::MatrixData );

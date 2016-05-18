@@ -35,6 +35,11 @@ namespace BSPProf
         BSP::GetInstance().MarkSuperstep();
     }
 
+    inline void MarkSuperstep( uint32_t superstep )
+    {
+        BSP::GetInstance().MarkSuperstep( superstep );
+    }
+
     inline void PauseRecording()
     {
         BSP::GetInstance().PauseRecording();
