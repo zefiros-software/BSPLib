@@ -18,8 +18,15 @@ void UFft( double *x, uint32_t n, int sign, std::vector<double> &w )
           exp(-2*pi*i*j/n), 0 <= j < n/2,
        which must have been initialized before calling this function.
     */
+#ifdef _MSC_VER
+    unsigned long end;
+    _BitScanReverse( &end, n | 1 );
+    const uint32_t mEnd = static_cast< uint32_t >( end );
+#else
     const uint32_t mEnd = 31 - __builtin_clz( n );
-    for( uint32_t m = 1; m <= mEnd; ++m )
+#endif
+
+    for ( uint32_t m = 1; m <= mEnd; ++m )
     {
         // const uint32_t k = 1 << m;
         const uint32_t nk = n >> m;
@@ -28,6 +35,8 @@ void UFft( double *x, uint32_t n, int sign, std::vector<double> &w )
         for ( uint32_t r = 0; r < nk; ++r )
         {
             const uint32_t rk = r << ( m + 1 );
+
+            #pragma omp simd
 
             for ( uint32_t j = 0; j < jEnd; ++j )
             {
@@ -85,10 +94,16 @@ void UFftInit( uint32_t n, std::vector<double> &w )
             // wComplex = std::exp( wComplex );
             // //w[j2] =   cos( j * theta );
             // w[j2] = wComplex.real();
-            
+
             // //w[j2 + 1] = sin( j * theta );
             // w[j2 + 1] = wComplex.imag();
+#ifdef _MSC_VER
+            w[j2] = std::cos( j * theta );
+            w[j2 + 1] = std::sin( j * theta );
+#else
             __builtin_sincos( j * theta, &w[j2 + 1], &w[j2] );
+#endif // _MSC_VER
+
         }
 
         /* weights n/8+1 .. n/4 */
@@ -203,7 +218,13 @@ void BitRevInit( uint32_t n, std::vector<uint32_t> &rho )
         return;
     }
 
-    uint32_t kEnd = 31 - __builtin_clz( n );
+#ifdef _MSC_VER
+    unsigned long end;
+    _BitScanReverse( &end, n | 1 );
+    const uint32_t kEnd = static_cast<uint32_t>( end );
+#else
+    const uint32_t kEnd = 31 - __builtin_clz( n );
+#endif
 
     for ( uint32_t j = 0; j < n; ++j )
     {
