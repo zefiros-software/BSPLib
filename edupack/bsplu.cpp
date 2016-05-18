@@ -114,6 +114,8 @@ void bsplu( int M, int N, int s, int t, int n, int *pi, double **a )
     }
 
     bsp_sync();
+    BSPProf::ResumeRecording();
+    BSPProf::MarkSuperstep( 0 );
 
     for ( k = 0; k < n; k++ )
     {
@@ -162,6 +164,7 @@ void bsplu( int M, int N, int s, int t, int n, int *pi, double **a )
         }
 
         bsp_sync();
+        BSPProf::MarkSuperstep();
 
         /****** Superstep 1 ******/
         if ( k % N == t )
@@ -206,6 +209,7 @@ void bsplu( int M, int N, int s, int t, int n, int *pi, double **a )
         }
 
         bsp_sync();
+        BSPProf::MarkSuperstep();
 
         /****** Superstep 2 ******/
         if ( k % M == s )
@@ -231,6 +235,7 @@ void bsplu( int M, int N, int s, int t, int n, int *pi, double **a )
         }
 
         bsp_sync();
+        BSPProf::MarkSuperstep();
 
         /****** Superstep 3 ******/
         /* Phase 0 of two-phase broadcasts */
@@ -256,11 +261,15 @@ void bsplu( int M, int N, int s, int t, int n, int *pi, double **a )
         bsp_broadcast( uk, nlc - kc1, ( k % M ) + t * M, t * M, 1, M, s + t * M, 0 );
         bsp_sync();
 
+        BSPProf::MarkSuperstep();
+
         /****** Superstep 4 ******/
         /* Phase 1 of two-phase broadcasts */
         bsp_broadcast( lk, nlr - kr1, s + ( k % N )*M,  s, M, N, s + t * M, 1 );
         bsp_broadcast( uk, nlc - kc1, ( k % M ) + t * M, t * M, 1, M, s + t * M, 1 );
         bsp_sync();
+
+        BSPProf::MarkSuperstep( 0 );
 
         /****** Superstep 0 ******/
         /* Update of A */
@@ -272,6 +281,8 @@ void bsplu( int M, int N, int s, int t, int n, int *pi, double **a )
             }
         }
     }
+
+    BSPProf::PauseRecording();
 
     bsp_pop_reg( Imax );
     vecfreei( Imax );
