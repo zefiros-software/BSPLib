@@ -242,7 +242,8 @@ public:
                 {
                     const ProcessorData &data = processorsData[owner];
 
-                    BSPUtil::StaticIf< Contains( tHistoryType, HistoryType::BarData ) >( [&data, pid, owner, &receiveBytes, &receiveCount, &sendCount]
+                    BSPUtil::StaticIf< Contains( tHistoryType, HistoryType::BarData ) >( [&data, pid, owner, &receiveBytes, &receiveCount,
+                    &sendCount]
                     {
                         BSPUtil::StaticIf< Contains( tHistoryType, HistoryType::MessageSize ) >( [&data, pid, &receiveBytes]
                         {
@@ -342,7 +343,8 @@ public:
                         } );
                     } );
 
-                    BSPUtil::StaticIf< Contains( tHistoryType, HistoryType::BarData ) >( [&data, pid, target, &receiveBytes, &receiveCount, &sendCount]
+                    BSPUtil::StaticIf< Contains( tHistoryType, HistoryType::BarData ) >( [&data, pid, target, &receiveBytes, &receiveCount,
+                                                                                          &sendCount]
                     {
                         BSPUtil::StaticIf< Contains( tHistoryType, HistoryType::MessageSize ) >( [&data, target, &receiveBytes]
                         {
@@ -367,7 +369,8 @@ public:
                     mSendSizes[pid].push_back( sendSizes );
                 } );
 
-                BSPUtil::StaticIf< Contains( tHistoryType, HistoryType::BarData ) >( [this, pid, sendBytes, receiveBytes, sendCount, receiveCount]
+                BSPUtil::StaticIf< Contains( tHistoryType, HistoryType::BarData ) >( [this, pid, sendBytes, receiveBytes, sendCount,
+                                                                                      receiveCount]
                 {
                     mMaxSizes[pid].push_back( std::max( sendBytes, receiveBytes ) );
                     mMaxCounts[pid].push_back( std::max( sendCount, receiveCount ) );
@@ -524,9 +527,9 @@ private:
 
         SubPlots subPlots( rows, columns );
 
-        for ( const auto & source : mSendSizes )
+        for ( const auto &source : mSendSizes )
         {
-            for ( const auto & superstep : source )
+            for ( const auto &superstep : source )
             {
                 double max = *std::max_element( superstep.begin(), superstep.end() );
                 double min = *std::min_element( superstep.begin(), superstep.end() );

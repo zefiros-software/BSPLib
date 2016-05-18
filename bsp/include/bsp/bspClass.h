@@ -254,7 +254,7 @@ public:
 #   endif
 #endif
 
-            for ( auto & thr : mThreads )
+            for ( auto &thr : mThreads )
             {
 #ifndef BSP_SUPPRESS_ABORT_WARNING
 #   ifndef DEBUG
