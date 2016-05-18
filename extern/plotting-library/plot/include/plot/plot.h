@@ -391,8 +391,6 @@ protected:
     
     bool mHasColourCycler;
 
-    bool mHasColourCycler;
-
     static std::string GetContext( Context context )
     {
         switch ( context )
