@@ -227,7 +227,7 @@ public:
     {
         constexpr bool barOrMatrixData = EitherOr( tHistoryType, HistoryType::BarData, HistoryType::MatrixData );
         constexpr bool sizeOrCountData = EitherOr( tHistoryType, HistoryType::MessageSize, HistoryType::MessageCount );
-        BSPUtil::StaticIf < barOrMatrixData && sizeOrCountData > ( [this, pid, &processorsData]
+        BSPUtil::StaticIf < barOrMatrixData &&sizeOrCountData > ( [this, pid, &processorsData]
         {
             if ( mRecording[pid] )
             {
@@ -512,7 +512,7 @@ private:
 
         plot.SetLegend( hueData, hueFunc );
         plot.SetXLabel( "Superstep" ).SetYLabel( "comp/(comm + sync)" );
-        plot.SetYScale( Plot::Scale::Log );
+        plot.SetYScaleSymLog( 0.1, 1.0 );
         plot.SetTitle( "Ratio comp/(comm + sync) per superstep" );
         plot.SetSize( 1050, 400 );
     }

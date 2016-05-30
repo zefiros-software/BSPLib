@@ -73,6 +73,10 @@ public:
     {
     }
 
+    void MarkSuperstep( uint32_t /*pid*/, uint32_t /*superstep*/ )
+    {
+    }
+
     void RecordProcessorsData( uint32_t /*pid*/, const std::vector<ProcessorData> &/*processorsData*/ )
     {
     }
