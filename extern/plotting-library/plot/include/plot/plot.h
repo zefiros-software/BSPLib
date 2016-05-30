@@ -220,7 +220,7 @@ public:
         {
             titles.push_back( titleFunc( title ) );
         }
-        
+
         SetLegend( titles, Location::Best );
 
         return *this;
@@ -282,6 +282,14 @@ public:
         return *this;
     }
 
+    Plot &SetYScaleSymLog( double linthreshy, double linscaley )
+    {
+        mStream << "plt.yscale('" << GetScale( Scale::Symlog ) << "', linthreshy=" << linthreshy << ", linscaley=" << linscaley
+                << ")\n";
+
+        return *this;
+    }
+
     Plot &AddPlot( const AbstractPlot &plot )
     {
         mStream << "\n" << plot.ToString() << "\n";
@@ -330,7 +338,7 @@ public:
         ss << mInitStream.str() << mStream.str() <<  "\nplt.show()";
 
         ss.close();
-        
+
 #ifdef _WIN32
         system( "python plot.in" );
 #else
@@ -388,7 +396,7 @@ protected:
 
     std::stringstream mInitStream;
     std::stringstream mStream;
-    
+
     bool mHasColourCycler;
 
     static std::string GetContext( Context context )

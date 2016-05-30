@@ -105,6 +105,8 @@ solution "bsp-library"
 
         includedirs {
             root .. "bsp/include/",
+            root .. "extern/plotting-library/plot/include/",
+            root .. "extern/plotting-library/extern/armadillo/include/",
             root .. "extern/sparsehash/src/"
             }   
             
@@ -126,6 +128,8 @@ solution "bsp-library"
             
             root .. "bsp/include/",
             root .. "test/",
+            root .. "extern/plotting-library/plot/include/",
+            root .. "extern/plotting-library/extern/armadillo/include/",
             root .. "extern/sparsehash/src/"
             }   
         
@@ -207,6 +211,8 @@ solution "bsp-edupack"
 
         includedirs {
             root .. "bsp/include/",
+            root .. "extern/plotting-library/plot/include/",
+            root .. "extern/plotting-library/extern/armadillo/include/",
             root .. "edupack/"
             }   
             
@@ -265,6 +271,8 @@ solution "bsp-edupack"
 
         includedirs {
             root .. "bsp/include/",
+            root .. "extern/plotting-library/plot/include/",
+            root .. "extern/plotting-library/extern/armadillo/include/",
             root .. "edupack/"
             }   
             
@@ -298,6 +306,8 @@ solution "bsp-edupack"
 
         includedirs {
             root .. "bsp/include/",
+            root .. "extern/plotting-library/plot/include/",
+            root .. "extern/plotting-library/extern/armadillo/include/",
             root .. "edupack/"
             }   
             
@@ -316,6 +326,8 @@ solution "bsp-edupack"
 
         includedirs {
             root .. "bsp/include/",
+            root .. "extern/plotting-library/plot/include/",
+            root .. "extern/plotting-library/extern/armadillo/include/",
             root .. "edupack/"
             }   
             
