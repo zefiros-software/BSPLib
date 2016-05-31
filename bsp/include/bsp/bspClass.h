@@ -24,7 +24,6 @@
 #define __BSPLIB_BSPCLASS_H__
 
 //#define BSP_SKIP_CHECKS
-//#define BSP_USE_PROFILER
 
 #include "bsp/communicationQueues.h"
 #include "bsp/historyRecorderType.h"

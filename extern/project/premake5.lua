@@ -224,6 +224,7 @@ solution "bsp-edupack"
         flags "WinMain"
         
         defines "M_PI=3.14159265358979323846"
+        defines "BSP_USE_PROFILER"
 
         includedirs {
             root .. "bsp/include/",
@@ -244,6 +245,7 @@ solution "bsp-edupack"
         flags "WinMain"
         
         defines "M_PI=3.14159265358979323846"
+        defines "BSP_USE_PROFILER"
 
         includedirs {
             root .. "bsp/include/",
