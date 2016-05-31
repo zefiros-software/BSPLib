@@ -107,7 +107,6 @@ solution "bsp-library"
             root .. "bsp/include/",
             root .. "extern/plotting-library/plot/include/",
             root .. "extern/plotting-library/extern/armadillo/include/",
-            root .. "extern/sparsehash/src/"
             }   
             
         files { 
@@ -130,7 +129,6 @@ solution "bsp-library"
             root .. "test/",
             root .. "extern/plotting-library/plot/include/",
             root .. "extern/plotting-library/extern/armadillo/include/",
-            root .. "extern/sparsehash/src/"
             }   
         
         files { 
@@ -173,7 +171,6 @@ solution "bsp-edupack"
             root .. "edupack/",
             root .. "extern/plotting-library/plot/include/",
             root .. "extern/plotting-library/extern/armadillo/include/",
-            root .. "extern/sparsehash/src/"
             }   
             
         files { 
@@ -192,7 +189,6 @@ solution "bsp-edupack"
             root .. "edupack/",
             root .. "extern/plotting-library/plot/include/",
             root .. "extern/plotting-library/extern/armadillo/include/",
-            root .. "extern/sparsehash/src/"
             }   
             
         files { 
@@ -234,7 +230,6 @@ solution "bsp-edupack"
             root .. "edupack/",
             root .. "extern/plotting-library/plot/include/",
             root .. "extern/plotting-library/extern/armadillo/include/",
-            root .. "extern/sparsehash/src/"
             }   
             
         files { 
@@ -255,7 +250,6 @@ solution "bsp-edupack"
             root .. "edupack/",
             root .. "extern/plotting-library/plot/include/",
             root .. "extern/plotting-library/extern/armadillo/include/",
-            root .. "extern/sparsehash/src/"
             }   
             
         files { 

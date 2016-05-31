@@ -25,6 +25,7 @@
 
 #include "bsp/processorData.h"
 
+#ifdef BSP_USE_PROFILER
 #include "plot/plotting.h"
 
 enum class HistoryType : uint32_t
@@ -570,5 +571,6 @@ private:
         plot.SetSize( 840, 600 );
     }
 };
+#endif
 
 #endif

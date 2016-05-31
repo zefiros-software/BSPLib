@@ -26,11 +26,8 @@
 //#define BSP_SKIP_CHECKS
 //#define BSP_USE_PROFILER
 
-#include "bsp/threadRegisterDenseHash.h"
-#include "bsp/threadRegisterVector.h"
 #include "bsp/communicationQueues.h"
 #include "bsp/historyRecorderType.h"
-#include "bsp/threadRegisterMap.h"
 #include "bsp/condVarBarrier.h"
 #include "bsp/processorData.h"
 #include "bsp/requestVector.h"
