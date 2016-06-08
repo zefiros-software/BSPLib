@@ -2,56 +2,64 @@ site_name: BSPLib
 site_url: http://www.bsplib.eu
 repo_url: https://github.com/Zefiros-Software/BSPLib
 site_description: BSPLib a fast and easy to use parallel computation libary.
-theme: readthedocs
-copyright: Copyright © 2015 Mick van Duijn, Koen Visscher and Paul Visscher
+theme: united
+copyright: Copyright © 2016 Mick van Duijn, Koen Visscher and Paul Visscher
 google_analytics: ['UA-29999374-2', 'www.bsplib.eu']
 
 pages:
-- BSP: 'index.md'
+- BSP: 
+    - 'index.md'
 
-- Program Logic:
-    - 'Execute BSP Program': 'logic/execute.md'
-    - 'Init BSP Program': 'logic/init.md'
-    - 'Begin BSP Program': 'logic/begin.md'
-    - 'End BSP Program': 'logic/end.md'
+    - Classic: 'classic.md'
 
-- Utilities:
-    - 'Get Processor Count': 'util/nprocs.md'
-    - 'Get Processor Identifier': 'util/procid.md'
-    - 'Get Wall Time': 'util/time.md'
+- Program:
+    - Logic:
+        - 'Execute BSP Kernel': 'logic/execute.md'
+        - 'Init BSP Kernel': 'logic/init.md'
+        - 'Begin BSP Kernel': 'logic/begin.md'
+        - 'End BSP Kernel': 'logic/end.md'
+        
+    - Halting:
+        - 'Abort Program': 'halting/abort.md'
 
-- Halting:
-    - 'Abort Program': 'halting/abort.md'
+    - Util:
+        - 'Processor Count': 'util/nprocs.md'
+        - 'Processor Identifier': 'util/procid.md'
+        - 'Wall Time': 'util/time.md'
 
-- Synchronisation Point:
-    - 'Synchronising': 'sync/sync.md'
-
-- Registration & Deregistration:
+- (De)registration:
     - 'Push Register': 'regdereg/push.md'
     - 'Pop Register': 'regdereg/pop.md'
 
 - Communication:
-    - 'Get Register': 'com/get.md'
-    - 'Get Register - Primitives' : 'com/getPrimitive.md'
-    - 'Get Register - Pointers' : 'com/getPtrs.md'
-    - 'Get Register - Containers' : 'com/getContainer.md'
-    - 'Put Register': 'com/put.md'
-    - 'Put Register - Primitives' : 'com/putPrimitive.md'
-    - 'Put Register - Pointers' : 'com/putPtrs.md'
-    - 'Put Register - Containers' : 'com/putContainer.md'
+    - 'Get Register':
+        - 'Normal': 'com/get.md'
+        - 'Primitives' : 'com/getPrimitive.md'
+        - 'Pointers' : 'com/getPtrs.md'
+        - 'Containers' : 'com/getContainer.md'
+
+    - 'Put Register':
+        - 'Normal': 'com/put.md'
+        - 'Primitives' : 'com/putPrimitive.md'
+        - 'Pointers' : 'com/putPtrs.md'
+        - 'Containers' : 'com/putContainer.md'
+
+    - Sync Point:
+        - 'Synchronising': 'sync/sync.md'
 
 - Messaging:
 
-    - 'Send Memory': 'messaging/send.md'
-    - 'Send Memory - Primitives' : 'messaging/sendPrimitive.md'
-    - 'Send Memory - Iterators' : 'messaging/sendIterator.md'
-    - 'Send Memory - Containers' : 'messaging/sendContainer.md'
-    - 'Send Memory - Pointers - Primitives' : 'messaging/sendPtrs.md'
-    - 'Send Memory - Pointers - Containers' : 'messaging/sendTagContainer.md'
+    - Send Memory:
+        - 'Normal': 'messaging/send.md'
+        - 'Primitives' : 'messaging/sendPrimitive.md'
+        - 'Iterators' : 'messaging/sendIterator.md'
+        - 'Containers' : 'messaging/sendContainer.md'
+        - 'Pointers - Primitives' : 'messaging/sendPtrs.md'
+        - 'Pointers - Containers' : 'messaging/sendTagContainer.md'
     - 'Move Memory': 'messaging/move.md'
     - 'Get Queue Size': 'messaging/qsize.md'
 
-- Messaging Utilities:
+- Utilities:
     - 'Get Tag': 'messagingutil/gettag.md'
     - 'Set Tag Size': 'messagingutil/settagsize.md'
 
@@ -60,8 +68,6 @@ pages:
 #    - 'Put Register': 'hp/hpput.md'
 #    - 'Send Memory': 'hp/hpsend.md'
 #    - 'Move Memory': 'hp/hpmove.md'
-
-- Classic: 'classic.md'
 
 markdown_extensions:
     - toc:
