@@ -1,0 +1,14 @@
+[
+    {
+        "project": "BSPLib",
+        "do":
+        [
+            {"kind": "StaticLib"},
+            {"language": "C++"},
+            {"exportincludedirs": [
+                "bsp/include/"
+            ]},
+            {"headeronly": true}
+        ]
+    }
+]

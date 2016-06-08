@@ -1,4 +1,5 @@
 {
+    "name": "Zefiros-Software/BSPLib",
     "description": "BSPLib is a fast, and easy to use C++ implementation of the Bulk Synchronous Parallel (BSP) threading model. This model is mainly used in the scientific computing field, but can also be applied more general in computer science. This library includes an extended version the standard BSP interface to perform better, and made it more easy to use.",
     "keywords": ["C++", "BSP", "easy", "fast"],
     "website": "http://bsplib.eu/",
@@ -18,6 +19,30 @@
             "name": "Koen Visscher",
             "email": "koen.visscher@zefiros.eu",
             "website": "https://zefiros.eu/"
+        }
+    ],
+    "dev": {
+        "assets": [
+            {
+                "name": "Zefiros-Software/gcov2clover",
+                "version": ">=1.0.0"
+            }
+        ],
+        "requires": [
+            {
+                "name": "Zefiros-Software/GoogleTest",
+                "version": "@head"
+            }
+        ]
+    },
+    "requires": [
+        {
+            "name": "Zefiros-Software/ArmadilloExt",
+            "version": "@head"
+        },
+        {
+            "name": "Zefiros-Software/PlotLib",
+            "version": "@head"
         }
     ]
 }
