@@ -373,8 +373,8 @@ public:
                 BSPUtil::StaticIf< Contains( tHistoryType, HistoryType::BarData ) >( [this, pid, sendBytes, receiveBytes, sendCount,
                                                                                       receiveCount]
                 {
-                    mMaxSizes[pid].push_back( std::max( sendBytes, receiveBytes ) );
-                    mMaxCounts[pid].push_back( std::max( sendCount, receiveCount ) );
+                    mMaxSizes[pid].push_back( std::max( sendBytes, receiveBytes ) * 1.0 );
+                    mMaxCounts[pid].push_back( std::max( sendCount, receiveCount ) * 1.0 );
                 } );
             }
         } );

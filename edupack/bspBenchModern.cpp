@@ -72,7 +72,7 @@ void BSPBenchModern( uint32_t P, BenchType::BenchType benchType )
     plot.SetTightLayout().Show();
 }
 
-int main( int /*argc*/, char **/*argv*/ )
+int main( int /*argc*/, char ** /*argv*/ )
 {
 #ifdef _WIN32
     _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );

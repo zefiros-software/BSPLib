@@ -41,8 +41,6 @@
 #endif
 #endif
 
-uint32_t P; /* number of processors requested */
-
 void leastsquares( int h0, int h1, double *t, double *g, double *l )
 {
     /* This function computes the parameters g and l of the
@@ -191,7 +189,7 @@ void ReportR( uint32_t n, double &r, std::vector<double> &Time, double *y, doubl
     fflush( stdout );
 }
 
-__attribute__( ( noinline ) ) void  MeasureR( double *x, double *y, double *z, double beta, double alpha, int n )
+void  MeasureR( double *x, double *y, double *z, double beta, double alpha, int n )
 {
 #ifdef BSP_USE_ASM_BENCH
     {
@@ -213,7 +211,7 @@ __attribute__( ( noinline ) ) void  MeasureR( double *x, double *y, double *z, d
 
     for ( int i = 0; i < n; ++i )
     {
-        y[i] += alpha * y[i];
+        y[i] += alpha * x[i];
     }
 
 #endif
@@ -244,7 +242,7 @@ __attribute__( ( noinline ) ) void  MeasureR( double *x, double *y, double *z, d
 #endif
 }
 
-__attribute__( ( noinline ) ) void  CorrectionR( double *x, double *y, double *z, double beta, double alpha, int n )
+void  CorrectionR( double * /*x*/, double * /*y*/, double * /*z*/, double /*beta*/, double /*alpha*/, int n )
 {
 #ifdef BSP_USE_ASM_BENCH
     {

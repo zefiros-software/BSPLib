@@ -173,7 +173,7 @@ void BSPFftTest()
 
 } /* end bspfft_test */
 
-int main( int /*argc*/, char **/*argv*/ )
+int main( int /*argc*/, char ** /*argv*/ )
 {
     printf( "How many processors do you want to use?\n" );
     fflush( stdout );

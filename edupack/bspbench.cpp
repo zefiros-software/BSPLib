@@ -230,7 +230,7 @@ void bspbench()
     //bsp_end();
 } /* end bspbench */
 
-int main( int argc, char **argv )
+int main( int /*argc*/, char ** /*argv*/ )
 {
 
 #ifdef _WIN32
@@ -251,7 +251,7 @@ int main( int argc, char **argv )
         exit( 1 );
     }
 
-    BSPLib::Execute( BSPBenchModern, P );
+    BSPLib::Execute( bspbench, P );
 
     //BSPBenchModern();
     exit( 0 );
