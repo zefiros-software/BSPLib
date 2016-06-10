@@ -1,3 +1,6 @@
+
+
+
 workspace "BSPLib"
 
     configurations { "Debug", "Release", "Coverage" }
@@ -72,6 +75,8 @@ workspace "BSPLib"
         
         filter { "*Release", "platforms:x86_64" }
             defines "PREFIX=X86_64R_"
+    
+        filter {}
         
     project "bsp-library"
     
