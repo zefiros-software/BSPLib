@@ -1,27 +1,28 @@
+-- artifacts
+bin/*
+
+-- make
+*.make
+
+-- zpm
+._config.json
+
+-- git
+*.orig
+
+-- make
+Makefile
+
+-- visual studio code
+*/.vs/*
+
+-- visual studio
 *.sdf
 *.sln
 *.suo
-*.filters
-*.user
-bin/*
-build/
+*.VC.*
 *.opensdf
-*.vcxproj
-*.filters
-*.user
-*.vsp
-*.psess
-*.make
-Makefile
-My Amplifier XE Results*
-*.orig
-My Inspector XE Results - bsplib/
-My Advisor XE Results - bsplib/
-My Advisor XE Results - bench/
-test/My Inspector XE Results - *
-bsp/My Advisor XE Results *
-test/My Advisor XE Results *
-docs/docs/.vscode/
-*.ipgset
-*/.vscode
-*Makefile
+*.vcxproj*
+
+-- Intel Tools
+*Amplifier*

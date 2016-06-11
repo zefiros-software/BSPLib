@@ -119,7 +119,7 @@ When a bug is found, please insert it in the issue tracker, so we can resolve it
 
 ## Authors
 * Mick van Duijn <m.vanduijn@zefiros.eu>
-* Paul Visscher <paul.pev@zefiros.eu>
+* Paul Visscher <p.e.visscher@zefiros.eu>
 * Koen Visscher <k.m.visscher@zefiros.eu>
 
 ## Used By
