@@ -38,6 +38,8 @@ workspace "BSPEdupack"
     startproject "bench-modern"
     location "edupack/"
     objdir "bin/obj/"
+        
+    defines "M_PI=3.14159265358979323846"
     
     vectorextensions "SSE2"
     warnings "Extra"
@@ -116,8 +118,6 @@ workspace "BSPEdupack"
             "Zefiros-Software/ArmadilloExt",
             "Zefiros-Software/PlotLib"
         }
-        
-        defines "M_PI=3.14159265358979323846"
 
         includedirs {
             "bsp/include/",
@@ -139,8 +139,6 @@ workspace "BSPEdupack"
             "Zefiros-Software/ArmadilloExt",
             "Zefiros-Software/PlotLib"
         }
-        
-        defines "M_PI=3.14159265358979323846"
         defines "BSP_USE_PROFILER"
 
         includedirs {
@@ -228,8 +226,6 @@ workspace "BSPEdupack"
             "Zefiros-Software/ArmadilloExt",
             "Zefiros-Software/PlotLib"
         }
-        
-        defines "M_PI=3.14159265358979323846"
 
         includedirs {
             "bsp/include/",
@@ -251,8 +247,6 @@ workspace "BSPEdupack"
             "Zefiros-Software/ArmadilloExt",
             "Zefiros-Software/PlotLib"
         }
-        
-        defines "M_PI=3.14159265358979323846"
 
         includedirs {
             "bsp/include/",

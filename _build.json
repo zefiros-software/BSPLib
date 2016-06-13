@@ -1,14 +1,45 @@
 [
     {
         "project": "BSPLib",
+        "options": {
+            "Profiler": true,
+            "OwnArmadillo": true
+        },
         "do":
         [
             {"kind": "StaticLib"},
             {"language": "C++"},
+            {"flags": "C++11"},
+            {"headeronly": true},
             {"exportincludedirs": [
                 "bsp/include/"
             ]},
-            {"headeronly": true}
+            {
+                "filter-options": {
+                    "Profiler": true
+                },
+                "do":
+                [
+                    {"reuses": [
+                        "Zefiros-Software/PlotLib"
+                    ]},
+                    {
+                        "filter-options": {
+                            "OwnArmadillo": true
+                        },
+                        "do":
+                        [
+                            {"reuses": [
+                                "Zefiros-Software/ArmadilloExt"
+                            ]}
+                        ]
+                    }
+                ],
+                "otherwise":
+                [                    
+                    {"defines": "BSP_USE_PROFILER"}
+                ]
+            }
         ]
     }
 ]

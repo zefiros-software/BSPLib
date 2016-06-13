@@ -118,9 +118,9 @@ When a bug is found, please insert it in the issue tracker, so we can resolve it
 5. Submit a pull request
 
 ## Authors
-* Mick van Duijn <mick.v.duijn@zefiros.eu>
-* Paul Visscher <paul.pev@zefiros.eu>
-* Koen Visscher <koen.visscher@zefiros.eu>
+* Mick van Duijn <m.vanduijn@zefiros.eu>
+* Paul Visscher <p.e.visscher@zefiros.eu>
+* Koen Visscher <k.m.visscher@zefiros.eu>
 
 ## Used By
 We are interested to find out what projects use BSPLib. We would love to include your projects here, 

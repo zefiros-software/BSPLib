@@ -64,13 +64,3 @@ but we also provide the classic interface implementation.
 | -------------------------------------------------- | ----------------------------------------------------- |
 | [`bsp_set_tagsize()`](messagingutil/settagsize.md) | [`BSPLib::SetTagSize()`](messagingutil/settagsize.md) |
 | [`bsp_get_tag()`](messagingutil/gettag.md)         | [`BSPLib::GetTag()`](messagingutil/gettag.md)         |
-
-
-## High Performance
-
-| Classic                        | Modern                                |
-| ------------------------------ | ------------------------------------- |
-| [`bsp_hpmove()`](hp/hpmove.md) | [`BSPLib::HPMove()`](hp/hpmove.md)    |
-| [`bsp_hpget()`](hp/hpget.md)   | [`BSPLib::HPGet()`](hp/hpget.md)      |
-| [`bsp_hpput()`](hp/hpput.md)   | [`BSPLib::HPPut()`](hp/hpput.md)      |
-| [`bsp_hpsend()`](hp/hpsend.md) | [`BSPLib::HPSend()`](hp/hpsend.md)    |

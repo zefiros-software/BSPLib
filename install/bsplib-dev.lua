@@ -22,6 +22,7 @@
 -- @endcond
 --]]
 
-dofile( "assets/Zefiros-Software/PlotLib/Zefiros-Software/Anaconda/anaconda.lua" )
+dofile( "assets/Zefiros-Software/BSPLib/Zefiros-Software/Anaconda/anaconda.lua" )
 
 os.execute( "pip install mkdocs -U" )
+os.execute( "pip install mkdocs-bootswatch -U" )
