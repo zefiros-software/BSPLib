@@ -22,10 +22,15 @@
         }
     ],
     "dev": {
+        "install": "install/bsplib-dev.lua",
         "assets": [
             {
                 "name": "Zefiros-Software/gcov2clover",
                 "version": ">=1.0.0"
+            },
+            {
+                "name": "Zefiros-Software/Anaconda",
+                "version": ">=4.0.0"
             }
         ],
         "requires": [
