@@ -11,8 +11,8 @@
             {"language": "C++"},
             {"flags": "C++11"},
             {"headeronly": true},
-            {"exportincludedirs": [
-                "bsp/include/"
+            {"export":[
+                {"includedirs": "bsp/include/"}
             ]},
             {
                 "filter-options": {
@@ -20,18 +20,14 @@
                 },
                 "do":
                 [
-                    {"reuses": [
-                        "Zefiros-Software/PlotLib"
-                    ]},
+                    {"reuses": "Zefiros-Software/PlotLib"},
                     {
                         "filter-options": {
                             "OwnArmadillo": true
                         },
                         "do":
                         [
-                            {"reuses": [
-                                "Zefiros-Software/ArmadilloExt"
-                            ]}
+                            {"reuses": "Zefiros-Software/ArmadilloExt"}
                         ]
                     }
                 ],
