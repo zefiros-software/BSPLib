@@ -30,7 +30,7 @@
             },
             {
                 "name": "Zefiros-Software/Anaconda",
-                "version": ">=4.0.0"
+                "version": "@head"
             }
         ],
         "requires": [
@@ -40,6 +40,10 @@
             }
         ]
     },
+    "options": {
+        "Profiler": true,
+        "OwnArmadillo": true
+    },  
     "requires": [
         {
             "name": "Zefiros-Software/ArmadilloExt",

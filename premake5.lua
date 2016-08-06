@@ -27,7 +27,9 @@ local zefiros = require( "Zefiros-Software/Zefiros-Defaults", "@head" )
 
 workspace "BSPLib"
 
-	zefiros.setDefaults( "bsp" )
+	zefiros.setDefaults( "bsp", {
+        mayLink = false
+    } )
             
 workspace "BSPEdupack"
 
@@ -62,8 +64,6 @@ workspace "BSPEdupack"
     filter "*Release"
         flags "LinkTimeOptimization"
         optimize "Speed"
-        
-    zpm.buildLibraries()
     
     filter {}
     

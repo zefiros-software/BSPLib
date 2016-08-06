@@ -1,0 +1,21 @@
+{
+    "name": "Zefiros-Software/BSPLib-Dev",
+    "requires": [
+            {
+                "name": "Zefiros-Software/BSPLib",
+                "version": "@head"
+            },
+            {
+                "name": "Zefiros-Software/PlotLib",
+                "version": "@head"
+            },
+            {
+                "name": "Zefiros-Software/GoogleTest",
+                "version": "@head"
+            },
+            {
+                "name": "Zefiros-Software/ArmadilloExt",
+                "version": "@head"
+            }
+    ]
+}
