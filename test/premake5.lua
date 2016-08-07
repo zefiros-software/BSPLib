@@ -29,3 +29,10 @@ workspace "BSPLib-ZPM"
 	zefiros.setTestZPMDefaults( "bsp", {
         mayLink = false
     } )
+    
+	project "bsp-zpm-test"
+
+		zpm.uses {
+            "Zefiros-Software/ArmadilloExt",
+            "Zefiros-Software/BSPLib"
+        }

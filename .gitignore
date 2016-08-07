@@ -1,14 +1,13 @@
 -- artifacts
 bin/*
+test/obj/*
+test/bin/*
 
 -- zpm
-._config.json
+.config.json
 
 -- git
 *.orig
-
--- make
-Makefile
 
 -- make
 Makefile
@@ -27,3 +26,13 @@ Makefile
 
 -- Intel Tools
 *Amplifier*
+
+-- Docs
+*.chi
+*.chm
+
+-- ZPM 
+extern/
+assets/
+test/extern
+test/assets
