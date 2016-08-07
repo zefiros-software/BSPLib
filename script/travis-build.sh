@@ -18,13 +18,12 @@ cd zpm/
 make
 cd ../
 
-cd ../docs/images/
-../../bin/x86/bsp-test
-../../bin/x86/bsp-testd
-#../../bin/x86/bsp-testcd
+bin/x86/bsp-test
+bin/x86/bsp-testd
+#bin/x86/bsp-testcd
 
-../../bin/x86_64/bsp-test
-../../bin/x86_64/bsp-testd
-#../../bin/x86_64/bsp-testcd
+bin/x86_64/bsp-test
+bin/x86_64/bsp-testd
+#bin/x86_64/bsp-testcd
 
-../../test/bin/x86/bsp-zpm-test
+test/bin/x86/bsp-zpm-test
