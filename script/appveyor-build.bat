@@ -9,6 +9,8 @@ cd test/
 premake5 vs2015 || exit /b
 msbuild zpm/BSPLib-ZPM.sln || exit /b
 
+cd ../../
+
 bin\x86\bsp-test.exe || exit /b
 bin\x86\bsp-testd.exe || exit /b
 

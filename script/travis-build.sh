@@ -16,7 +16,7 @@ premake5 gmake
 
 cd zpm/
 make
-cd ../
+cd ../../
 
 bin/x86/bsp-test
 bin/x86/bsp-testd
