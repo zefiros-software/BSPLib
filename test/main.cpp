@@ -32,12 +32,8 @@ int32_t main( int32_t argc, char **argv )
 {
     testing::InitGoogleTest( &argc, argv );
 
-    int result = RUN_ALL_TESTS();
-
-#ifdef _WIN32
-    system( "pause" );
-#endif // _WIN32
-
+    int32_t result = RUN_ALL_TESTS();
+    ( void * )result;
 
     return result;
 }
