@@ -2,7 +2,7 @@
 
 project "BSPLib"
   
-    kind "StaticLib"
+    kind "Utility"
 
     if zpm.option( "Profiler" ) then
         defines "PLOTLIB_USE_ZPM_ANACONDA"
