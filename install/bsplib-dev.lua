@@ -24,5 +24,16 @@
 
 dofile( "assets/Zefiros-Software/BSPLib/Zefiros-Software/Anaconda/anaconda.lua" )
 
-os.execute( "pip install mkdocs -U" )
-os.execute( "pip install mkdocs-bootswatch -U" )
+local anaBin = os.get() == "windows" and os.getenv("UserProfile") .. "/zpm-anaconda/Scripts/" or "~/zpm-anaconda/bin/"
+
+if os.get() == "windows" then
+    os.executef( "%spip install mkdocs -U", anaBin )
+    os.executef( "%spip install mkdocs-bootswatch -U", anaBin )
+    os.executef( "%spip install pymdown-extensions -U", anaBin )
+    os.executef( "%spip install markdown-checklist -U", anaBin )
+else
+    os.executef( "%s/python3 %spip install mkdocs -U", anaBin, anaBin )
+    os.executef( "%s/python3 %spip install mkdocs-bootswatch -U", anaBin, anaBin )
+    os.executef( "%s/python3 %spip install pymdown-extensions -U", anaBin, anaBin )
+    os.executef( "%s/python3 %spip install markdown-checklist -U", anaBin, anaBin )
+end

@@ -1,9 +1,10 @@
-language: generic
+language: python
 matrix:
     include:
         # Use the built in venv for linux builds
         - os: linux
-          dist: trusty
+          sudo: required
+          python: 3.5
         # Use generic language for osx
         # disabled due to premake bug
         #- os: osx
@@ -14,7 +15,7 @@ install:
     - wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-travis.sh | bash
     # annoying pip fix
     - export BOTO_CONFIG=/tmp/bogusvalue
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install g++-multilib -y && bash ./script/install-docs.sh; fi   
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install g++-multilib -y; fi   
 script:
     - bash ./script/travis-build.sh
 after_success:
