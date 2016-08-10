@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="BSPLib a fast and easy to use parallel computation libary.">
+        
+        <link rel="canonical" href="http://www.bsplib.eu/">
+        <link rel="shortcut icon" href="./img/favicon.ico">
+
+	<title>Zefiros-BSPLib</title>
+
+        <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="./css/highlight.css">
+        <link href="./css/base.css" rel="stylesheet">
+        <link href="./style/docs.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-29999374-2', 'www.bsplib.eu');
+            ga('send', 'pageview');
+        </script>
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+    <a class="navbar-img" href="."><img src="./style/logo.png" /></a>
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Program <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Logic</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="logic/execute/">Execute BSP Kernel</a>
+</li>
+
+        
+            
+<li >
+    <a href="logic/init/">Init BSP Kernel</a>
+</li>
+
+        
+            
+<li >
+    <a href="logic/begin/">Begin BSP Kernel</a>
+</li>
+
+        
+            
+<li >
+    <a href="logic/end/">End BSP Kernel</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Halting</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="halting/abort/">Abort Program</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Util</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="util/nprocs/">Processor Count</a>
+</li>
+
+        
+            
+<li >
+    <a href="util/procid/">Processor Identifier</a>
+</li>
+
+        
+            
+<li >
+    <a href="util/time/">Wall Time</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">(De)registration <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="regdereg/push/">Push Register</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="regdereg/pop/">Pop Register</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Communication <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Get Register</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="com/get/">Normal</a>
+</li>
+
+        
+            
+<li >
+    <a href="com/getPrimitive/">Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="com/getPtrs/">Pointers</a>
+</li>
+
+        
+            
+<li >
+    <a href="com/getContainer/">Containers</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Put Register</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="com/put/">Normal</a>
+</li>
+
+        
+            
+<li >
+    <a href="com/putPrimitive/">Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="com/putPtrs/">Pointers</a>
+</li>
+
+        
+            
+<li >
+    <a href="com/putContainer/">Containers</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Sync Point</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="sync/sync/">Synchronising</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Messaging <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Send Memory</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="messaging/send/">Normal</a>
+</li>
+
+        
+            
+<li >
+    <a href="messaging/sendPrimitive/">Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="messaging/sendIterator/">Iterators</a>
+</li>
+
+        
+            
+<li >
+    <a href="messaging/sendContainer/">Containers</a>
+</li>
+
+        
+            
+<li >
+    <a href="messaging/sendPtrs/">Pointers - Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="messaging/sendTagContainer/">Pointers - Containers</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+<li >
+    <a href="messaging/move/">Move Memory</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="messaging/qsize/">Get Queue Size</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utilities <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="messagingutil/gettag/">Get Tag</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="messagingutil/settagsize/">Set Tag Size</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/Zefiros-Software/BSPLib">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#bsplib">BSPLib</a></li>
+        
+    
+        <li class="main "><a href="#status">Status</a></li>
+        
+    
+        <li class="main "><a href="#bsp">BSP</a></li>
+        
+    
+        <li class="main "><a href="#code_documentation">Code &amp; Documentation</a></li>
+        
+            <li><a href="#features">Features</a></li>
+        
+            <li><a href="#installation">Installation</a></li>
+        
+            <li><a href="#usage">Usage</a></li>
+        
+            <li><a href="#planned_features">Planned Features</a></li>
+        
+            <li><a href="#bspedupack">BSPedupack</a></li>
+        
+            <li><a href="#alternatives">Alternatives</a></li>
+        
+            <li><a href="#why_bsplib">Why BSPLib?</a></li>
+        
+            <li><a href="#bugs">Bugs</a></li>
+        
+            <li><a href="#contributing">Contributing</a></li>
+        
+            <li><a href="#authors">Authors</a></li>
+        
+            <li><a href="#used_by">Used By</a></li>
+        
+            <li><a href="#citing_bsplib">Citing BSPLib</a></li>
+        
+            <li><a href="#license">License</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="bsplib">BSPLib<a class="headerlink" href="#bsplib" title="Permanent link">&para;</a></h1>
+<p><a href="https://wwww.bsplib.eu">BSPLib</a> is a fast, and easy to use C++ implementation of the Bulk Synchronous Parallel (BSP) threading model. This model is mainly used in the scientific computing field, but can also be applied more general in computer science. This library includes an extended version the standard BSP interface to perform better, and made it more easy to use.</p>
+<h1 id="status">Status<a class="headerlink" href="#status" title="Permanent link">&para;</a></h1>
+<table>
+<thead>
+<tr>
+<th>OS</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux &amp; OSX</td>
+<td><a href="https://travis-ci.org/Zefiros-Software/BSPLib"><img alt="Build Status" src="https://travis-ci.org/Zefiros-Software/BSPLib.svg?branch=master" /></a></td>
+</tr>
+<tr>
+<td>Windows</td>
+<td><a href="https://ci.appveyor.com/project/PaulVisscher/bsplib"><img alt="Build status" src="https://ci.appveyor.com/api/projects/status/g2aduvs6k7u3640r?svg=true" /></a></td>
+</tr>
+</tbody>
+</table>
+<h1 id="bsp">BSP<a class="headerlink" href="#bsp" title="Permanent link">&para;</a></h1>
+<p>The BSP specification can be found <a href="./bsp.pdf">here</a> and is maintained by <a href="http://www.bsp-worldwide.org">bsp-worldwide.org</a>. Parts of the
+documentation and code are based off this specification, to ensure backward compatibility between BSP libraries.</p>
+<h1 id="code_documentation"><a href="https://github.com/Zefiros-Software/BSPLib">Code</a> &amp; <a href="http://www.bsplib.eu">Documentation</a><a class="headerlink" href="#code_documentation" title="Permanent link">&para;</a></h1>
+<p>The code can be found <a href="https://github.com/Zefiros-Software/BSPLib">here</a>. See <a href="http://www.bsplib.eu">this</a> for the documentation.</p>
+<h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Fast: All our code is hand optimised using profilers, to ensure maximum performance.</li>
+<li>Reliable: We have an extensive testing suite, making sure we do not break forward and backward compatiblity.</li>
+<li>Easy to use: The library is completely header only. Also next to our improved c++ interface, we shipped the
+classic BSP C interface.</li>
+<li>Cross platform: Designed to only use C++11, with no external dependencies.</li>
+<li>Warning free, compiled on the highest warning level.</li>
+</ul>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<p>The whole library is header only, so for usage in your own code you should clone the repository. And add <code>bsp/include/</code> as include path.
+After this you can use the include <code>#include "bsp/bsp.h"</code> in your code to start using the library.</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<p>For detailed usage, please visit <a href="https://www.bsplib.eu">BSPLib</a>.</p>
+<p><strong>Example</strong></p>
+<pre><code class="cpp">void main( int32_t, const char ** )
+{
+    BSPLib::Execute( []
+    {
+        std::cout &lt;&lt; &quot;Hello BSP Worldwide from process &quot; &lt;&lt; BSPLib::ProcId() 
+                  &lt;&lt; &quot; of &quot; &lt;&lt; BSPLib::NProcs() &lt;&lt; std::endl;
+    }, BSPLib::NProcs() );
+}
+</code></pre>
+
+<h3 id="flexibility">Flexibility<a class="headerlink" href="#flexibility" title="Permanent link">&para;</a></h3>
+<h4 id="dont_like_the_legacy_interface">Don't like the legacy interface?<a class="headerlink" href="#dont_like_the_legacy_interface" title="Permanent link">&para;</a></h4>
+<p>No worries! You can easily disable the macros by defining:</p>
+<pre><code class="cpp">#define BSP_DISABLE_LEGACY
+</code></pre>
+
+<h4 id="speeding_up_debugging">Speeding up debugging<a class="headerlink" href="#speeding_up_debugging" title="Permanent link">&para;</a></h4>
+<p>When debug builds are too slow, you can remove the extra safety check by defining:</p>
+<pre><code class="cpp">#define BSP_SKIP_CHECKS
+</code></pre>
+
+<h4 id="bsplib_limits">BSPLib Limits<a class="headerlink" href="#bsplib_limits" title="Permanent link">&para;</a></h4>
+<ul>
+<li>For small programs, you may experience a lot of overhead in starting the threads.</li>
+<li>Starting more threads than available physical cores, may reduce perfomance.</li>
+<li>No support for more nodes by TCP/UDP connections.</li>
+</ul>
+<h2 id="planned_features">Planned Features<a class="headerlink" href="#planned_features" title="Permanent link">&para;</a></h2>
+<ul>
+<li>MultiBSP interface addition.</li>
+<li>Utility functions, such as broadcasting and various distributions.</li>
+<li>Subset synchronisation on BSPLib::Sync with both predicates and processors lists.
+  eg. BSPLib::Sync( [] { return BSPLib::ProcId() % 2 == 0; } ) and BSPLib::Sync( {1, 3, 4} )</li>
+<li>BenchLib version of BSP bench, so we can circumvent compiler optmisations and differences.</li>
+</ul>
+<h2 id="bspedupack">BSPedupack<a class="headerlink" href="#bspedupack" title="Permanent link">&para;</a></h2>
+<p>As an example usage of the BSP programming model we included the BSPedupack written by <a href="http://www.staff.science.uu.nl/~bisse101/">Rob H. Bisseling</a>
+with his permission. It includes some tools to benchmark and test the library on different machines, to quote
+from his own <a href="http://www.staff.science.uu.nl/~bisse101/Software/software">site</a>:</p>
+<blockquote>
+<p><em>BSPedupack is a library of numerical algorithms written in C according to the BSP model. 
+It uses the BSPlib standard library. The 'edu' in the name stands for educational. 
+The programs are intended for teaching: they give examples of portable parallel 
+numerical programs. The trade-off between clarity/brevity on the one hand, and efficiency 
+on the other hand is in favour of clarity/brevity. There is also an MPI version which 
+teaches how to program in bulk synchronous parallel style using the collective communications
+from MPI-1 and the one-sided communications from MPI-2. You guessed it, this package is called 
+MPIedupack. Both packages accompany the book: <a href="http://ukcatalogue.oup.com/product/9780198529392.do">Parallel Scientific Computation: 
+A Structured Approach using BSP and MPI</a>, 
+by <a href="http://www.staff.science.uu.nl/~bisse101/">Rob H. Bisseling</a>, Oxford University Press, 
+March 2004. ISBN 978-0-19-852939-2.</em></p>
+</blockquote>
+<h2 id="alternatives">Alternatives<a class="headerlink" href="#alternatives" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="http://www.multicorebsp.com">MulticoreBSP</a></li>
+<li><a href="http://www.bsp-worldwide.org/implmnts/oxtool/">Oxford BSP Toolkit</a></li>
+<li><a href="http://bsponmpi.sourceforge.net/">BSPonMPI</a></li>
+</ul>
+<h2 id="why_bsplib">Why BSPLib?<a class="headerlink" href="#why_bsplib" title="Permanent link">&para;</a></h2>
+<p>We wanted an easy to use, high performing BSP model implementation, but of course there
+were some alternatives.</p>
+<h3 id="bsplib_vs_multicorebsp">BSPLib vs MulticoreBSP<a class="headerlink" href="#bsplib_vs_multicorebsp" title="Permanent link">&para;</a></h3>
+<ul>
+<li>BSPLib is headeronly, whilst MulticoreBSP requires linking.</li>
+<li>BSPLib is crossplatform, but MulticoreBSP requires POSIX compatibility.</li>
+<li>MulticoreBSP can be compiled with a C compiler.</li>
+<li>MulticoreBSP programs will compile faster.</li>
+<li>BSPLib can disable sanity checks to boost performance.</li>
+<li>BSPLib will only synchronise the used functionality, so we have faster synchronisation.</li>
+</ul>
+<h3 id="bsplib_vs_oxford_bsp_toolkit">BSPLib vs Oxford BSP Toolkit<a class="headerlink" href="#bsplib_vs_oxford_bsp_toolkit" title="Permanent link">&para;</a></h3>
+<ul>
+<li>BSPLib is headeronly, whilst Oxford BSP Toolkit requires linking.</li>
+<li>Oxford BSP Toolkit programs will compile faster.</li>
+</ul>
+<h3 id="bsplib_vs_bsponmpi">BSPLib vs BSPonMPI<a class="headerlink" href="#bsplib_vs_bsponmpi" title="Permanent link">&para;</a></h3>
+<ul>
+<li>BSPLib is headeronly, whilst BSPonMPI requires linking.</li>
+<li>BSPLib uses a permissive license (MIT), whereas BSPonMPI uses (LGPL).</li>
+<li>BSPonMPI is based on MPI, so it uses another abstraction layer, whereas BSPLib uses a low level
+  threading interface.</li>
+<li>BSPonMPI programs will compile faster.</li>
+</ul>
+<h2 id="bugs">Bugs<a class="headerlink" href="#bugs" title="Permanent link">&para;</a></h2>
+<p>When a bug is found, please insert it in the issue tracker, so we can resolve it as quickly as we can.</p>
+<h2 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Fork it!</li>
+<li>Create your feature branch: <code>git checkout -b my-new-feature</code></li>
+<li>Commit your changes: <code>git commit -am 'Add some feature'</code></li>
+<li>Push to the branch: <code>git push origin my-new-feature</code></li>
+<li>Submit a pull request</li>
+</ol>
+<h2 id="authors">Authors<a class="headerlink" href="#authors" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Mick van Duijn <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#109;&#46;&#118;&#97;&#110;&#100;&#117;&#105;&#106;&#110;&#64;&#122;&#101;&#102;&#105;&#114;&#111;&#115;&#46;&#101;&#117;">&#109;&#46;&#118;&#97;&#110;&#100;&#117;&#105;&#106;&#110;&#64;&#122;&#101;&#102;&#105;&#114;&#111;&#115;&#46;&#101;&#117;</a></li>
+<li>Paul Visscher <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#112;&#46;&#101;&#46;&#118;&#105;&#115;&#115;&#99;&#104;&#101;&#114;&#64;&#122;&#101;&#102;&#105;&#114;&#111;&#115;&#46;&#101;&#117;">&#112;&#46;&#101;&#46;&#118;&#105;&#115;&#115;&#99;&#104;&#101;&#114;&#64;&#122;&#101;&#102;&#105;&#114;&#111;&#115;&#46;&#101;&#117;</a></li>
+<li>Koen Visscher <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#107;&#46;&#109;&#46;&#118;&#105;&#115;&#115;&#99;&#104;&#101;&#114;&#64;&#122;&#101;&#102;&#105;&#114;&#111;&#115;&#46;&#101;&#117;">&#107;&#46;&#109;&#46;&#118;&#105;&#115;&#115;&#99;&#104;&#101;&#114;&#64;&#122;&#101;&#102;&#105;&#114;&#111;&#115;&#46;&#101;&#117;</a></li>
+</ul>
+<h2 id="used_by">Used By<a class="headerlink" href="#used_by" title="Permanent link">&para;</a></h2>
+<p>We are interested to find out what projects use BSPLib. We would love to include your projects here, 
+just shoot us a mail. :)</p>
+<h2 id="citing_bsplib">Citing BSPLib<a class="headerlink" href="#citing_bsplib" title="Permanent link">&para;</a></h2>
+<p>When you use BSPLib as part of a scientific publication, we would love you to cite this project. This BibTex snippet can be used:</p>
+<pre><code>@misc{bsplib2016,
+  author    = {Mick van Duijn and Koen Visscher and Paul Visscher},
+  title     = {{BSPLib}: a fast, and easy to use {C++} implementation of the {Bulk} {Synchronous} {Parallel} ({BSP}) threading model.},
+  abstract  = {{BSPLib} is a fast, and easy to use {C++} implementation of the {Bulk} {Synchronous} {Parallel} ({BSP}) threading model. This model is mainly used in the scientific computing field, but can also be applied more general in computer science. This library includes an extended version the standard BSP interface to perform better, and made it more easy to use.},
+  howpublished = {\url{http://bsplib.eu/}}
+}
+</code></pre>
+
+<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
+<p>This project is licensed under the MIT license.</p>
+<pre><code>Copyright (c) 2016 Mick van Duijn, Koen Visscher and Paul Visscher
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+</code></pre></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+                <center>Copyright © 2016 Mick van Duijn, Koen Visscher and Paul Visscher</center>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
+        <script src="./js/jquery-1.10.2.min.js"></script>
+        <script src="./js/bootstrap-3.0.3.min.js"></script>
+        <script src="./js/highlight.pack.js"></script>
+        <script>var base_url = '.';</script>
+        <script data-main="./mkdocs/js/search.js" src="./mkdocs/js/require.js"></script>
+        <script src="./js/base.js"></script>
+        <script src="./style/mathjax-loader.js"></script>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

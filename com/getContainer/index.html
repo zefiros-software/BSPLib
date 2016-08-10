@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="http://www.bsplib.eu/com/getContainer/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>Containers - Zefiros-BSPLib</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../style/docs.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-29999374-2', 'www.bsplib.eu');
+            ga('send', 'pageview');
+        </script>
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+    <a class="navbar-img" href="../.."><img src="../../style/logo.png" /></a>
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Program <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Logic</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../logic/execute/">Execute BSP Kernel</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../logic/init/">Init BSP Kernel</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../logic/begin/">Begin BSP Kernel</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../logic/end/">End BSP Kernel</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Halting</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../halting/abort/">Abort Program</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Util</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../util/nprocs/">Processor Count</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../util/procid/">Processor Identifier</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../util/time/">Wall Time</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">(De)registration <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../../regdereg/push/">Push Register</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../regdereg/pop/">Pop Register</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Communication <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Get Register</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../get/">Normal</a>
+</li>
+
+        
+            
+<li >
+    <a href="../getPrimitive/">Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="../getPtrs/">Pointers</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">Containers</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Put Register</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../put/">Normal</a>
+</li>
+
+        
+            
+<li >
+    <a href="../putPrimitive/">Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="../putPtrs/">Pointers</a>
+</li>
+
+        
+            
+<li >
+    <a href="../putContainer/">Containers</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Sync Point</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../sync/sync/">Synchronising</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Messaging <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Send Memory</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../messaging/send/">Normal</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendPrimitive/">Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendIterator/">Iterators</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendContainer/">Containers</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendPtrs/">Pointers - Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendTagContainer/">Pointers - Containers</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+<li >
+    <a href="../../messaging/move/">Move Memory</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../messaging/qsize/">Get Queue Size</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utilities <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../../messagingutil/gettag/">Get Tag</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../messagingutil/settagsize/">Set Tag Size</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/Zefiros-Software/BSPLib">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#interfaces">Interfaces</a></li>
+        
+    
+        <li class="main "><a href="#parameters">Parameters</a></li>
+        
+    
+        <li class="main "><a href="#pre-conditions">Pre-Conditions</a></li>
+        
+    
+        <li class="main "><a href="#post-conditions">Post-Conditions</a></li>
+        
+    
+        <li class="main "><a href="#examples">Examples</a></li>
+        
+            <li><a href="#1_begin-offset-count">(1) Begin-Offset-Count</a></li>
+        
+            <li><a href="#2_begin-cursor-end">(2) Begin-Cursor-End</a></li>
+        
+            <li><a href="#3_same_begin-cursor-end">(3) Same Begin-Cursor-End</a></li>
+        
+            <li><a href="#4_same_begin-end">(4) Same Begin-End</a></li>
+        
+            <li><a href="#5_same_begin-offset-count">(5) Same Begin-Offset-Count</a></li>
+        
+            <li><a href="#6_c-array">(6) C-Array</a></li>
+        
+            <li><a href="#7_same_c-array">(7) Same C-Array</a></li>
+        
+            <li><a href="#8_general_container">(8) General container</a></li>
+        
+            <li><a href="#9_same_container">(9) Same container</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="interfaces">Interfaces<a class="headerlink" href="#interfaces" title="Permanent link">&para;</a></h1>
+<pre><code class="cpp">template&lt; typename tIterator, typename tOutputIterator &gt;
+    void GetIterator( uint32_t pid, tIterator srcBegin, size_t offset, 
+                      tOutputIterator resultBegin, 
+                      size_t count )                            // (1) Begin-Offset-Count
+
+template&lt; typename tIterator, typename tOutputIterator &gt;
+void BSPLib::GetIterator( uint32_t pid, tIterator srcBegin, tIterator srcCursor, 
+                          tOutputIterator resultBegin,
+                          tOutputIterator resultEnd )           // (2) Begin-Cursor-End
+
+template&lt; typename tIterator &gt;
+void BSPLib::GetIterator( uint32_t pid, tIterator begin, 
+                          tIterator cursor, tIterator end )     // (3) Same Begin-Cursor-End
+
+template&lt; typename tIterator &gt;
+void BSPLib::GetIterator( uint32_t pid, tIterator begin, 
+                          tIterator end )                       // (4) Same Begin-End
+
+template&lt; typename tIterator &gt;
+void BSPLib::GetIterator( uint32_t pid, tIterator begin,
+                          size_t offset, size_t count )         // (5) Same Begin-Offset-Count
+
+template&lt; typename tPrimitive, size_t tSizeIn, size_t tSizeOut &gt;
+void BSPLib::GetCArray( uint32_t pid, tPrimitive( &amp;srcCArray )[tSizeIn], 
+                        tPrimitive( &amp;dstCArray )[tSizeOut] )    // (6) C-Array
+
+template&lt; typename tPrimitive, size_t tSizeIn, size_t tSizeOut &gt;
+void BSPLib::GetCArray( uint32_t pid, 
+                        tPrimitive( &amp;cArray )[tSizeIn] )        // (7) Same C-Array
+
+template &lt; typename tContainerIn, typename tContainerOut &gt;
+void BSPLib::GetContainer( uint32_t pid, tContainerIn &amp;srcContainer,
+                           tContainerOut &amp;dstContainer )        // (8) General container   
+
+template &lt; typename tContainerIn, typename tContainerOut &gt;
+void BSPLib::GetContainer( uint32_t pid,
+                           tContainer &amp;srcContainer )           // (9) Same container
+</code></pre>
+
+<p>This operation get the registered memory of another processor and copies the 
+memory into its own memory. Gets the values from the container in the processor 
+with identifier <code>pid</code> and stores it the required destination container. 
+Internally, it calculates the size in bytes that is required for the primitive, 
+and calls to <a href="../get/"><code>BSPLib::Classic::Get()</code></a>.</p>
+<ol>
+<li>Gets a buffer of size <code>count</code> primitives from source iterator 
+   <code>srcBegin</code> that is located in the processor with identifier <code>pid</code> at 
+   offset <code>offset</code> primitives from source iterator <code>srcBegin</code> and stores 
+   it at the location of <code>dstBegin</code>.</li>
+<li>Has the same behaviour as (1), but now we use a cursor
+   instead of a count. The offset is defined as <code>offset = srcCursor - srcBegin</code> 
+   and <code>count = resultEnd - resultBegin</code>.</li>
+<li>Has the same behaviour as (1), using that <code>srcBegin = begin</code>, 
+   <code>srcCursor = resultBegin = cursor</code> and <code>resultEnd = end</code>.</li>
+<li>Has the same behaviour as (3), using that <code>cursor = begin</code>.</li>
+<li>Has the same behaviour as (1), using that <code>srcBegin = resultBegin = begin</code>.</li>
+<li>Gets an entire C-Array as buffer from <code>srcCArray</code> located in the processor 
+   with identifier <code>pid</code> and stores it at the location of <code>dstCArray</code>.</li>
+<li>Has the same behaviour as (6), but now <code>srcCArray = dstCArray = cArray</code>, 
+   so the source is in the same location as the destination, but in the 
+   other processor.</li>
+<li>Gets an entire container as buffer from <code>srcContainer</code> located in the 
+   processor with identifier <code>pid</code> and stores it at the location of <code>dstContainer</code>.</li>
+<li>Has the same behaviour as (8), but now <code>srcContainer = dstContainer = container</code>.</li>
+</ol>
+<div class="admonition danger">
+<p class="admonition-title">Warnings</p>
+<ul>
+<li>In case of (8) and (9), make sure the container is described by contiguous 
+   iterators.</li>
+</ul>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>There are also other specialisations available. See
+<a href="./">Containers</a>, <a href="../getPrimitive/">Primitives</a>
+and <a href="../getPtrs/">Pointers</a>.</p>
+</div>
+<h1 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h1>
+<ul>
+<li><code>pid</code> The identifier of the processor to communicate with.</li>
+<li><code>srcBegin</code> Iterator describing the begin of the information in the other processor.</li>
+<li><code>offset</code> Offset from the source <code>srcBegin</code> in number of primitives to start 
+  reading from.</li>
+<li><code>resultBegin</code> Iterator describing the destination for the information in 
+  the current processor.</li>
+<li><code>count</code> Number of primitives to read.</li>
+<li><code>srcCursor</code> Other method to determine <code>offset</code>. The behaviour is the same as 
+  taking <code>offset = srcCursor - srcBegin</code>.</li>
+<li><code>resultEnd</code> Other method to determine <code>count</code>. The behaviour is the same as
+  taking <code>count = resultEnd - resultBegin</code>.</li>
+<li><code>begin</code> Iterator describing the begin of the information in both the processors.</li>
+<li><code>cursor</code> Cursor to start reading from in the other processor, and to start writing
+  to in the current processor.</li>
+<li><code>end</code> End of the information block to get.</li>
+<li><code>srcCArray</code> C-Array located in the other processor, the source of the information.</li>
+<li><code>dstCArray</code> C-Array located in the current processor, the destination for 
+  the information.</li>
+<li><code>cArray</code> C-Array that is located in both the processors, both the source 
+  and the destination for the information.</li>
+<li><code>srcContainer</code> Container located in the other processor, the source of 
+  the information.</li>
+<li><code>dstContainer</code> Container located in the current processor, the destination 
+  for the information.</li>
+<li><code>container</code> Container that is located in both the processors, both the source 
+  and the destination for the information.</li>
+</ul>
+<h1 id="pre-conditions">Pre-Conditions<a class="headerlink" href="#pre-conditions" title="Permanent link">&para;</a></h1>
+<ul>
+<li><a href="../../logic/begin/"><code>BSPLib::Begin()</code></a> has been called.</li>
+<li><a href="../../regdereg/push/"><code>BSPLib::Push()</code></a> has been called on the source,
+  in the processor with identifier <code>pid</code>, with at least the same size as the destination.</li>
+<li>A <a href="../../sync/sync/"><code>BSPLib::Sync()</code></a> has happened between 
+  <a href="../../regdereg/push/"><code>BSPLig::Push()</code></a> and this call.</li>
+</ul>
+<h1 id="post-conditions">Post-Conditions<a class="headerlink" href="#post-conditions" title="Permanent link">&para;</a></h1>
+<ul>
+<li>Get request has been queued.</li>
+<li>In the next superstep <a href="../../sync/sync/"><code>BSPLib::Sync()</code></a>, the destination 
+  will have the copied value from the source.</li>
+</ul>
+<h1 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h1>
+<h3 id="1_begin-offset-count">(1) Begin-Offset-Count<a class="headerlink" href="#1_begin-offset-count" title="Permanent link">&para;</a></h3>
+<h3 id="2_begin-cursor-end">(2) Begin-Cursor-End<a class="headerlink" href="#2_begin-cursor-end" title="Permanent link">&para;</a></h3>
+<h3 id="3_same_begin-cursor-end">(3) Same Begin-Cursor-End<a class="headerlink" href="#3_same_begin-cursor-end" title="Permanent link">&para;</a></h3>
+<h3 id="4_same_begin-end">(4) Same Begin-End<a class="headerlink" href="#4_same_begin-end" title="Permanent link">&para;</a></h3>
+<h3 id="5_same_begin-offset-count">(5) Same Begin-Offset-Count<a class="headerlink" href="#5_same_begin-offset-count" title="Permanent link">&para;</a></h3>
+<h3 id="6_c-array">(6) C-Array<a class="headerlink" href="#6_c-array" title="Permanent link">&para;</a></h3>
+<h3 id="7_same_c-array">(7) Same C-Array<a class="headerlink" href="#7_same_c-array" title="Permanent link">&para;</a></h3>
+<h3 id="8_general_container">(8) General container<a class="headerlink" href="#8_general_container" title="Permanent link">&para;</a></h3>
+<h3 id="9_same_container">(9) Same container<a class="headerlink" href="#9_same_container" title="Permanent link">&para;</a></h3></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+                <center>Copyright © 2016 Mick van Duijn, Koen Visscher and Paul Visscher</center>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script data-main="../../mkdocs/js/search.js" src="../../mkdocs/js/require.js"></script>
+        <script src="../../js/base.js"></script>
+        <script src="../../style/mathjax-loader.js"></script>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="http://www.bsplib.eu/logic/execute/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>Execute BSP Kernel - Zefiros-BSPLib</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../style/docs.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-29999374-2', 'www.bsplib.eu');
+            ga('send', 'pageview');
+        </script>
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+    <a class="navbar-img" href="../.."><img src="../../style/logo.png" /></a>
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+            
+            
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Program <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Logic</a>
+    <ul class="dropdown-menu">
+        
+            
+<li class="active">
+    <a href="./">Execute BSP Kernel</a>
+</li>
+
+        
+            
+<li >
+    <a href="../init/">Init BSP Kernel</a>
+</li>
+
+        
+            
+<li >
+    <a href="../begin/">Begin BSP Kernel</a>
+</li>
+
+        
+            
+<li >
+    <a href="../end/">End BSP Kernel</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Halting</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../halting/abort/">Abort Program</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Util</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../util/nprocs/">Processor Count</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../util/procid/">Processor Identifier</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../util/time/">Wall Time</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">(De)registration <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../../regdereg/push/">Push Register</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../regdereg/pop/">Pop Register</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Communication <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Get Register</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../com/get/">Normal</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../com/getPrimitive/">Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../com/getPtrs/">Pointers</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../com/getContainer/">Containers</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Put Register</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../com/put/">Normal</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../com/putPrimitive/">Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../com/putPtrs/">Pointers</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../com/putContainer/">Containers</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Sync Point</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../sync/sync/">Synchronising</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Messaging <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Send Memory</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../messaging/send/">Normal</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendPrimitive/">Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendIterator/">Iterators</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendContainer/">Containers</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendPtrs/">Pointers - Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendTagContainer/">Pointers - Containers</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+<li >
+    <a href="../../messaging/move/">Move Memory</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../messaging/qsize/">Get Queue Size</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utilities <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../../messagingutil/gettag/">Get Tag</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../messagingutil/settagsize/">Set Tag Size</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/Zefiros-Software/BSPLib">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#interfaces">Interfaces</a></li>
+        
+    
+        <li class="main "><a href="#parameters">Parameters</a></li>
+        
+    
+        <li class="main "><a href="#return_value">Return Value</a></li>
+        
+    
+        <li class="main "><a href="#post-conditions">Post-Conditions</a></li>
+        
+    
+        <li class="main "><a href="#examples">Examples</a></li>
+        
+            <li><a href="#1_simple">(1) Simple</a></li>
+        
+            <li><a href="#2_arguments">(2) Arguments</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="interfaces">Interfaces<a class="headerlink" href="#interfaces" title="Permanent link">&para;</a></h1>
+<pre><code class="cpp">bool Execute( std::function&lt; void() &gt; func, uint32_t nProc )    // (1) Simple
+bool Execute( std::function&lt; void() &gt; func, uint32_t nProc, 
+              int32_t argc, char **argv )                       // (2) Arguments
+</code></pre>
+
+<p>This function executes the given function according to the BSP model, with the
+given amount of processors. There is no need to seperate main thread and instanced threads from the library, 
+and also <a href="../begin/"><code>BSPLib::Classic::Begin()</code></a> and <a href="../end/"><code>BSPLib::Classic::End()</code></a> are not needed in 
+this function body. Everything is taken care off, and if the computations are abored prematurely,
+the return value will be false instead of true.</p>
+<p>This function is sematically equal to:</p>
+<pre><code class="cpp">std::function&lt; void() &gt; spmd = [func, nProc]
+{
+    BSPLib::Classic::Begin( nProc );
+
+    func();
+
+    BSPLib::Classic::End();
+};
+
+BSPLib::Classic::Init( spmd, argc, argv );
+
+try
+{
+    spmd();
+}
+catch ( BspInternal::BspAbort &amp; )
+{
+    return false;
+}
+
+return true;
+</code></pre>
+
+<p>A BSP program normally is paired by <a href="../begin/"><code>BSPLib::Classic::Begin()</code></a> 
+and <a href="../end/"><code>BSPLib::Classic::End()</code></a> calls. When using the normal execution mode
+<a href="../init/"><code>BSPLib::Classic::Init()</code></a> needs to be called beforehand, otherwise 
+the computations will start in SPMD mode, and the behaviour will be undefined.
+To solve this we introduce the <a href="./"><code>BSPLib::Execute()</code></a> function makes the
+BSP interface easier to use.</p>
+<ol>
+<li>This is the most basic way of calling this function.</li>
+<li>When we need to pass the <code>main()</code> arguments to the BSP program.</li>
+</ol>
+<h1 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h1>
+<ul>
+<li><code>func</code>   The entry function to execute over all processors.</li>
+<li><code>nProcs</code> The amount of processors to use in the executions.</li>
+<li><code>argc</code>   <em>Currently not used, should be <code>argc</code> from <code>main</code> function.</em></li>
+<li><code>argv</code>   <em>Currently not used, should be <code>argv</code> from <code>main</code> function.</em></li>
+</ul>
+<h1 id="return_value">Return Value<a class="headerlink" href="#return_value" title="Permanent link">&para;</a></h1>
+<p>True when the BSP program executed successfully, othwerise false.</p>
+<h1 id="post-conditions">Post-Conditions<a class="headerlink" href="#post-conditions" title="Permanent link">&para;</a></h1>
+<ul>
+<li>The BSP program has been executed.</li>
+</ul>
+<h1 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h1>
+<h3 id="1_simple">(1) Simple<a class="headerlink" href="#1_simple" title="Permanent link">&para;</a></h3>
+<p><strong>Normal</strong></p>
+<p>This is the normal usage of the function.</p>
+<pre><code class="cpp">void main( int32_t, const char ** )
+{
+    BSPLib::Execute( []
+    {
+        std::cout &lt;&lt; &quot;Hello BSP Worldwide from process &quot; &lt;&lt; BSPLib::Classic::ProcId() 
+                  &lt;&lt; &quot; of &quot; &lt;&lt; BSPLib::NProcs() &lt;&lt; std::endl;
+    }, BSPLib::NProcs() );
+}
+</code></pre>
+
+<p><strong>Non Gracefull Exit</strong></p>
+<p>If the computation could call abort, one can check for it on the return type.</p>
+<pre><code class="cpp">void main( int32_t, const char ** )
+{
+    bool success = BSPLib::Execute( []
+    {
+        std::cout &lt;&lt; &quot;Hello BSP Worldwide from process &quot; &lt;&lt; BSPLib::Classic::ProcId() 
+                  &lt;&lt; &quot; of &quot; &lt;&lt; BSPLib::NProcs() &lt;&lt; std::endl;
+
+        if ( BSPLib::ProcId() == 0 )
+        {
+            BSPLib::Abort( &quot;Quit non gracefully&quot; );
+        }
+    }, BSPLib::NProcs() );
+
+    assert( !success );
+}
+</code></pre>
+
+<h3 id="2_arguments">(2) Arguments<a class="headerlink" href="#2_arguments" title="Permanent link">&para;</a></h3>
+<pre><code class="cpp">void main( int32_t argc, const char **argv )
+{
+    BSPLib::Execute( []
+    {
+        std::cout &lt;&lt; &quot;Hello BSP Worldwide from process &quot; &lt;&lt; BSPLib::Classic::ProcId() 
+                  &lt;&lt; &quot; of &quot; &lt;&lt; BSPLib::NProcs() &lt;&lt; std::endl;
+    }, BSPLib::NProcs(), argc, argv );
+}
+</code></pre></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+                <center>Copyright © 2016 Mick van Duijn, Koen Visscher and Paul Visscher</center>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script data-main="../../mkdocs/js/search.js" src="../../mkdocs/js/require.js"></script>
+        <script src="../../js/base.js"></script>
+        <script src="../../style/mathjax-loader.js"></script>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

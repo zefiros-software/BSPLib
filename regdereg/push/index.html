@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="http://www.bsplib.eu/regdereg/push/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>Push Register - Zefiros-BSPLib</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../style/docs.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-29999374-2', 'www.bsplib.eu');
+            ga('send', 'pageview');
+        </script>
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+    <a class="navbar-img" href="../.."><img src="../../style/logo.png" /></a>
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Program <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Logic</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../logic/execute/">Execute BSP Kernel</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../logic/init/">Init BSP Kernel</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../logic/begin/">Begin BSP Kernel</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../logic/end/">End BSP Kernel</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Halting</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../halting/abort/">Abort Program</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Util</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../util/nprocs/">Processor Count</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../util/procid/">Processor Identifier</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../util/time/">Wall Time</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">(De)registration <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li class="active">
+    <a href="./">Push Register</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../pop/">Pop Register</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Communication <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Get Register</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../com/get/">Normal</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../com/getPrimitive/">Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../com/getPtrs/">Pointers</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../com/getContainer/">Containers</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Put Register</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../com/put/">Normal</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../com/putPrimitive/">Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../com/putPtrs/">Pointers</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../com/putContainer/">Containers</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Sync Point</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../sync/sync/">Synchronising</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Messaging <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Send Memory</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../messaging/send/">Normal</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendPrimitive/">Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendIterator/">Iterators</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendContainer/">Containers</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendPtrs/">Pointers - Primitives</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../messaging/sendTagContainer/">Pointers - Containers</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+<li >
+    <a href="../../messaging/move/">Move Memory</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../messaging/qsize/">Get Queue Size</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utilities <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../../messagingutil/gettag/">Get Tag</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../../messagingutil/settagsize/">Set Tag Size</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/Zefiros-Software/BSPLib">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#interfaces">Interfaces</a></li>
+        
+    
+        <li class="main "><a href="#parameters">Parameters</a></li>
+        
+    
+        <li class="main "><a href="#pre-conditions">Pre-Conditions</a></li>
+        
+    
+        <li class="main "><a href="#post-conditions">Post-Conditions</a></li>
+        
+    
+        <li class="main "><a href="#examples">Examples</a></li>
+        
+            <li><a href="#1_modern">(1) Modern</a></li>
+        
+            <li><a href="#2_padding">(2) Padding</a></li>
+        
+            <li><a href="#3_reference">(3) Reference</a></li>
+        
+            <li><a href="#4_stdstring">(4) std::string</a></li>
+        
+            <li><a href="#5_primitive_pointer">(5) Primitive pointer</a></li>
+        
+            <li><a href="#6_primitive_pointers">(6) Primitive pointers</a></li>
+        
+            <li><a href="#7_iterator">(7) Iterator</a></li>
+        
+            <li><a href="#8_iterators">(8) Iterators</a></li>
+        
+            <li><a href="#9_c-array">(9) C-Array</a></li>
+        
+            <li><a href="#10_container">(10) Container</a></li>
+        
+            <li><a href="#11_classic">(11) Classic</a></li>
+        
+            <li><a href="#12_bsp">(12) BSP</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="interfaces">Interfaces<a class="headerlink" href="#interfaces" title="Permanent link">&para;</a></h1>
+<pre><code class="cpp">void BSPLib::Push( const void *ident, size_t byteSize )         // (1) Modern
+void BSPLib::Push()                                             // (2) Padding
+
+template&lt; typename tPrimitive &gt;
+void BSPLib::Push( tPrimitive &amp;identRef )                       // (3) Reference
+
+template&lt;&gt;
+void BSPLib::Push( std::string &amp;stringRef )                     // (4) std::string
+
+template&lt; typename tPrimitive &gt;
+void BSPLib::PushPtrs( tPrimitive *begin, size_t count )        // (5) Primitive pointer
+
+template&lt; typename tPrimitive &gt;
+void BSPLib::PushPtrs( tPrimitive *begin, tPrimitive *end )     // (6) Primitive pointers
+
+template &lt; typename tIterator&gt;
+void BSPLib::PushIterator( tIterator beginIt, size_t count )    // (7) Iterator
+
+template &lt; typename tIterator&gt;
+void BSPLib::PushIterator( tIterator beginIt, tIterator endIt ) // (8) Iterators
+
+template&lt; typename tPrimitive, size_t tSize &gt;
+void BSPLib::PushCArray( tPrimitive( &amp;cArray )[tSize] )         // (9) C-Array
+
+template&lt; typename tContainer &gt;
+void BSPLib::PushContainer( tContainer &amp;container )             // (10) Container
+
+
+void BSPLib::Classic::Push( const void *ident, size_t byteSize ) // (11) Classic
+void bsp_pushreg( const void *ident, size_t byteSize )           // (12) BSP
+</code></pre>
+
+<p>Pushes a register, with the given size. BSPLib can have communication with any 
+contiguous data type. To ensure this requirement, the library needs to know what
+addresses are available for communication. To recognise addresses of other
+processors, the order of <a href="./">registration</a> and <a href="../pop/">deregistration</a> 
+needs to be the same in each processor. When one processor does not need to register
+an address, a <code>nullptr</code>can be pushed, or the specialised function (2) can be used.
+Each push should be accompanied by a pop, or is assumed to be popped at the end of
+the BSP program.</p>
+<ol>
+<li>Modern interface of the classic BSP function.</li>
+<li>Adds padding if the current processor does not need to push.</li>
+<li>Pushes a primitive as register. Computes the bytesize internally.</li>
+<li>Template specialisation for <code>std::string</code>.</li>
+<li>Pushes the address of <code>begin</code>, with bytesize <code>count * sizeof(tPrimitive)</code>.</li>
+<li>Pushes all addresses from <code>begin</code> to <code>end</code>. Computes the bytesize internally.</li>
+<li>Pushes the address of the <code>beginIt</code> iterator up to <code>count</code> adresses more.</li>
+<li>Pushes all addresses from <code>beginIt</code> to <code>endIt</code>. Computes the bytesize internally.</li>
+<li>Pushes all addresses of the C-Array, with bytesize <code>tSize * sizeof(tPrimitive)</code>.</li>
+<li>Pushes all addresses of the container, with bytesize <code>container.size() * sizeof(tContainer::value_type)</code>.</li>
+<li>Classic BSP function.</li>
+<li>Legacy BSP function.</li>
+</ol>
+<div class="admonition danger">
+<p class="admonition-title">Warnings</p>
+<ul>
+<li>In case of (4), the std::string must not be resized. If a resize is absolutely
+   necessary, it should be done before pushing the register, or after popping the
+   register. Also, make sure the processors agree on the size beforehand.</li>
+<li>In case of (7), (8) and (10), make sure the iterators describe contiguous memory, 
+   and are not invalidated (due to resizes).</li>
+<li>When <code>BSPLib::Push()</code> is called after <code>BSPLib::Pop()</code>, the register that has
+   been popped will not be replaced by the new register, as the naming might
+   suggest. </li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Notes</p>
+<p>In the current implementation, the pointer to the top of the registration stack
+is never lowered. In the programs we tested until now, this has not been a
+problem. We might change this behaviour in the future. In case we do, no changes 
+will be needed in existing BSP programs. The stack is always cleared when a new
+BSP program is initialised.</p>
+</div>
+<h1 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h1>
+<ul>
+<li><code>ident</code> The address to register.</li>
+<li><code>byteSize</code> The size in bytes of the address space.</li>
+<li><code>identRef</code> Reference to the variable to register.</li>
+<li><code>stringRef</code> Reference to the string to regiser.</li>
+<li><code>begin</code> Begin of the address space to register.</li>
+<li><code>count</code> Number of addresses to register in the current space.</li>
+<li><code>end</code> End of the address space to register.</li>
+<li><code>beginIt</code> Iterator describing the begin of the address space to register.</li>
+<li><code>endIt</code> Iterator describing the end of the address space to register.</li>
+<li><code>cArray</code> C-Array of which we register all addresses.</li>
+<li><code>container</code> Container of which we register all addresses.</li>
+</ul>
+<h1 id="pre-conditions">Pre-Conditions<a class="headerlink" href="#pre-conditions" title="Permanent link">&para;</a></h1>
+<ul>
+<li><a href="../../logic/begin/"><code>BSPLib::Classic::Begin()</code></a> has been called.</li>
+</ul>
+<h1 id="post-conditions">Post-Conditions<a class="headerlink" href="#post-conditions" title="Permanent link">&para;</a></h1>
+<ul>
+<li>Push request has been queued.</li>
+<li>In the next superstep, this register will be available for <a href="../../com/put/"><code>BSPLib::Put()</code></a>/<a href="../../com/get/"><code>BSPLib::Get()</code></a>.</li>
+</ul>
+<h1 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h1>
+<h3 id="1_modern">(1) Modern<a class="headerlink" href="#1_modern" title="Permanent link">&para;</a></h3>
+<h3 id="2_padding">(2) Padding<a class="headerlink" href="#2_padding" title="Permanent link">&para;</a></h3>
+<h3 id="3_reference">(3) Reference<a class="headerlink" href="#3_reference" title="Permanent link">&para;</a></h3>
+<h3 id="4_stdstring">(4) std::string<a class="headerlink" href="#4_stdstring" title="Permanent link">&para;</a></h3>
+<h3 id="5_primitive_pointer">(5) Primitive pointer<a class="headerlink" href="#5_primitive_pointer" title="Permanent link">&para;</a></h3>
+<h3 id="6_primitive_pointers">(6) Primitive pointers<a class="headerlink" href="#6_primitive_pointers" title="Permanent link">&para;</a></h3>
+<h3 id="7_iterator">(7) Iterator<a class="headerlink" href="#7_iterator" title="Permanent link">&para;</a></h3>
+<h3 id="8_iterators">(8) Iterators<a class="headerlink" href="#8_iterators" title="Permanent link">&para;</a></h3>
+<h3 id="9_c-array">(9) C-Array<a class="headerlink" href="#9_c-array" title="Permanent link">&para;</a></h3>
+<h3 id="10_container">(10) Container<a class="headerlink" href="#10_container" title="Permanent link">&para;</a></h3>
+<h3 id="11_classic">(11) Classic<a class="headerlink" href="#11_classic" title="Permanent link">&para;</a></h3>
+<h3 id="12_bsp">(12) BSP<a class="headerlink" href="#12_bsp" title="Permanent link">&para;</a></h3></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+                <center>Copyright © 2016 Mick van Duijn, Koen Visscher and Paul Visscher</center>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script data-main="../../mkdocs/js/search.js" src="../../mkdocs/js/require.js"></script>
+        <script src="../../js/base.js"></script>
+        <script src="../../style/mathjax-loader.js"></script>
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
