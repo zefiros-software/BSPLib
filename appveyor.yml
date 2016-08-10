@@ -6,8 +6,5 @@ build: off
 install:
     - powershell -command "Invoke-WebRequest -Uri https://goo.gl/1Zcf72 -OutFile %TEMP%/install-zpm.bat" && %TEMP%/install-zpm.bat 
     - "SET PATH=%PATH%;%ALLUSERSPROFILE%/zpm"
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then chmod +x ./script/deploy-docs.sh && chmod +x ./script/install-docs.sh && ./script/install-docs.sh; fi
 test_script:
     - script/appveyor-build.bat
-after_success:
-  - if [[ "$TRAVIS_BRANCH" == "master" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./script/deploy-docs.sh; fi
