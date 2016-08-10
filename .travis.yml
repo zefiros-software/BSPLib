@@ -1,10 +1,9 @@
-language: python
+language: generic
 matrix:
     include:
         # Use the built in venv for linux builds
         - os: linux
-          sudo: required
-          python: 3.5
+          dist: trusty
         # Use generic language for osx
         # disabled due to premake bug
         #- os: osx
