@@ -1,6 +1,12 @@
 # BSPLib
 [BSPLib](https://wwww.bsplib.eu) is a fast, and easy to use C++ implementation of the Bulk Synchronous Parallel (BSP) threading model. This model is mainly used in the scientific computing field, but can also be applied more general in computer science. This library includes an extended version the standard BSP interface to perform better, and made it more easy to use.
 
+# Status
+OS          | Status
+----------- | -------
+Linux & OSX | [![Build Status](https://travis-ci.org/Zefiros-Software/BSPLib.svg?branch=master)](https://travis-ci.org/Zefiros-Software/BSPLib)
+Windows     | [![Build status](https://ci.appveyor.com/api/projects/status/g2aduvs6k7u3640r?svg=true)](https://ci.appveyor.com/project/PaulVisscher/bsplib)
+
 #BSP
 The BSP specification can be found [here](bsp.pdf) and is maintained by [bsp-worldwide.org](http://www.bsp-worldwide.org). Parts of the
 documentation and code are based off this specification, to ensure backward compatibility between BSP libraries.

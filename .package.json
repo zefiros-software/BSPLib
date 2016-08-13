@@ -28,10 +28,6 @@
         ],
         "assets": [
             {
-                "name": "Zefiros-Software/gcov2clover",
-                "version": ">=1.0.0"
-            },
-            {
                 "name": "Zefiros-Software/Anaconda",
                 "version": "@head"
             }
@@ -54,7 +50,7 @@
         },
         {
             "name": "Zefiros-Software/PlotLib",
-            "version": "@head"
+            "version": "^1.0.0"
         }
     ]
 }

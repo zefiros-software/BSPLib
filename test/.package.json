@@ -3,11 +3,11 @@
     "requires": [
             {
                 "name": "Zefiros-Software/BSPLib",
-                "version": "@head"
+                "version": "^1.1.0"
             },
             {
                 "name": "Zefiros-Software/PlotLib",
-                "version": "@head"
+                "version": "^1.0.0"
             },
             {
                 "name": "Zefiros-Software/GoogleTest",
