@@ -5,13 +5,13 @@
         
     <url>
      <loc>http://www.bsplib.eu/</loc>
-     <lastmod>2016-08-10</lastmod>
+     <lastmod>2016-08-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>http://www.bsplib.eu/classic/</loc>
-     <lastmod>2016-08-10</lastmod>
+     <lastmod>2016-08-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -43,13 +43,13 @@
         
     <url>
      <loc>http://www.bsplib.eu/regdereg/push/</loc>
-     <lastmod>2016-08-10</lastmod>
+     <lastmod>2016-08-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>http://www.bsplib.eu/regdereg/pop/</loc>
-     <lastmod>2016-08-10</lastmod>
+     <lastmod>2016-08-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -87,13 +87,13 @@
         
     <url>
      <loc>http://www.bsplib.eu/messaging/move/</loc>
-     <lastmod>2016-08-10</lastmod>
+     <lastmod>2016-08-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>http://www.bsplib.eu/messaging/qsize/</loc>
-     <lastmod>2016-08-10</lastmod>
+     <lastmod>2016-08-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -103,13 +103,13 @@
         
     <url>
      <loc>http://www.bsplib.eu/messagingutil/gettag/</loc>
-     <lastmod>2016-08-10</lastmod>
+     <lastmod>2016-08-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>http://www.bsplib.eu/messagingutil/settagsize/</loc>
-     <lastmod>2016-08-10</lastmod>
+     <lastmod>2016-08-13</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
