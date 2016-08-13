@@ -28,6 +28,10 @@ In `premake5.lua`
 zpm.uses "Zefiros-Software/BSPLib"
 ```
 
+## Manual Installation
+The whole library is header only, so for usage in your own code you should clone the repository. And add `bsp/include/` as include path.
+After this you can use the include `#include "bsp/bsp.h"` in your code to start using the library.
+
 #[Code](https://github.com/Zefiros-Software/BSPLib) & [Documentation](http://www.bsplib.eu)
 The code can be found [here](https://github.com/Zefiros-Software/BSPLib). See [this](http://www.bsplib.eu) for the documentation.
 
@@ -38,10 +42,6 @@ The code can be found [here](https://github.com/Zefiros-Software/BSPLib). See [t
 classic BSP C interface.
 * Cross platform: Designed to only use C++11, with no external dependencies.
 * Warning free, compiled on the highest warning level.
-
-## Installation
-The whole library is header only, so for usage in your own code you should clone the repository. And add `bsp/include/` as include path.
-After this you can use the include `#include "bsp/bsp.h"` in your code to start using the library.
 
 ## Usage
 For detailed usage, please visit [BSPLib](http://bsplib.eu).
