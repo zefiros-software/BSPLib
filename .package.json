@@ -28,10 +28,6 @@
         ],
         "assets": [
             {
-                "name": "Zefiros-Software/Anaconda",
-                "version": "@head"
-            },
-            {
                 "name": "Zefiros-Software/Zefiros-Mkdocs-Style",
                 "version": "^1.0.0"
             }
@@ -47,6 +43,9 @@
         "Profiler": true,
         "OwnArmadillo": true
     },  
+    "modules": [
+        "Zefiros-Software/Anaconda"
+    ],
     "requires": [
         {
             "name": "Zefiros-Software/ArmadilloExt",
