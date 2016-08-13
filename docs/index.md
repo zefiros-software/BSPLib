@@ -27,7 +27,7 @@ The whole library is header only, so for usage in your own code you should clone
 After this you can use the include `#include "bsp/bsp.h"` in your code to start using the library.
 
 ## Usage
-For detailed usage, please visit [BSPLib](https://www.bsplib.eu).
+For detailed usage, please visit [BSPLib](http://bsplib.eu).
 
 **Example**
 
