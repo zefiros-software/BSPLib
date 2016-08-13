@@ -5,6 +5,7 @@ site_description: BSPLib a fast and easy to use parallel computation libary.
 theme: united
 copyright: Copyright © 2016 Mick van Duijn, Koen Visscher and Paul Visscher
 google_analytics: ['UA-29999374-2', 'www.bsplib.eu']
+theme_dir: docs/style
 
 pages:
 - BSP: 
@@ -69,9 +70,20 @@ pages:
 #    - 'Send Memory': 'hp/hpsend.md'
 #    - 'Move Memory': 'hp/hpmove.md'
 
+
+extra_css:
+    - 'style/docs.css'
+
+extra_javascript:
+    - 'style/mathjax-loader.js'
+    - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+
 markdown_extensions:
     - toc:
         permalink: True
         separator: "_"
-    - admonition:
-    - sane_lists:
+    - admonition
+    - sane_lists
+    - pymdownx.arithmatex
+    - pymdownx.magiclink
+    - markdown_checklist.extension

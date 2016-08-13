@@ -12,9 +12,11 @@ matrix:
 install:
     - rm -rf ~/.matplotlib/fontList.cache
     - wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-travis.sh | bash
-    - chmod a+x ./script/travis-build.sh
     # annoying pip fix
     - export BOTO_CONFIG=/tmp/bogusvalue
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install g++-multilib -y; fi
+    - sudo chmod a+x ./script/travis-build.sh && sudo chmod a+x ./script/deploy-docs.sh
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install g++-multilib -y; fi   
 script:
     - ./script/travis-build.sh
+after_success:
+  - if [[ "$TRAVIS_BRANCH" == "master" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./script/deploy-docs.sh; fi

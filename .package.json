@@ -30,6 +30,10 @@
             {
                 "name": "Zefiros-Software/Anaconda",
                 "version": "@head"
+            },
+            {
+                "name": "Zefiros-Software/Zefiros-Mkdocs-Style",
+                "version": "^1.0.0"
             }
         ],
         "requires": [
