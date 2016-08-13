@@ -11,6 +11,23 @@ Windows     | [![Build status](https://ci.appveyor.com/api/projects/status/g2adu
 The BSP specification can be found [here](bsp.pdf) and is maintained by [bsp-worldwide.org](http://www.bsp-worldwide.org). Parts of the
 documentation and code are based off this specification, to ensure backward compatibility between BSP libraries.
 
+# [ZPM](zpm.zefiros.eu) Installation
+
+In `.package.json`
+```json
+"requires": [
+		{
+			"name": "Zefiros-Software/BSPLib",
+			"version": "^1.1.0"
+		}
+]
+```
+
+In `premake5.lua`
+```lua
+zpm.uses "Zefiros-Software/BSPLib"
+```
+
 #[Code](https://github.com/Zefiros-Software/BSPLib) & [Documentation](http://www.bsplib.eu)
 The code can be found [here](https://github.com/Zefiros-Software/BSPLib). See [this](http://www.bsplib.eu) for the documentation.
 
