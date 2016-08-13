@@ -390,11 +390,14 @@
         <li class="main "><a href="#bsp">BSP</a></li>
         
     
+        <li class="main "><a href="#zpm_installation">ZPM Installation</a></li>
+        
+            <li><a href="#manual_installation">Manual Installation</a></li>
+        
+    
         <li class="main "><a href="#code_documentation">Code &amp; Documentation</a></li>
         
             <li><a href="#features">Features</a></li>
-        
-            <li><a href="#installation">Installation</a></li>
         
             <li><a href="#usage">Usage</a></li>
         
@@ -447,6 +450,23 @@
 <h1 id="bsp">BSP<a class="headerlink" href="#bsp" title="Permanent link">&para;</a></h1>
 <p>The BSP specification can be found <a href="./bsp.pdf">here</a> and is maintained by <a href="http://www.bsp-worldwide.org">bsp-worldwide.org</a>. Parts of the
 documentation and code are based off this specification, to ensure backward compatibility between BSP libraries.</p>
+<h1 id="zpm_installation"><a href="./zpm.zefiros.eu">ZPM</a> Installation<a class="headerlink" href="#zpm_installation" title="Permanent link">&para;</a></h1>
+<p>In <code>.package.json</code></p>
+<pre><code class="json">&quot;requires&quot;: [
+        {
+            &quot;name&quot;: &quot;Zefiros-Software/BSPLib&quot;,
+            &quot;version&quot;: &quot;^1.1.0&quot;
+        }
+]
+</code></pre>
+
+<p>In <code>premake5.lua</code></p>
+<pre><code class="lua">zpm.uses &quot;Zefiros-Software/BSPLib&quot;
+</code></pre>
+
+<h2 id="manual_installation">Manual Installation<a class="headerlink" href="#manual_installation" title="Permanent link">&para;</a></h2>
+<p>The whole library is header only, so for usage in your own code you should clone the repository. And add <code>bsp/include/</code> as include path.
+After this you can use the include <code>#include "bsp/bsp.h"</code> in your code to start using the library.</p>
 <h1 id="code_documentation"><a href="https://github.com/Zefiros-Software/BSPLib">Code</a> &amp; <a href="http://www.bsplib.eu">Documentation</a><a class="headerlink" href="#code_documentation" title="Permanent link">&para;</a></h1>
 <p>The code can be found <a href="https://github.com/Zefiros-Software/BSPLib">here</a>. See <a href="http://www.bsplib.eu">this</a> for the documentation.</p>
 <h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
@@ -458,9 +478,6 @@ classic BSP C interface.</li>
 <li>Cross platform: Designed to only use C++11, with no external dependencies.</li>
 <li>Warning free, compiled on the highest warning level.</li>
 </ul>
-<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
-<p>The whole library is header only, so for usage in your own code you should clone the repository. And add <code>bsp/include/</code> as include path.
-After this you can use the include <code>#include "bsp/bsp.h"</code> in your code to start using the library.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <p>For detailed usage, please visit <a href="http://bsplib.eu">BSPLib</a>.</p>
 <p><strong>Example</strong></p>
