@@ -100,7 +100,7 @@ inline void AbortTestAllWaitExceptOne()
 
     if ( BSPLib::ProcId() == 1 )
     {
-        std::this_thread::sleep_for( std::chrono::milliseconds( 200 ) );
+        std::this_thread::sleep_for( std::chrono::milliseconds( 1 ) );
         BSPLib::Classic::Abort( "" );
     }
 
@@ -118,7 +118,7 @@ inline void AbortTestAllWaitExceptMain()
 
     if ( BSPLib::ProcId() == 0 )
     {
-        std::this_thread::sleep_for( std::chrono::milliseconds( 200 ) );
+        std::this_thread::sleep_for( std::chrono::milliseconds( 1 ) );
         BSPLib::Classic::Abort( "" );
     }
 
@@ -127,7 +127,7 @@ inline void AbortTestAllWaitExceptMain()
 
 TEST( P( Classic ), AbortTestAllWaitExceptMain )
 {
-    EXPECT_FALSE( BSPLib::Execute( AbortTestAllWaitExceptMain, 8 ) );
+    EXPECT_FALSE( BSPLib::Execute( AbortTestAllWaitExceptMain, BSPLib::NProcs() ) );
 }
 
 inline void EmptyTest()
