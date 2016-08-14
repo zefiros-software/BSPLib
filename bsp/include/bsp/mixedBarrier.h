@@ -114,7 +114,7 @@ namespace BSPInternal
                 if ( i >= BSP_SPIN_ITERATIONS )
                 {
                     std::unique_lock< std::mutex > condVarLoc( mCondVarMutex );
-                    mCurrentCon->wait( condVarLoc, [&] {return mGeneration != myGeneration && !aborted;} );
+                    mCurrentCon->wait( condVarLoc, [&] {return mGeneration != myGeneration || aborted;} );
                 }
             }
 
