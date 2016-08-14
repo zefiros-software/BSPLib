@@ -109,7 +109,7 @@ inline void AbortTestAllWaitExceptOne()
 
 TEST( P( Classic ), AbortTestAllWaitExceptOne )
 {
-    EXPECT_FALSE( BSPLib::Execute( AbortTestAllWaitExceptOne, 8 ) );
+    EXPECT_FALSE( BSPLib::Execute( AbortTestAllWaitExceptOne, BSPLib::NProcs() ) );
 }
 
 inline void AbortTestAllWaitExceptMain()
