@@ -1,21 +1,24 @@
 {
     "name": "Zefiros-Software/BSPLib-Dev",
+    "modules": [
+        "Zefiros-Software/Zefiros-Defaults"
+    ],
     "requires": [
-            {
-                "name": "Zefiros-Software/BSPLib",
-                "version": "^1.1.0"
-            },
-            {
-                "name": "Zefiros-Software/PlotLib",
-                "version": "^1.0.0"
-            },
-            {
-                "name": "Zefiros-Software/GoogleTest",
-                "version": "@head"
-            },
-            {
-                "name": "Zefiros-Software/ArmadilloExt",
-                "version": "@head"
-            }
+        {
+            "name": "Zefiros-Software/BSPLib",
+            "version": "^1.1.0"
+        },
+        {
+            "name": "Zefiros-Software/PlotLib",
+            "version": "^1.0.0"
+        },
+        {
+            "name": "Zefiros-Software/GoogleTest",
+            "version": "@head"
+        },
+        {
+            "name": "Zefiros-Software/ArmadilloExt",
+            "version": "@head"
+        }
     ]
 }
