@@ -30,8 +30,11 @@ When a bug is found, please insert it in the issue tracker, so we can resolve it
 5. Submit a pull request
 
 ## License
+
+```
 This project is licensed under the MIT license.
 
+```
 Copyright (c) 2016 Mick van Duijn, Koen Visscher and Paul Visscher
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -51,3 +54,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+```
