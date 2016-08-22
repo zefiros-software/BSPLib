@@ -48,7 +48,7 @@
     ],
     "requires": [
         {
-            "name": "Zefiros-Software/ArmadilloExt",
+            "name": "Zefiros-Software/Armadillo",
             "version": "@head"
         },
         {

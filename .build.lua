@@ -11,7 +11,7 @@ project "BSPLib"
 
         if zpm.option( "OwnArmadillo" ) then
 
-            zpm.uses "Zefiros-Software/ArmadilloExt"
+            zpm.uses "Zefiros-Software/Armadillo"
 
         end
     end
