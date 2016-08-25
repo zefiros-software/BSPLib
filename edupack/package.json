@@ -1,0 +1,17 @@
+{
+    "name": "Zefiros-Software/BSPLib-Edu",
+    "modules": [
+        "Zefiros-Software/Zefiros-Defaults",
+        "Zefiros-Software/Anaconda"
+    ],
+    "requires": [
+        {
+            "name": "Zefiros-Software/Armadillo",
+            "version": "@head"
+        },
+        {
+            "name": "Zefiros-Software/PlotLib",
+            "version": "^1.0.0"
+        }
+    ]
+}
