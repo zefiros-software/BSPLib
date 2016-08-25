@@ -6,4 +6,4 @@ cd ../
 
 ./bsp-testcd
 
-codecov --gcov-root bsp
+codecov
