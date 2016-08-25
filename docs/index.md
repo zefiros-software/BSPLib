@@ -6,7 +6,7 @@ Type        | Status
 ----------- | -------
 Linux & OSX | [![Build Status](https://travis-ci.org/Zefiros-Software/BSPLib.svg?branch=master)](https://travis-ci.org/Zefiros-Software/BSPLib)
 Windows     | [![Build status](https://ci.appveyor.com/api/projects/status/g2aduvs6k7u3640r?svg=true)](https://ci.appveyor.com/project/PaulVisscher/bsplib)
-overage	| [![codecov](https://codecov.io/gh/Zefiros-Software/BSPLib/branch/master/graph/badge.svg)](https://codecov.io/gh/Zefiros-Software/BSPLib)
+Coverage	  | [![codecov](https://codecov.io/gh/Zefiros-Software/BSPLib/branch/master/graph/badge.svg)](https://codecov.io/gh/Zefiros-Software/BSPLib)
 
 #BSP
 The BSP specification can be found [here](bsp.pdf) and is maintained by [bsp-worldwide.org](http://www.bsp-worldwide.org). Parts of the
