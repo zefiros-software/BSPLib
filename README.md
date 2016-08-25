@@ -30,7 +30,7 @@ When a bug is found, please insert it in the issue tracker, so we can resolve it
 5. Submit a pull request
 
 ## License
-This project is licensed under the MIT license.
+This project is licensed under the MIT license by [Zefiros Software](https://zefiros.eu).
 
 ```
 Copyright (c) 2016 Mick van Duijn, Koen Visscher and Paul Visscher
