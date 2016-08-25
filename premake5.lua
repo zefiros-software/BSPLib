@@ -72,7 +72,7 @@ workspace "BSPEdupack"
         flags "WinMain"
      
         zpm.uses {
-            "Zefiros-Software/ArmadilloExt",
+            "Zefiros-Software/Armadillo",
             "Zefiros-Software/PlotLib"
         }
 
@@ -93,7 +93,7 @@ workspace "BSPEdupack"
         flags "WinMain"
         
         zpm.uses {
-            "Zefiros-Software/ArmadilloExt",
+            "Zefiros-Software/Armadillo",
             "Zefiros-Software/PlotLib"
         }
 
@@ -115,7 +115,7 @@ workspace "BSPEdupack"
         flags "WinMain"
      
         zpm.uses {
-            "Zefiros-Software/ArmadilloExt",
+            "Zefiros-Software/Armadillo",
             "Zefiros-Software/PlotLib"
         }
 
@@ -136,7 +136,7 @@ workspace "BSPEdupack"
         flags "WinMain"
      
         zpm.uses {
-            "Zefiros-Software/ArmadilloExt",
+            "Zefiros-Software/Armadillo",
             "Zefiros-Software/PlotLib"
         }
         defines "BSP_USE_PROFILER"
@@ -158,7 +158,7 @@ workspace "BSPEdupack"
         flags "WinMain"
      
         zpm.uses {
-            "Zefiros-Software/ArmadilloExt",
+            "Zefiros-Software/Armadillo",
             "Zefiros-Software/PlotLib"
         }
         
@@ -182,7 +182,7 @@ workspace "BSPEdupack"
         flags "WinMain"
      
         zpm.uses {
-            "Zefiros-Software/ArmadilloExt",
+            "Zefiros-Software/Armadillo",
             "Zefiros-Software/PlotLib"
         }
 
@@ -202,7 +202,7 @@ workspace "BSPEdupack"
         flags "WinMain"
      
         zpm.uses {
-            "Zefiros-Software/ArmadilloExt",
+            "Zefiros-Software/Armadillo",
             "Zefiros-Software/PlotLib"
         }
 
@@ -223,7 +223,7 @@ workspace "BSPEdupack"
         flags "WinMain"
      
         zpm.uses {
-            "Zefiros-Software/ArmadilloExt",
+            "Zefiros-Software/Armadillo",
             "Zefiros-Software/PlotLib"
         }
 
@@ -244,7 +244,7 @@ workspace "BSPEdupack"
         flags "WinMain"
      
         zpm.uses {
-            "Zefiros-Software/ArmadilloExt",
+            "Zefiros-Software/Armadillo",
             "Zefiros-Software/PlotLib"
         }
 
