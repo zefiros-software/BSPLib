@@ -27,6 +27,7 @@
 
 #include "bsp/bspAbort.h"
 
+#include <condition_variable>
 #include <atomic>
 #include <mutex>
 
