@@ -3,10 +3,10 @@
 project "BSPLib"
   
 
-    filter { "action:not xcode" }
+    filter { "action:not xcode4" }
 	    kind "Utility"  
         
-    filter { "action:xcode" }
+    filter { "action:xcode4" }
             kind "StaticLib"
 
     if zpm.option( "Profiler" ) then
