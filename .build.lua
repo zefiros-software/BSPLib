@@ -1,15 +1,12 @@
 
 
 project "BSPLib"
-  
-
-    filter { "action:not xcode4" }
-	    kind "Utility"  
+ 
+    kind "Utility"  
         
-    filter { "action:xcode4" }
+    if _ACTION == "xcode4" then
             kind "StaticLib"
-
-    filter {}
+    end
 
     if zpm.option( "Profiler" ) then
         defines "PLOTLIB_USE_ZPM_ANACONDA"
