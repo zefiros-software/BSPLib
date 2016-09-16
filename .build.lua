@@ -1,19 +1,8 @@
 
 
 project "BSPLib"
-    
-
-    filter "platforms:Windows"
-        kind "Utility"
-
-    filter "platforms:Unix"
-        kind "StaticLib"
-
-    filter "platforms:Mac"
-        kind "StaticLib"
-
-    filter {}
-
+    kind "StaticLib"
+        
     if zpm.option( "Profiler" ) then
         defines "PLOTLIB_USE_ZPM_ANACONDA"
 
