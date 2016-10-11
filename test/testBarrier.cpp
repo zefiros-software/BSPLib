@@ -86,7 +86,7 @@ void TestBarrier( uint32_t threads, const std::atomic_bool &abort )
         thread.wait_for( std::chrono::milliseconds( 200 ) );
     }
 
-    delete check;
+    delete[] check;
 }
 
 /*
