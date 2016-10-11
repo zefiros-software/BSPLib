@@ -39,6 +39,8 @@ TEST( P( Classic ), AbortTest )
 
 }
 
+// clang does not support variadic lambdas
+#ifndef __clang__
 inline void VAbortTest()
 {
     BSPLib::Sync();
@@ -61,6 +63,7 @@ TEST( P( Classic ), VAbortTest )
     EXPECT_FALSE( BSPLib::Execute( VAbortTest, 32 ) );
 
 }
+#endif
 
 inline void AbortTestMain()
 {
