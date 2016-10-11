@@ -7,9 +7,9 @@ matrix:
           dist: trusty
         # Use generic language for osx
         # disabled due to premake bug
-        #- os: osx
-        #  osx_image: xcode8
-        #  language: generic
+        - os: osx
+          osx_image: xcode8
+          language: generic
 install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo pip install codecov; fi
     - rm -rf ~/.matplotlib/fontList.cache
