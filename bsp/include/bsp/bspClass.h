@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 Mick van Duijn, Koen Visscher and Paul Visscher
+ * Copyright (c) 2016 Mick van Duijn, Koen Visscher and Paul Visscher
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -317,14 +317,7 @@ public:
         SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_HIGHEST );
 #endif // _WIN32
 
-#ifdef __GNUG__
-        /*sched_param sch;
-        int policy;
-        pthread_getschedparam(pthread_self(), &policy, &sch);
-        sch.sched_priority = sched_get_priority_max(SCHED_FIFO);
-        int shedErr = pthread_setschedparam(pthread_self(), SCHED_FIFO, &sch);
-        assert(shedErr == 0);
-        pthread_getschedparam(pthread_self(), &policy, &sch);*/
+#if defined(__GNUC__) && !defined(__APPLE__)
         int num_cores = std::thread::hardware_concurrency();
         int core_id = ProcId() % num_cores;
 
