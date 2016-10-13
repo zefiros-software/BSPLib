@@ -1,7 +1,7 @@
 set -e
 
 premake5 install-package --allow-install --allow-module
-premake5 gmake
+premake5 gmake --ignore-updates
 cd bsp
 make config=debug_x86
 make config=debug_x86_64

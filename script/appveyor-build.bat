@@ -1,5 +1,5 @@
 premake5 install-package --allow-install --allow-module  || exit /b 1
-premake5 vs2015 || exit /b 1
+premake5 vs2015 --ignore-updates || exit /b 1
 msbuild bsp/BSPLib.sln /property:Configuration=Release /property:Platform=Win32 || exit /b 1
 ::msbuild bsp/BSPLib.sln /property:Configuration=Debug /property:Platform=Win32 || exit /b 1
 msbuild bsp/BSPLib.sln /property:Configuration=Release /property:Platform=x64 || exit /b 1
