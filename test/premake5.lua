@@ -33,6 +33,5 @@ workspace "BSPLib-ZPM"
 	project "bsp-zpm-test"
 
 		zpm.uses {
-            "Zefiros-Software/Armadillo",
             "Zefiros-Software/BSPLib"
         }

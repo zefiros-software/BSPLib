@@ -9,15 +9,7 @@
             "path": "../"
         },
         {
-            "name": "Zefiros-Software/PlotLib",
-            "version": "^1.0.0"
-        },
-        {
             "name": "Zefiros-Software/GoogleTest",
-            "version": "@head"
-        },
-        {
-            "name": "Zefiros-Software/Armadillo",
             "version": "@head"
         }
     ]
