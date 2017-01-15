@@ -1,8 +1,34 @@
 platform:
   - Win32
+build: off
 environment:
     PYTHON: "C:\\Python35"
-build: off
+    matrix:  
+        - TYPE: zpm
+        - TYPE: release
+          ARCH: x86
+          PLAT: Win32
+          VSTUD: vs2015
+        - TYPE: debug
+          ARCH: x86
+          PLAT: Win32
+          VSTUD: vs2015
+        - TYPE: release
+          ARCH: x86_64
+          PLAT: x64
+          VSTUD: vs2015
+        - TYPE: debug
+          ARCH: x86_64
+          PLAT: x64
+          VSTUD: vs2015
+        - TYPE: release
+          ARCH: x86_64
+          PLAT: x64
+          VSTUD: vs2015
+        - TYPE: release 
+          ARCH: x86_64
+          PLAT: x64
+          VSTUD: vs2015
 install:
     - powershell -command "Invoke-WebRequest -Uri https://goo.gl/1Zcf72 -OutFile %TEMP%/install-zpm.bat" && %TEMP%/install-zpm.bat 
     - "SET PATH=%PATH%;%ALLUSERSPROFILE%/zpm"
