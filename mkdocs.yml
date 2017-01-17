@@ -3,7 +3,7 @@ site_url: http://www.bsplib.eu
 repo_url: https://github.com/Zefiros-Software/BSPLib
 site_description: BSPLib a fast and easy to use parallel computation libary.
 theme: united
-copyright: Copyright © 2017 Zefiros Software.
+copyright: Copyright © 2017 Zefiros Software
 google_analytics: ['UA-29999374-2', 'www.bsplib.eu']
 theme_dir: docs/style
 
