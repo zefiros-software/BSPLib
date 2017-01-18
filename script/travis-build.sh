@@ -11,22 +11,22 @@ if [ "$TYPE" == "zpm" ]; then
     make
     cd ../../
 
-    test/bin/x86/math-zpm-test
+    test/bin/x86/bsp-zpm-test
 
 else
     zpm install-package --allow-install --allow-module
     zpm gmake --allow-install
-    cd math
+    cd bsp
     make config=${TYPE}_${ARCH}
     cd ../
 
 
     if [ "$TYPE" == "debug" ]; then
-        bin/${ARCH}/math-testd
+        bin/${ARCH}/bsp-testd
 
     elif [ "$TYPE" == "coverage" ]; then
-        ./math-testcd
+        ./bsp-testcd
     else
-        bin/${ARCH}/math-test
+        bin/${ARCH}/bsp-test
     fi
 fi
