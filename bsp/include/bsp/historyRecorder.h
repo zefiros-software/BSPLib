@@ -560,7 +560,7 @@ private:
 
             heatMap.SetMinValue( 0 )
             .SetMaxValue( maxElem )
-            .SetSquare( true )
+            .Square( true )
             .SetLineWidths( 0.1 );
 
             subPlots.AddHeatMapPlot( heatMap );
