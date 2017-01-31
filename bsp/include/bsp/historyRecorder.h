@@ -513,7 +513,7 @@ private:
 
         plot.SetLegend( hueData, hueFunc );
         plot.SetXLabel( "Superstep" ).SetYLabel( "comp/(comm + sync)" );
-        plot.SetYScaleSymLog( 0.1, 1.0 );
+        plot.SetYScale( SymLogScale().SetLinScaleY(0.0,1.0) );
         plot.SetTitle( "Ratio comp/(comm + sync) per superstep" );
         plot.SetSize( 1050, 400 );
     }
