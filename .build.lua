@@ -18,4 +18,7 @@ project "BSPLib"
     zpm.export [[
         includedirs "bsp/include/"
         flags "C++11"
+
+        filter "system:not windows"
+            links "pthread"
     ]]
