@@ -391,9 +391,10 @@ public:
         PlotWidthBars( plot );
         plot.Figure();
         PlotRatio( plot );
-        // plot.Figure();
+		//enabling this will result in an extra empty plot
+        //plot.Figure();
         PlotMatrices( plot );
-        plot.Show();
+		plot.Show();
     }
 
 private:
@@ -430,7 +431,7 @@ private:
             return std::to_string( i ) + " Compute";
         };
 
-        EasyPlot::BackgroundForegroundBarPlot( plot, mSyncTimes, mComputeTimes, mSuperstepIndices, backPalette, forePalette,
+        EasyPlot::BackgroundForegroundBarPlot( plot, ToPVecVec(mSyncTimes), ToPVecVec(mComputeTimes), ToPVecVec(mSuperstepIndices), backPalette, forePalette,
                                                backHue,
                                                foreHue );
         plot.SetXLabel( "Superstep (grouped)" ).SetYLabel( "Time (s)" );
@@ -449,11 +450,11 @@ private:
         };
 
         plot.SubPlot( 1, 2, 1 );
-        EasyPlot::StackedBarPlot( plot, mSuperstepIndices, mMaxSizes, palette, hueFunc );
+        EasyPlot::StackedBarPlot( plot, ToPVecVec(mSuperstepIndices), ToPVecVec(mMaxSizes), palette, hueFunc );
         plot.SetXLabel( "Superstep (grouped)" ).SetYLabel( "Bytes communicated = max(send, receive)" );
 
         plot.SubPlot( 1, 2, 2 );
-        EasyPlot::StackedBarPlot( plot, mSuperstepIndices, mMaxCounts, palette, hueFunc );
+        EasyPlot::StackedBarPlot( plot, ToPVecVec(mSuperstepIndices), ToPVecVec(mMaxCounts), palette, hueFunc );
         plot.SetXLabel( "Superstep (grouped)" ).SetYLabel( "Messages communicated = max(send, receive)" );
 
         plot.SetSupTitle( "#communications, grouped by superstep number" );
@@ -471,11 +472,11 @@ private:
         };
 
         plot.SubPlot( 1, 2, 1 );
-        EasyPlot::StackedDistancedBarPlot( plot, mComputeTimes, mSyncTimes, mMaxSizes, palette, hueFunc );
+        EasyPlot::StackedDistancedBarPlot( plot, ToPVecVec(mComputeTimes), ToPVecVec(mSyncTimes), ToPVecVec(mMaxSizes), palette, hueFunc );
         plot.SetXLabel( "Time (s)" ).SetYLabel( "Bytes communicated = max(send, receive)" );
 
         plot.SubPlot( 1, 2, 2 );
-        EasyPlot::StackedDistancedBarPlot( plot, mComputeTimes, mSyncTimes, mMaxCounts, palette, hueFunc );
+        EasyPlot::StackedDistancedBarPlot( plot, ToPVecVec(mComputeTimes), ToPVecVec(mSyncTimes), ToPVecVec(mMaxCounts), palette, hueFunc );
         plot.SetXLabel( "Time (s)" ).SetYLabel( "Messages communicated = max(send, receive)" );
 
         plot.SetSupTitle( "#communications, width represents time" );
@@ -513,7 +514,7 @@ private:
 
         plot.SetLegend( hueData, hueFunc );
         plot.SetXLabel( "Superstep" ).SetYLabel( "comp/(comm + sync)" );
-        plot.SetYScale( SymLogScale().SetLinScaleY(0.0,1.0) );
+		plot.SetYScale(SymLogScale());
         plot.SetTitle( "Ratio comp/(comm + sync) per superstep" );
         plot.SetSize( 1050, 400 );
     }
@@ -569,6 +570,16 @@ private:
         plot.AddPlot( subPlots );
         plot.SetSupTitle( "#communications from processor left to processor bottom" );
         plot.SetSize( 840, 600 );
+    }
+
+	static std::vector<PVec> ToPVecVec(const std::vector<std::vector<double>> &v)
+    {
+		std::vector<PVec> s;
+		for (const auto &c : v)
+		{
+			s.emplace_back(PVec(c));
+		}
+		return s;
     }
 };
 #endif

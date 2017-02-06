@@ -1,5 +1,4 @@
 #include "bspedupack.h"
-#include "config.h"
 
 #include <numeric>
 

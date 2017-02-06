@@ -36,3 +36,5 @@ extern/
 assets/
 test/extern
 test/assets
+edupack/bin/*
+*.lock
