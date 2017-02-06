@@ -27,6 +27,8 @@ local zefiros = require( "Zefiros-Software/Zefiros-Defaults", "@head" )
 
 workspace "BSPLib"
 
+    flags "C++11"
+
 	zefiros.setDefaults( "bsp", {
         mayLink = false
     } )
