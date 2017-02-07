@@ -1,5 +1,8 @@
 #include "bench.h"
 
+#define PLOTLIB_ARMA
+#include "plot/plotting.h"
+
 template< typename tFunc >
 void BenchCommunication( const tFunc &measureCommunication, uint32_t P, Plot &plot )
 {
@@ -31,7 +34,7 @@ void BenchCommunication( const tFunc &measureCommunication, uint32_t P, Plot &pl
         BSPLib::PopContainer( Time );
     }, P );
 
-    LinePlot line( Vec( 0, MAXH, MAXH, [g, l, r]( double h )
+    LinePlot line( PVec( 0, MAXH, MAXH, [g, l, r]( double h )
     {
         return ( g * h + l ) / r * 1000000;
     } ) );

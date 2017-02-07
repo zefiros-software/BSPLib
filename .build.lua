@@ -7,12 +7,6 @@ project "BSPLib"
         defines "PLOTLIB_USE_ZPM_ANACONDA"
 
         zpm.uses "Zefiros-Software/PlotLib"
-
-        if zpm.option( "OwnArmadillo" ) then
-
-            zpm.uses "Zefiros-Software/Armadillo"
-
-        end
     end
 
     zpm.export [[

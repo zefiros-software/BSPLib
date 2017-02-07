@@ -1,6 +1,10 @@
 {
     "requires": [
         {
+            "name": "Zefiros-Software/Armadillo",
+            "version": "@head"
+        },
+        {
             "name": "Zefiros-Software/BSPLib",
             "path": "../"
         }

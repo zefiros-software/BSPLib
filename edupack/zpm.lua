@@ -81,7 +81,10 @@ workspace "BSPEdupack"
     project "bench-modern"                
         kind "ConsoleApp"
                 
-        zpm.uses "Zefiros-Software/BSPLib"
+        zpm.uses {
+            "Zefiros-Software/BSPLib",
+            "Zefiros-Software/Armadillo"
+        }
 
         includedirs "./"
             

@@ -24,9 +24,11 @@
 #define __BSPLIB_BENCH_H__
 
 #include "bspedupack.h"
-#include "config.h"
 
+#include <armadillo>
 #include <numeric>
+
+using namespace arma;
 
 /*  This program measures p, r, g, and l of a BSP computer using bsp_put for communication. */
 

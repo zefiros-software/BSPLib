@@ -28,23 +28,22 @@
         ],
         "requires": [
             {
+                "name": "Zefiros-Software/Armadillo",
+                "version": "@head"
+            },
+            {
                 "name": "Zefiros-Software/GoogleTest",
                 "version": "@head"
             }
         ]
     },
     "options": {
-        "Profiler": true,
-        "OwnArmadillo": true
+        "Profiler": true
     },  
     "modules": [
         "Zefiros-Software/Anaconda"
     ],
     "requires": [
-        {
-            "name": "Zefiros-Software/Armadillo",
-            "version": "@head"
-        },
         {
             "name": "Zefiros-Software/PlotLib",
             "version": "^1.0.0"
