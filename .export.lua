@@ -3,10 +3,8 @@
 project "BSPLib"
     kind "StaticLib"
         
-    if zpm.setting( "profiler" ) then
+    if zpm.setting( "profiler" ) and zpm.uses "Zefiros-Software/PlotLib" then
         defines "PLOTLIB_USE_ZPM_ANACONDA"
-
-        zpm.uses "Zefiros-Software/PlotLib"
     end
 
     zpm.export [[

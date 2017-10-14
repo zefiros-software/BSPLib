@@ -30,6 +30,4 @@ workspace "BSPLib-ZPM"
     
 	project "bsp-zpm-test"
 
-		zpm.uses {
-            "Zefiros-Software/BSPLib"
-        }
+		zpm.uses "Zefiros-Software/BSPLib"

@@ -42,3 +42,4 @@ edupack/bin/*
 @obj/*
 test/@bin/*
 test/@obj/*
+.zpm/*
