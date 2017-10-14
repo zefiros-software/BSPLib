@@ -22,8 +22,6 @@
 -- @endcond
 --]]
 
-local zefiros = require( "Zefiros-Software/Zefiros-Defaults", "@head" )
-
 workspace "BSPLib-ZPM"
 
 	zefiros.setTestZPMDefaults( "bsp", {

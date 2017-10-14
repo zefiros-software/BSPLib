@@ -1,0 +1,40 @@
+description: BSPLib is a fast, and easy to use C++ implementation of the Bulk Synchronous Parallel (BSP) threading model. This model is mainly used in the scientific computing field, but can also be applied more general in computer science. This library includes an extended version the standard BSP interface to perform better, and made it more easy to use.
+keywords:
+  - C++
+  - BSP
+  - easy
+  - fast
+website: 'http://bsplib.eu/'
+license: MIT
+authors:
+  - name: Mick van Duijn
+    email: m.vanduijn@zefiros.eu
+    website: 'https://zefiros.eu/'
+  - name: Paul Visscher
+    email: p.e.visscher@zefiros.eu
+    website: 'https://zefiros.eu/'
+  - name: Koen Visscher
+    email: k.m.visscher@zefiros.eu
+    website: 'https://zefiros.eu/'
+public:
+  libraries:
+    - name: Zefiros-Software/PlotLib
+      optional: true
+      version: ^2.0.0
+dev:
+  modules:
+      - name: Zefiros-Software/Zefiros-Defaults
+        version: '@head'
+      - name: Zefiros-Software/Miniconda
+        version: '@head'
+  public:
+    libraries:
+        - name: Zefiros-Software/Armadillo
+          version: '^7.800.0'
+        - name: Zefiros-Software/PlotLib
+          optional: false
+          version: ^2.0.0
+settings:
+  profiler:
+    default: false
+    reduce: anyTrue

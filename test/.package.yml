@@ -1,0 +1,6 @@
+modules:
+  - name: Zefiros-Software/Zefiros-Defaults
+    version: '@head'
+libraries:
+  - name: Zefiros-Software/BSPLib
+    repository: ../

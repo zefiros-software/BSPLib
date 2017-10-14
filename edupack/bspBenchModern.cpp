@@ -1,6 +1,5 @@
 #include "bench.h"
 
-#define PLOTLIB_ARMA
 #include "plot/plotting.h"
 
 template< typename tFunc >

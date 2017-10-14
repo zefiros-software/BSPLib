@@ -23,12 +23,141 @@
 -- @endcond
 --]]
 
-local zefiros = require( "Zefiros-Software/Zefiros-Defaults", "@head" )
-
 workspace "BSPLib"
 
-    flags "C++11"
+    cppdialect "C++11"
 
 	zefiros.setDefaults( "bsp", {
         mayLink = false
     } )
+
+
+workspace "BSPEdupack"
+
+    configurations { "Debug", "Release" }
+    platforms { "x86_64", "x86" }
+
+    cppdialect "C++11"
+    
+    startproject "bench-modern"
+    location "edupack"
+    objdir "bin/obj/"
+        
+    defines "M_PI=3.14159265358979323846"
+    
+    vectorextensions "SSE2"
+    warnings "Extra"
+    
+    filter "platforms:x86"
+        targetdir "bin/x86/"
+        debugdir "bin/x86/"
+        architecture "x86"
+        
+    filter "platforms:x86_64"
+        targetdir "bin/x86_64/"
+        debugdir "bin/x86_64/"
+        architecture "x86_64"
+        
+    filter "*Debug"
+        targetsuffix "d"
+        symbols "On"
+        defines "DEBUG"
+        optimize "Off"
+        
+    filter "*Release"
+        flags "LinkTimeOptimization"
+        optimize "Speed"
+    
+    filter {}
+    
+    project "bench"                
+        kind "ConsoleApp"
+             
+        includedirs "bsp/include"
+            
+        files { 
+            "edupack/bspedupack.h",
+            "edupack/config.h",
+            "edupack/bspedupack.cpp",
+            "edupack/bspbench.cpp",
+            }
+            
+    project "bench-modern"                
+        kind "ConsoleApp"
+                
+        zpm.uses "Zefiros-Software/PlotLib"
+
+        includedirs "bsp/include"
+            
+        files { 
+            "edupack/bspedupack.h",
+            "edupack/config.h",
+            "edupack/bspedupack.cpp",
+            "edupack/bspBenchModern.cpp",
+            "edupack/bench.h"
+            }
+            
+    project "fft"                
+        kind "ConsoleApp"
+             
+        includedirs "bsp/include"
+            
+        files { 
+            "edupack/bspedupack.h",
+            "edupack/bspedupack.cpp",
+            "edupack/bspfft.cpp",
+            "edupack/bspfft_test.cpp",
+            }
+            
+    project "fft-modern"                
+        kind "ConsoleApp"
+             
+        defines "BSP_USE_PROFILER"
+        zpm.uses "Zefiros-Software/PlotLib"
+
+        includedirs "bsp/include"
+            
+        files { 
+            "edupack/bspedupack.h",
+            "edupack/bspedupack.cpp",
+            "edupack/modernFft.h",
+            "edupack/modernFftTest.cpp",
+            }
+            
+    project "lu"                
+        kind "ConsoleApp"
+        
+        defines "BSP_USE_PROFILER"
+
+        includedirs "bsp/include"
+        zpm.uses "Zefiros-Software/PlotLib"
+            
+        files { 
+            "edupack/bspedupack.h",
+            "edupack/bspedupack.cpp",
+            "edupack/bsplu.cpp",
+            "edupack/bsplu_test.cpp",
+            }
+            
+    project "ip"                
+        kind "ConsoleApp"
+             
+        includedirs "bsp/include"
+            
+        files { 
+            "edupack/bspedupack.h",
+            "edupack/bspedupack.cpp",
+            "edupack/bspinprod.cpp",
+            }
+            
+    project "matvec"                
+        kind "ConsoleApp"
+             
+        includedirs "bsp/include"
+            
+        files { 
+            "edupack/bspedupack.h",
+            "edupack/bspedupack.cpp",
+            "edupack/bspmv.cpp",
+            "edupack/bspmv_test.cpp",
+            }
