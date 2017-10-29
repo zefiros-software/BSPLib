@@ -1,6 +1,6 @@
 {
     "description": "BSPLib is a fast, and easy to use C++ implementation of the Bulk Synchronous Parallel (BSP) threading model.", 
-    "license": "MIT", 
+    "license": "MIT License", 
     "title": "Zefiros-Software/BSPLib 1.1.11", 
     "upload_type": "software", 
     "publication_date": "2017-10-29", 
