@@ -17,7 +17,8 @@
             "name": "K M Visscher"
         }
     ], 
-    "access_right": "MIT", 
+    "access_right": "open",
+    "license": "MIT License",
     "related_identifiers": [
         {
             "scheme": "url", 
