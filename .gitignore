@@ -43,3 +43,4 @@ edupack/bin/*
 test/@bin/*
 test/@obj/*
 .zpm/*
+/site/*

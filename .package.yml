@@ -23,17 +23,20 @@ public:
       version: ^2.0.0
 dev:
   modules:
-      - name: Zefiros-Software/Zefiros-Defaults
-        version: '@head'
-      - name: Zefiros-Software/Miniconda
-        version: '@head'
+    - name: Zefiros-Software/Zefiros-Defaults
+      version: '@head'
+    - name: Zefiros-Software/Miniconda
+      version: '@head'
+  assets:
+    - name: Zefiros-Software/Zefiros-Mkdocs-Style
+      version: ^1.0.0
   public:
     libraries:
-        - name: Zefiros-Software/Armadillo
-          version: '^7.800.0'
-        - name: Zefiros-Software/PlotLib
-          optional: false
-          version: ^2.0.0
+      - name: Zefiros-Software/Armadillo
+        version: '^7.800.0'
+      - name: Zefiros-Software/PlotLib
+        optional: false
+        version: ^2.0.0
 settings:
   profiler:
     default: false

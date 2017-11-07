@@ -5,8 +5,9 @@ site_description: BSPLib a fast and easy to use parallel computation libary.
 theme: united
 copyright: Copyright © 2017 Zefiros Software
 google_analytics: ['UA-29999374-2', 'www.bsplib.eu']
-theme_dir: docs/style
-
+theme:
+    name: null
+    custom_dir: 'docs/style'
 pages:
 - BSP: 
     - 'index.md'
@@ -76,7 +77,6 @@ extra_css:
 
 extra_javascript:
     - 'style/mathjax-loader.js'
-    - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 
 markdown_extensions:
     - toc:
