@@ -5,6 +5,7 @@ test/bin/*
 
 -- zpm
 .config.json
+.config.yml
 
 -- git
 *.orig
@@ -31,16 +32,5 @@ Makefile
 *.chi
 *.chm
 
--- ZPM 
-extern/
-assets/
-test/extern
-test/assets
-edupack/bin/*
-*.lock
-@bin/*
-@obj/*
-test/@bin/*
-test/@obj/*
-.zpm/*
-/site/*
+-- Astyle
+.astylerc

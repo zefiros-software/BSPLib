@@ -1,0 +1,28 @@
+platform:
+  - Win32
+build: off
+environment:
+  PYTHON: "C:\\Python35"
+  PROJECT: BSPLib
+  PROJECT_DIRECTORY: bsp
+  matrix:  
+    - TYPE: zpm
+    - BUILD_CONFIG: release
+      BUILD_ARCHITECTURE: x86
+    - BUILD_CONFIG: debug
+      BUILD_ARCHITECTURE: x86
+    - BUILD_CONFIG: release
+      BUILD_ARCHITECTURE: x86_64
+    - BUILD_CONFIG: debug
+      BUILD_ARCHITECTURE: x86_64
+    - BUILD_CONFIG: release
+      BUILD_ARCHITECTURE: x86_64
+    - BUILD_CONFIG: release 
+      BUILD_ARCHITECTURE: x86_64
+install:
+  - powershell -command "Invoke-WebRequest -Uri https://raw.githubusercontent.com/Zefiros-Software/ZPM/features/refactor/script/install-zpm.bat -OutFile %TEMP%/install-zpm.bat" && %TEMP%/install-zpm.bat 
+  - "SET PATH=%PATH%;%USERPROFILE%/zpm/bin"
+test_script:
+  - zpm run build-ci-library
+deploy_script:
+  - zpm run deploy-ci-library 

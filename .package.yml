@@ -21,9 +21,9 @@ public:
     - name: Zefiros-Software/PlotLib
       optional: true
       version: ^2.0.0
-dev:
+development:
   modules:
-    - name: Zefiros-Software/Zefiros-Defaults
+    - name: Zefiros-Software/Defaults
       version: '@head'
     - name: Zefiros-Software/Miniconda
       version: '@head'

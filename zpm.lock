@@ -1,0 +1,88 @@
+{
+  "definition": "./",
+  "optionals": [],
+  "private": {
+    "assets": [ {
+      "definition": "https://github.com/Zefiros-Software/Zefiros-Mkdocs-Style.git",
+      "hash": "4d543a49f499199210d5beff785e008c71ce4f36",
+      "name": "Zefiros-Software/Zefiros-Mkdocs-Style",
+      "repository": "https://github.com/Zefiros-Software/Zefiros-Mkdocs-Style.git",
+      "tag": "1.0.2",
+      "version": "1.0.2",
+      "versionRequirement": "^1.0.0"
+    } ],
+    "modules": [ {
+      "definition": "https://github.com/Zefiros-Software/ZefirosDefaults.git",
+      "hash": "d86b8cf00f5d63d490b8dfeec0d5106b34095627",
+      "name": "Zefiros-Software/Defaults",
+      "public": {
+        "libraries": [ {
+          "definition": "https://github.com/Zefiros-Software/GoogleTest.git",
+          "hash": "62ba5d91d0ceff98fbd95294bd94c97017a07f9e",
+          "name": "Zefiros-Software/GoogleTest",
+          "repository": "https://github.com/google/googletest.git",
+          "tag": "HEAD",
+          "versionRequirement": "@head || ^1.0.0"
+        }, {
+          "definition": "https://github.com/Zefiros-Software/GoogleBenchmark.git",
+          "hash": "4fe0206b658c6aa1d74a2278c26b50f0938a4e64",
+          "name": "Zefiros-Software/GoogleBenchmark",
+          "repository": "https://github.com/google/benchmark.git",
+          "tag": "HEAD",
+          "versionRequirement": "@head"
+        } ]
+      },
+      "repository": "https://github.com/Zefiros-Software/ZefirosDefaults.git",
+      "tag": "HEAD",
+      "versionRequirement": "@head"
+    }, {
+      "definition": "https://github.com/Zefiros-Software/Miniconda.git",
+      "hash": "b06de1dc6df13173994aae4b84461ccda8e51b44",
+      "name": "Zefiros-Software/Miniconda",
+      "repository": "https://github.com/Zefiros-Software/Miniconda.git",
+      "tag": "HEAD",
+      "versionRequirement": "@head"
+    } ]
+  },
+  "public": {
+    "libraries": [ {
+      "definition": "https://github.com/Zefiros-Software/PlotLib.git",
+      "hash": "d22076c5d5fccfab61f4b18099a8a504e14110dc",
+      "name": "Zefiros-Software/PlotLib",
+      "optionals": {
+        "libraries": [ {
+          "name": "Zefiros-Software/Armadillo",
+          "versionRequirement": "^7.800.0"
+        } ]
+      },
+      "private": {
+        "modules": [ {
+          "definition": "https://github.com/Zefiros-Software/Miniconda.git",
+          "hash": "b06de1dc6df13173994aae4b84461ccda8e51b44",
+          "name": "Zefiros-Software/Miniconda",
+          "repository": "https://github.com/Zefiros-Software/Miniconda.git",
+          "tag": "HEAD",
+          "versionRequirement": "@head"
+        } ]
+      },
+      "repository": "https://github.com/Zefiros-Software/PlotLib.git",
+      "tag": "2.0.2",
+      "version": "2.0.2",
+      "versionRequirement": "^2.0.0"
+    }, {
+      "definition": "https://github.com/Zefiros-Software/ArmadilloBuild.git",
+      "hash": "1314e433b09a77455647e84375292a2b0a16ac94",
+      "name": "Zefiros-Software/Armadillo",
+      "optionals": {
+        "libraries": [ {
+          "name": "Zefiros-Software/MKL",
+          "versionRequirement": "@head"
+        } ]
+      },
+      "repository": "https://github.com/conradsnicta/armadillo-code.git",
+      "tag": "7.800.x",
+      "versionRequirement": "^7.800.0"
+    } ]
+  },
+  "repository": "./"
+}
