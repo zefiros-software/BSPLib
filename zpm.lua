@@ -29,7 +29,9 @@ workspace "BSPLib"
 
     cppdialect "C++11"
 
-	zefiros.setDefaults("bsp")
+	zefiros.setDefaults( "bsp", {
+        mayLink = false
+    } )
 
 
 workspace "BSPEdupack"

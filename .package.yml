@@ -33,7 +33,7 @@ development:
   public:
     libraries:
       - name: Zefiros-Software/Armadillo
-        version: '^8.800.0'
+        version: '^8.300.0'
       - name: Zefiros-Software/PlotLib
         optional: false
         version: ^2.0.0
