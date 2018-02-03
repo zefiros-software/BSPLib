@@ -7,6 +7,7 @@ Type        | Status
 Linux & OSX | [![Build Status](https://travis-ci.org/Zefiros-Software/BSPLib.svg?branch=master)](https://travis-ci.org/Zefiros-Software/BSPLib)
 Windows     | [![Build status](https://ci.appveyor.com/api/projects/status/g2aduvs6k7u3640r?svg=true)](https://ci.appveyor.com/project/PaulVisscher/bsplib)
 Coverage	| [![codecov](https://codecov.io/gh/Zefiros-Software/BSPLib/branch/master/graph/badge.svg)](https://codecov.io/gh/Zefiros-Software/BSPLib)
+DOI      | [![DOI](https://zenodo.org/badge/47649492.svg)](https://zenodo.org/badge/latestdoi/47649492)
 
 
 #Documentation
