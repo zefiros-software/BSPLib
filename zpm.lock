@@ -13,19 +13,19 @@
     } ],
     "modules": [ {
       "definition": "https://github.com/Zefiros-Software/ZefirosDefaults.git",
-      "hash": "d86b8cf00f5d63d490b8dfeec0d5106b34095627",
+      "hash": "130feb5efe53d69a63c995e4d37e0edd0f9bbb80",
       "name": "Zefiros-Software/Defaults",
       "public": {
         "libraries": [ {
           "definition": "https://github.com/Zefiros-Software/GoogleTest.git",
-          "hash": "62ba5d91d0ceff98fbd95294bd94c97017a07f9e",
+          "hash": "a3c73ed28d7995b18d48027aee740ad827fcc157",
           "name": "Zefiros-Software/GoogleTest",
           "repository": "https://github.com/google/googletest.git",
           "tag": "HEAD",
           "versionRequirement": "@head || ^1.0.0"
         }, {
           "definition": "https://github.com/Zefiros-Software/GoogleBenchmark.git",
-          "hash": "4fe0206b658c6aa1d74a2278c26b50f0938a4e64",
+          "hash": "bc83262f9d687ac7e31509b3f5177ff391a7452a",
           "name": "Zefiros-Software/GoogleBenchmark",
           "repository": "https://github.com/google/benchmark.git",
           "tag": "HEAD",
@@ -37,7 +37,7 @@
       "versionRequirement": "@head"
     }, {
       "definition": "https://github.com/Zefiros-Software/Miniconda.git",
-      "hash": "b06de1dc6df13173994aae4b84461ccda8e51b44",
+      "hash": "a72fd309fcdbd684a4f1bd9d4fd9e835562beea6",
       "name": "Zefiros-Software/Miniconda",
       "repository": "https://github.com/Zefiros-Software/Miniconda.git",
       "tag": "HEAD",
@@ -58,7 +58,7 @@
       "private": {
         "modules": [ {
           "definition": "https://github.com/Zefiros-Software/Miniconda.git",
-          "hash": "b06de1dc6df13173994aae4b84461ccda8e51b44",
+          "hash": "a72fd309fcdbd684a4f1bd9d4fd9e835562beea6",
           "name": "Zefiros-Software/Miniconda",
           "repository": "https://github.com/Zefiros-Software/Miniconda.git",
           "tag": "HEAD",
@@ -71,7 +71,7 @@
       "versionRequirement": "^2.0.0"
     }, {
       "definition": "https://github.com/Zefiros-Software/ArmadilloBuild.git",
-      "hash": "1314e433b09a77455647e84375292a2b0a16ac94",
+      "hash": "248f7d0a2a733bbb7adeed8bdbb41fb621284c43",
       "name": "Zefiros-Software/Armadillo",
       "optionals": {
         "libraries": [ {
@@ -80,8 +80,8 @@
         } ]
       },
       "repository": "https://github.com/conradsnicta/armadillo-code.git",
-      "tag": "7.800.x",
-      "versionRequirement": "^7.800.0"
+      "tag": "8.300.x",
+      "versionRequirement": "^8.300.0"
     } ]
   },
   "repository": "./"
