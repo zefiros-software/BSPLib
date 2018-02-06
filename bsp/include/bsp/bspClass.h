@@ -417,6 +417,14 @@ public:
 
         if (ProcId() == 0)
         {
+            for (auto &thr : mThreads)
+            {
+                if (thr.valid())
+                {
+                    thr.get();
+                }
+            }
+
             mThreads.clear();
 
             mProcCount = 0;
