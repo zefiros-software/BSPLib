@@ -70,6 +70,14 @@ namespace BSPInternal
 
         StackAllocator::StackLocation tagLocation;
         uint32_t tagSize;
+
+        void From(const SendRequest &request)
+        {
+            bufferLocation = request.bufferLocation;
+            bufferSize = request.bufferSize;
+            tagLocation = request.tagLocation;
+            tagSize = request.tagSize;
+        }
     };
 
     struct PushRequest

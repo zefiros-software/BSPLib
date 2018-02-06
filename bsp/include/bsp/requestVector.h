@@ -41,9 +41,9 @@ namespace BSPInternal
     public:
 
         RequestVector()
-            : mRequests( 10 ),
-              mCursor( 0 ),
-              mSize( 10 )
+            : mRequests(10),
+              mCursor(0),
+              mSize(10)
         {
         }
 
@@ -53,21 +53,21 @@ namespace BSPInternal
          * @param   size The number of requests.
          */
 
-        RequestVector( size_t size )
-            : mRequests( size ),
-              mCursor( 0 ),
-              mSize( size )
+        RequestVector(size_t size)
+            : mRequests(size),
+              mCursor(0),
+              mSize(size)
         {
         }
 
-        tRequest &GetRequest( size_t index )
+        tRequest &GetRequest(size_t index)
         {
             return mRequests[index];
         }
 
         tRequest &InitRequest()
         {
-            if ( mCursor >= mSize )
+            if (mCursor >= mSize)
             {
                 Grow();
             }
@@ -75,12 +75,12 @@ namespace BSPInternal
             return mRequests[mCursor++];
         }
 
-        tRequest &operator[]( size_t index )
+        tRequest &operator[](size_t index)
         {
             return mRequests[index];
         }
 
-        const tRequest &operator[]( size_t index ) const
+        const tRequest &operator[](size_t index) const
         {
             return mRequests[index];
         }
@@ -150,11 +150,11 @@ namespace BSPInternal
         }
 
         template< typename tIterator >
-        void Append( tIterator begin, tIterator end )
+        void Append(tIterator begin, tIterator end)
         {
-            Reserve( end - begin );
+            Reserve(end - begin);
 
-            std::copy( begin, end, End() );
+            std::copy(begin, end, End());
 
             mCursor += end - begin;
         }
@@ -168,7 +168,7 @@ namespace BSPInternal
 
         void Grow()
         {
-            mRequests.resize( static_cast<size_t>( mSize * 1.6f ) + 1 );
+            mRequests.resize(static_cast<size_t>(mSize * 1.6f) + 1);
             mSize = mRequests.size();
         }
     };

@@ -32,9 +32,9 @@
 #include "testClassic.h"
 #include "testPrimitive.h"
 
-int32_t main( int32_t argc, char **argv )
+int32_t main(int32_t argc, char **argv)
 {
-    testing::InitGoogleTest( &argc, argv );
+    testing::InitGoogleTest(&argc, argv);
 
     int32_t result = RUN_ALL_TESTS();
 

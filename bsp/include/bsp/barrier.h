@@ -46,10 +46,10 @@ namespace BSPInternal
          * @param   count Number of threads to wait for.
          */
 
-        explicit Barrier( uint32_t count ) :
-            mCount( count ),
-            mSpaces( count ),
-            mGeneration( 0 )
+        explicit Barrier(uint32_t count) :
+            mCount(count),
+            mSpaces(count),
+            mGeneration(0)
         {
         }
 
@@ -61,7 +61,7 @@ namespace BSPInternal
          * @post The amount of threads the barriers waits on equals count.
          */
 
-        void SetSize( uint32_t count )
+        void SetSize(uint32_t count)
         {
             mCount = count;
             mSpaces = count;
@@ -79,22 +79,22 @@ namespace BSPInternal
          * @post all threads have waited for each other to reach the barrier.
          */
 
-        void Wait( const std::atomic_bool &aborted )
+        void Wait(const std::atomic_bool &aborted)
         {
             const uint32_t myGeneration = mGeneration;
 
-            if ( !--mSpaces )
+            if (!--mSpaces)
             {
                 mSpaces = mCount;
                 ++mGeneration;
             }
             else
             {
-                while ( mGeneration == myGeneration )
+                while (mGeneration == myGeneration)
                 {
-                    if ( aborted )
+                    if (aborted)
                     {
-                        throw BspAbort( "Aborted" );
+                        throw BspAbort("Aborted");
                     }
                 }
             }
