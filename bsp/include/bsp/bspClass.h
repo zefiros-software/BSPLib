@@ -56,7 +56,7 @@
 // forward declaration of the main function
 // so we can start this if no other function is given.
 // E.G. Legacy behaviour of the MulticoreBSP library.
-extern int main( int argc, char **argv );
+extern int main(int argc, char **argv);
 
 /**
  * The BSP implementation class. By using this class as singleton, we avoid global memory declarations, cross source
@@ -81,10 +81,10 @@ public:
      * @see Abort( const char *format, ... )
      */
 
-    inline void VAbort( const char *format, va_list args )
+    inline void VAbort(const char *format, va_list args)
     {
         mAbort = true;
-        vfprintf( stderr, format, args );
+        vfprintf(stderr, format, args);
         CheckAborted();
     }
 
@@ -100,16 +100,16 @@ public:
      * * If main thread, a BSPAbort exception will be thrown.
      */
 
-    inline void Abort( const char *format, ... )
+    inline void Abort(const char *format, ...)
     {
         va_list args;
-        va_start( args, format );
+        va_start(args, format);
 
         //pass to bsp_vabort
-        VAbort( format, args );
+        VAbort(format, args);
 
         //mark end of variable arguments
-        va_end( args );
+        va_end(args);
     }
 
     /**
@@ -148,15 +148,15 @@ public:
      *      The calculation of the accumulated size will be skipped.
      */
 
-    inline void QSize( size_t *packets, size_t *accumulatedSize )
+    inline void QSize(size_t *packets, size_t *accumulatedSize)
     {
 #ifndef BSP_SKIP_CHECKS
-        assert( packets != nullptr );
+        assert(packets != nullptr);
 #endif
 
         *packets = 0;
 
-        if ( accumulatedSize )
+        if (accumulatedSize)
         {
             *accumulatedSize = 0;
         }
@@ -164,9 +164,9 @@ public:
         const BSPInternal::RequestVector< BSPInternal::SendRequest > &sendQueue = mProcessorsData[ProcId()].sendRequests;
         *packets += sendQueue.GetSize();
 
-        if ( accumulatedSize )
+        if (accumulatedSize)
         {
-            for ( auto request = sendQueue.CBegin(), end = sendQueue.CEnd(); request != end; ++request )
+            for (auto request = sendQueue.CBegin(), end = sendQueue.CEnd(); request != end; ++request)
             {
                 *accumulatedSize += request->bufferSize;
             }
@@ -232,52 +232,52 @@ public:
      *  * For the main thread, ProcId() == 0.
      */
 
-    inline void Init( std::function< void() > entry, int32_t, char ** )
+    inline void Init(std::function< void() > entry, int32_t, char **)
     {
         mEntry = entry;
         mTagSize = 0;
 
-        if ( !mEnded && !mAbort )
+        if (!mEnded && !mAbort)
         {
-            fprintf( stderr, "Warning: initialisation data corresponding to another BSP run found;\n" );
-            fprintf( stderr, "         and this other run did not terminate (gracefully).\n" );
+            fprintf(stderr, "Warning: initialisation data corresponding to another BSP run found;\n");
+            fprintf(stderr, "         and this other run did not terminate (gracefully).\n");
         }
 
-        if ( mAbort )
+        if (mAbort)
         {
 #ifndef BSP_SUPPRESS_ABORT_WARNING
-            fprintf( stderr, "Warning: the previous BSP program ended using Abort or VAbort.\n" );
-            fprintf( stderr, "         BSPLib will now try to determine whether all threads have stopped.\n\n" );
+            fprintf(stderr, "Warning: the previous BSP program ended using Abort or VAbort.\n");
+            fprintf(stderr, "         BSPLib will now try to determine whether all threads have stopped.\n\n");
 
 #   ifndef DEBUG
             uint32_t i = 0;
 #   endif
 #endif
 
-            for ( auto &thr : mThreads )
+            for (auto &thr : mThreads)
             {
 #ifndef BSP_SUPPRESS_ABORT_WARNING
 #   ifndef DEBUG
-                fprintf( stderr, "Determining the status of thread %d.\n", ++i );
+                fprintf(stderr, "Determining the status of thread %d.\n", ++i);
 #   endif
 #endif
                 uint32_t count = 0;
 
-                while ( thr.wait_for( std::chrono::milliseconds( 200 ) ) == std::future_status::timeout && count++ < 100 )
+                while (thr.wait_for(std::chrono::milliseconds(200)) == std::future_status::timeout && count++ < 100)
                 {
                     mThreadBarrier.NotifyAbort();
                 }
 
-                if ( count >= 100 )
+                if (count >= 100)
                 {
-                    fprintf( stderr, "Error: could not safely end the previous BSP program. Terminating now." );
+                    fprintf(stderr, "Error: could not safely end the previous BSP program. Terminating now.");
                     std::terminate();
                 }
                 else
                 {
 #ifndef BSP_SUPPRESS_ABORT_WARNING
 #   ifndef DEBUG
-                    fprintf( stderr, "        %d has ended.\n\n", i );
+                    fprintf(stderr, "        %d has ended.\n\n", i);
 #   endif
 #endif
                 }
@@ -307,18 +307,18 @@ public:
      *      Starts the timer for the current thread.
      */
 
-    inline void Begin( uint32_t maxProcs )
+    inline void Begin(uint32_t maxProcs)
     {
         //fprintf( stderr, "Begin %ld-%ld\n", PID(), std::this_thread::get_id() );
-        if ( !mEntry )
+        if (!mEntry)
         {
-            mEntry = [] { main( 0, nullptr ); };
+            mEntry = [] { main(0, nullptr); };
             ProcId() = 0;
         }
 
 #ifdef _WIN32
-        SetThreadAffinityMask( GetCurrentThread(), 1 << ( ProcId() % std::thread::hardware_concurrency() ) );
-        SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_HIGHEST );
+        SetThreadAffinityMask(GetCurrentThread(), 1 << (ProcId() % std::thread::hardware_concurrency()));
+        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 #endif // _WIN32
 
 #if defined(__GNUC__) && !defined(__APPLE__)
@@ -326,30 +326,30 @@ public:
         int core_id = ProcId() % num_cores;
 
         cpu_set_t cpuset;
-        CPU_ZERO( &cpuset );
-        CPU_SET( core_id, &cpuset );
+        CPU_ZERO(&cpuset);
+        CPU_SET(core_id, &cpuset);
 
         pthread_t current_thread = pthread_self();
-        pthread_setaffinity_np( current_thread, sizeof( cpu_set_t ), &cpuset );
+        pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
 #endif
 
 
-        if ( ProcId() )
+        if (ProcId())
         {
 
 #ifndef BSP_SKIP_CHECKS
 
-            if ( ProcId() == 0xdeadbeef )
+            if (ProcId() == 0xdeadbeef)
             {
-                fprintf( stderr, "A processor with ID `0xdeadbeef` is found, this can happen when you forget to call Init()." );
+                fprintf(stderr, "A processor with ID `0xdeadbeef` is found, this can happen when you forget to call Init().");
             }
 
-            assert( maxProcs == mProcCount );
-            assert( ProcId() < maxProcs );
+            assert(maxProcs == mProcCount);
+            assert(ProcId() < maxProcs);
 #endif
 
             StartTiming();
-            mHistoryRecorder.InitSyncTimer( ProcId() );
+            mHistoryRecorder.InitSyncTimer(ProcId());
             return;
         }
 
@@ -358,28 +358,28 @@ public:
         mProcCount = maxProcs;
 
         mProcessorsData.clear();
-        mProcessorsData.resize( maxProcs );
+        mProcessorsData.resize(maxProcs);
 
-        for ( uint32_t i = 0; i < maxProcs; ++i )
+        for (uint32_t i = 0; i < maxProcs; ++i)
         {
             ProcessorData &data = mProcessorsData[i];
-            data.putRequests.resize( maxProcs );
-            data.getRequests.resize( maxProcs );
-            data.bufferedGetRequests.resize( maxProcs );
-            data.tmpSendRequests.resize( maxProcs );
-            data.tmpSendBufferStacks.resize( maxProcs );
+            data.putRequests.resize(maxProcs);
+            data.getRequests.resize(maxProcs);
+            data.bufferedGetRequests.resize(maxProcs);
+            data.tmpSendRequests.resize(maxProcs);
+            data.tmpSendBufferStacks.resize(maxProcs);
         }
 
-        mThreadBarrier.SetSize( maxProcs );
+        mThreadBarrier.SetSize(maxProcs);
 
         mThreads.clear();
-        mThreads.reserve( maxProcs );
+        mThreads.reserve(maxProcs);
 
-        mHistoryRecorder.ResetResize( maxProcs );
+        mHistoryRecorder.ResetResize(maxProcs);
 
-        for ( uint32_t i = 1; i < mProcCount; ++i )
+        for (uint32_t i = 1; i < mProcCount; ++i)
         {
-            mThreads.emplace_back( std::async( std::launch::async, [this]( uint32_t pid )
+            mThreads.emplace_back(std::async(std::launch::async, [this](uint32_t pid)
             {
                 ProcId() = pid;
 
@@ -387,15 +387,15 @@ public:
                 {
                     mEntry();
                 }
-                catch ( BSPInternal::BspAbort & )
+                catch (BSPInternal::BspAbort &)
                 {
 
                 }
-            }, i ) );
+            }, i));
         }
 
         StartTiming();
-        mHistoryRecorder.InitSyncTimer( 0 );
+        mHistoryRecorder.InitSyncTimer(0);
     }
 
     /**
@@ -415,7 +415,7 @@ public:
 
         SyncPoint();
 
-        if ( ProcId() == 0 )
+        if (ProcId() == 0)
         {
             mThreads.clear();
 
@@ -426,7 +426,7 @@ public:
 
     inline void SyncPoint()
     {
-        mThreadBarrier.Wait( mAbort );
+        mThreadBarrier.Wait(mAbort);
     }
 
     /**
@@ -448,147 +448,147 @@ public:
     {
         CheckAborted();
         uint32_t &pid = ProcId();
-        mHistoryRecorder.RecordPreSync( pid );
+        mHistoryRecorder.RecordPreSync(pid);
 
         ProcessorData &data = mProcessorsData[pid];
         auto &syncBools = data.syncBools;
 
-        CheckSyncBools( pid );
+        CheckSyncBools(pid);
 
         SyncPoint();
-        mHistoryRecorder.RecordProcessorsData( pid, mProcessorsData );
+        mHistoryRecorder.RecordProcessorsData(pid, mProcessorsData);
 
-        bool anySync = CollectSyncBools( pid );
+        bool anySync = CollectSyncBools(pid);
 
-        if ( syncBools.hasTagSizeUpdate )
+        if (syncBools.hasTagSizeUpdate)
         {
             //printf( "%d updates tagsize\n", pid );
-            ProcessTagSizeUpdate( pid );
+            ProcessTagSizeUpdate(pid);
         }
 
-        if ( syncBools.hasGetRequests )
+        if (syncBools.hasGetRequests)
         {
             //printf( "%d buffers get\n", pid );
-            BufferGetRequests( pid );
+            BufferGetRequests(pid);
         }
 
-        if ( syncBools.hasTagSizeUpdate || syncBools.hasGetRequests )
+        if (syncBools.hasTagSizeUpdate || syncBools.hasGetRequests)
         {
             //printf( "%d syncs tagsize or get\n", pid );
             SyncPoint();
         }
 
-        if ( syncBools.hasPopRequests )
+        if (syncBools.hasPopRequests)
         {
             //printf( "%d processes pop\n", pid );
-            ProcessPopRequests( pid );
+            ProcessPopRequests(pid);
         }
 
-        if ( syncBools.hasSendRequests )
+        if (syncBools.hasSendRequests)
         {
             //printf( "%d processes send\n", pid );
-            ProcessSendRequests( pid );
+            ProcessSendRequests(pid);
         }
 
-        if ( syncBools.hasPutRequests )
+        if (syncBools.hasPutRequests)
         {
             //printf( "%d processes put\n", pid );
-            ProcessPutRequests( pid );
+            ProcessPutRequests(pid);
         }
 
-        if ( syncBools.hasGetRequests )
+        if (syncBools.hasGetRequests)
         {
             //printf( "%d processes get\n", pid );
-            ProcessGetRequests( pid );
+            ProcessGetRequests(pid);
         }
 
-        if ( syncBools.hasSendRequests || syncBools.hasPopRequests || syncBools.hasPutRequests || syncBools.hasGetRequests )
+        if (syncBools.hasSendRequests || syncBools.hasPopRequests || syncBools.hasPutRequests || syncBools.hasGetRequests)
         {
             //printf( "%d enters massive sync\n", pid );
             SyncPoint();
         }
 
-        if ( syncBools.hasSendRequests )
+        if (syncBools.hasSendRequests)
         {
             //printf( "%d clears send\n", pid );
-            ClearSendRequests( pid );
+            ClearSendRequests(pid);
         }
 
-        if ( syncBools.hasPutRequests )
+        if (syncBools.hasPutRequests)
         {
             //printf( "%d clears put\n", pid );
             data.putBufferStack.Clear();
         }
 
-        if ( syncBools.hasPushRequests )
+        if (syncBools.hasPushRequests)
         {
             //printf( "%d processes push\n", pid );
-            ProcessPushRequests( pid );
+            ProcessPushRequests(pid);
             SyncPoint();
         }
 
-        ResetBools( pid );
+        ResetBools(pid);
 
-        if ( !anySync )
+        if (!anySync)
         {
             SyncPoint();
         }
 
-        mHistoryRecorder.RecordPostSync( pid );
+        mHistoryRecorder.RecordPostSync(pid);
     }
 
     inline void SyncPutRequests()
     {
         uint32_t &pid = ProcId();
-        mHistoryRecorder.RecordPreSync( pid );
+        mHistoryRecorder.RecordPreSync(pid);
 
         SyncPoint();
 
-        mHistoryRecorder.RecordProcessorsData( pid, mProcessorsData );
+        mHistoryRecorder.RecordProcessorsData(pid, mProcessorsData);
 
-        ProcessPutRequests( pid );
+        ProcessPutRequests(pid);
 
         SyncPoint();
 
         mProcessorsData[pid].putBufferStack.Clear();
 
-        mHistoryRecorder.RecordPostSync( pid );
+        mHistoryRecorder.RecordPostSync(pid);
     }
 
     inline void SyncGetRequests()
     {
         uint32_t &pid = ProcId();
-        mHistoryRecorder.RecordPreSync( pid );
+        mHistoryRecorder.RecordPreSync(pid);
 
         SyncPoint();
 
-        mHistoryRecorder.RecordProcessorsData( pid, mProcessorsData );
+        mHistoryRecorder.RecordProcessorsData(pid, mProcessorsData);
 
-        BufferGetRequests( pid );
+        BufferGetRequests(pid);
 
         SyncPoint();
 
-        ProcessGetRequests( pid );
+        ProcessGetRequests(pid);
 
-        mHistoryRecorder.RecordPostSync( pid );
+        mHistoryRecorder.RecordPostSync(pid);
     }
 
     inline void SyncSendRequests()
     {
         uint32_t &pid = ProcId();
-        mHistoryRecorder.RecordPreSync( pid );
+        mHistoryRecorder.RecordPreSync(pid);
 
         SyncPoint();
 
-        mHistoryRecorder.RecordProcessorsData( pid, mProcessorsData );
+        mHistoryRecorder.RecordProcessorsData(pid, mProcessorsData);
 
-        ProcessSendRequests( pid );
+        ProcessSendRequests(pid);
 
         SyncPoint();
 
-        ClearSendRequests( pid );
+        ClearSendRequests(pid);
 
-        mHistoryRecorder.RecordPostSync( pid );
+        mHistoryRecorder.RecordPostSync(pid);
     }
 
     /**
@@ -604,18 +604,18 @@ public:
      *  * In the next superstep, this register will be available for Put/Get.
      */
 
-    void PushReg( const void *ident, size_t size )
+    void PushReg(const void *ident, size_t size)
     {
         uint32_t &pid = ProcId();
 
 #ifndef BSP_SKIP_CHECKS
-        assert( pid < mProcCount );
-        assert( mProcessorsData.size() > pid );
+        assert(pid < mProcCount);
+        assert(mProcessorsData.size() > pid);
 #endif
 
         BSPInternal::PushRequest &pushRequest = mProcessorsData[pid].pushRequests.InitRequest();
         pushRequest.pushRegister = ident;
-        pushRequest.registerInfo.size = ( uint32_t )size;
+        pushRequest.registerInfo.size = (uint32_t)size;
         pushRequest.registerInfo.registerCount = mProcessorsData[pid].registerCount++;
     }
 
@@ -631,13 +631,13 @@ public:
      *  * In the next superstep, this register will be unavailable for Put/Get.
      */
 
-    void PopReg( const void *ident )
+    void PopReg(const void *ident)
     {
         uint32_t &pid = ProcId();
 
 #ifndef BSP_SKIP_CHECKS
-        assert( pid < mProcCount );
-        assert( mProcessorsData.size() > pid );
+        assert(pid < mProcCount);
+        assert(mProcessorsData.size() > pid);
 #endif
 
         BSPInternal::PopRequest &popRequest = mProcessorsData[pid].popRequests.InitRequest();
@@ -662,37 +662,37 @@ public:
      * * A Sync has happened between PushReg and this call.
      */
 
-    BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
+    BSP_FORCEINLINE void Put(uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes)
     {
         uint32_t &tpid = ProcId();
-        mHistoryRecorder.InitCommunication( tpid );
+        mHistoryRecorder.InitCommunication(tpid);
         //mHasPutRequests[mProcessorsData[tpid].syncBoolIndex] = true;
 
 #ifndef BSP_SKIP_CHECKS
-        assert( tpid < mProcCount );
-        assert( pid < mProcCount );
-        assert( src && dst );
+        assert(tpid < mProcCount);
+        assert(pid < mProcCount);
+        assert(src && dst);
 #endif
 
-        const char *srcBuff = reinterpret_cast<const char *>( src );
-        const uint32_t globalId = mProcessorsData[tpid].threadRegisters.LocalToGlobal( dst );
+        const char *srcBuff = reinterpret_cast<const char *>(src);
+        const uint32_t globalId = mProcessorsData[tpid].threadRegisters.LocalToGlobal(dst);
 
 #ifndef BSP_SKIP_CHECKS
-        assert( mProcessorsData[pid].threadRegisters.GetSize() > globalId );
+        assert(mProcessorsData[pid].threadRegisters.GetSize() > globalId);
 
         /*mThreadRegisterLocation[pid][globalId]*/
         //assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
-        ptrdiff_t bufferLocation = mProcessorsData[tpid].putBufferStack.Alloc( nbytes, srcBuff );
+        ptrdiff_t bufferLocation = mProcessorsData[tpid].putBufferStack.Alloc(nbytes, srcBuff);
 
         auto &putRequest = mProcessorsData[tpid].putRequests[pid].InitRequest();
         putRequest.bufferLocation = bufferLocation;
         putRequest.globalId = globalId;
         putRequest.offset = offset;
-        putRequest.size = ( uint32_t )nbytes;
+        putRequest.size = (uint32_t)nbytes;
 
-        mHistoryRecorder.FinishCommunication( tpid );
+        mHistoryRecorder.FinishCommunication(tpid);
     }
 
     /**
@@ -713,21 +713,21 @@ public:
      * * A Sync has happened between PushReg and this call.
      */
 
-    inline void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
+    inline void Get(uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes)
     {
         uint32_t &tpid = ProcId();
 
 #ifndef BSP_SKIP_CHECKS
-        assert( tpid < mProcCount );
-        assert( pid < mProcCount );
-        assert( src && dst );
+        assert(tpid < mProcCount);
+        assert(pid < mProcCount);
+        assert(src && dst);
 #endif
 
         const uint32_t globalId = mProcessorsData[tpid].threadRegisters.LocalToGlobal(
-                                      src ); //mRegisters[tpid][src].registerCount;
+                                      src);  //mRegisters[tpid][src].registerCount;
 
 #ifndef BSP_SKIP_CHECKS
-        assert( mProcessorsData[pid].threadRegisters.GetSize() > globalId );
+        assert(mProcessorsData[pid].threadRegisters.GetSize() > globalId);
         //assert( mProcessorsData[pid].registers[GlobalToLocal( pid, globalId )].size >= offset + nbytes );
 #endif
 
@@ -737,7 +737,7 @@ public:
         getRequest.destination = dst;
         getRequest.globalId = globalId;
         getRequest.offset = offset;
-        getRequest.size = ( uint32_t )nbytes;
+        getRequest.size = (uint32_t)nbytes;
     }
 
     /**
@@ -753,27 +753,27 @@ public:
      * * Tagsize is equal on all threads.
      */
 
-    inline void Send( uint32_t pid, const void *tag, const void *payload, const size_t size )
+    inline void Send(uint32_t pid, const void *tag, const void *payload, const size_t size)
     {
         uint32_t &tpid = ProcId();
 
 #ifndef BSP_SKIP_CHECKS
-        assert( pid < mProcCount );
-        assert( tpid < mProcCount );
+        assert(pid < mProcCount);
+        assert(tpid < mProcCount);
 #endif // !BSP_SKIP_CHECKS
-        assert( mProcessorsData[tpid].newTagSize == mTagSize );
+        assert(mProcessorsData[tpid].newTagSize == mTagSize);
 
-        const char *srcBuff = reinterpret_cast<const char *>( payload );
-        const char *tagBuff = reinterpret_cast<const char *>( tag );
+        const char *srcBuff = reinterpret_cast<const char *>(payload);
+        const char *tagBuff = reinterpret_cast<const char *>(tag);
 
         BSPInternal::StackAllocator &tmpSendBuffer = mProcessorsData[tpid].tmpSendBufferStacks[pid];
 
-        BSPInternal::StackAllocator::StackLocation bufferLocation = tmpSendBuffer.Alloc( size, srcBuff );
-        BSPInternal::StackAllocator::StackLocation tagLocation = tmpSendBuffer.Alloc( mTagSize, tagBuff );
+        BSPInternal::StackAllocator::StackLocation bufferLocation = tmpSendBuffer.Alloc(size, srcBuff);
+        BSPInternal::StackAllocator::StackLocation tagLocation = tmpSendBuffer.Alloc(mTagSize, tagBuff);
 
         BSPInternal::SendRequest &sendRequest = mProcessorsData[tpid].tmpSendRequests[pid].InitRequest();
         sendRequest.bufferLocation = bufferLocation;
-        sendRequest.bufferSize = ( uint32_t )size;
+        sendRequest.bufferSize = (uint32_t)size;
         sendRequest.tagLocation = tagLocation;
         sendRequest.tagSize = mTagSize;
     }
@@ -795,22 +795,22 @@ public:
      * @post The queue cursor for the send queue is moved to the next message.
      */
 
-    inline void Move( void *payload, size_t max_copy_size_in )
+    inline void Move(void *payload, size_t max_copy_size_in)
     {
         uint32_t &pid = ProcId();
         ProcessorData &data = mProcessorsData[pid];
 
-        if ( data.sendRequests.Empty() || data.sendReceivedIndex >= data.sendRequests.GetSize() )
+        if (data.sendRequests.Empty() || data.sendReceivedIndex >= data.sendRequests.GetSize())
         {
             return;
         }
 
-        assert( payload );
+        assert(payload);
 
         BSPInternal::SendRequest &request = data.sendRequests[data.sendReceivedIndex++];
 
-        const size_t copySize = std::min( ( uint32_t )max_copy_size_in, request.bufferSize );
-        data.sendBufferStack.Extract( request.bufferLocation, copySize, ( char * )payload );
+        const size_t copySize = std::min((uint32_t)max_copy_size_in, request.bufferSize);
+        data.sendBufferStack.Extract(request.bufferLocation, copySize, (char *)payload);
     }
 
     /**
@@ -823,11 +823,11 @@ public:
      * * size != nullptr.
      */
 
-    inline void SetTagsize( size_t *size )
+    inline void SetTagsize(size_t *size)
     {
         uint32_t &pid = ProcId();
-        assert( size );
-        const uint32_t newSize = ( uint32_t ) * size;
+        assert(size);
+        const uint32_t newSize = (uint32_t) * size;
         *size = mTagSize;
         mProcessorsData[pid].newTagSize = newSize;
     }
@@ -849,27 +849,27 @@ public:
      * @post The queue is in the same state as before.
      */
 
-    inline void GetTag( size_t *status, void *tag )
+    inline void GetTag(size_t *status, void *tag)
     {
         uint32_t &pid = ProcId();
-        *status = ( size_t ) - 1;
+        *status = (size_t) - 1;
         ProcessorData &data = mProcessorsData[pid];
 
         size_t index = data.sendReceivedIndex;
         const BSPInternal::RequestVector< BSPInternal::SendRequest > &sendQueue = data.sendRequests;
 
-        if ( !sendQueue.Empty() && index < sendQueue.GetSize() )
+        if (!sendQueue.Empty() && index < sendQueue.GetSize())
         {
             const BSPInternal::SendRequest &sendRequest = sendQueue[index];
             *status = sendRequest.bufferSize;
 
-            char *tagBuff = reinterpret_cast<char *>( tag );
+            char *tagBuff = reinterpret_cast<char *>(tag);
 
 #ifndef BSP_SKIP_CHECKS
-            assert( sendQueue[index].tagSize == mTagSize );
+            assert(sendQueue[index].tagSize == mTagSize);
 #endif // !BSP_SKIP_CHECKS
 
-            data.sendBufferStack.Extract( sendRequest.tagLocation, sendRequest.tagSize, tagBuff );
+            data.sendBufferStack.Extract(sendRequest.tagLocation, sendRequest.tagSize, tagBuff);
         }
     }
 
@@ -897,42 +897,42 @@ public:
     }
 
     BSP()
-        : mThreadBarrier( 0 ),
-          mProcCount( 0 ),
-          mTagSize( 0 ),
-          mEnded( true ),
-          mAbort( false )
+        : mThreadBarrier(0),
+          mProcCount(0),
+          mTagSize(0),
+          mEnded(true),
+          mAbort(false)
     {
     }
 
     void MarkSuperstep()
     {
-        mHistoryRecorder.MarkSuperstep( ProcId() );
+        mHistoryRecorder.MarkSuperstep(ProcId());
     }
 
-    void MarkSuperstep( uint32_t superstep )
+    void MarkSuperstep(uint32_t superstep)
     {
-        mHistoryRecorder.MarkSuperstep( ProcId(), superstep );
+        mHistoryRecorder.MarkSuperstep(ProcId(), superstep);
     }
 
     void PauseRecording()
     {
-        mHistoryRecorder.PauseRecording( ProcId() );
+        mHistoryRecorder.PauseRecording(ProcId());
     }
 
     void ResumeRecording()
     {
-        mHistoryRecorder.ResumeRecording( ProcId() );
+        mHistoryRecorder.ResumeRecording(ProcId());
     }
 
     void InitCommunication()
     {
-        mHistoryRecorder.ManualInitCommunicaion( ProcId() );
+        mHistoryRecorder.ManualInitCommunicaion(ProcId());
     }
 
     void FinishCommunication()
     {
-        mHistoryRecorder.ManualFinishCommunicaion( ProcId() );
+        mHistoryRecorder.ManualFinishCommunicaion(ProcId());
     }
 
 private:
@@ -954,35 +954,35 @@ private:
 
     inline void StartTiming()
     {
-        assert( ProcId() != 0xdeadbeef );
+        assert(ProcId() != 0xdeadbeef);
         SyncPoint();
         mProcessorsData[ProcId()].startTimer.Tic();
     }
 
     inline void CheckAborted()
     {
-        if ( mAbort )
+        if (mAbort)
         {
             mThreadBarrier.NotifyAbort();
-            throw BSPInternal::BspAbort( "Aborted" );
+            throw BSPInternal::BspAbort("Aborted");
         }
     }
 
-    inline void CheckSyncBools( uint32_t pid )
+    inline void CheckSyncBools(uint32_t pid)
     {
-        CheckHasGetRequests( pid );
-        CheckHasPopRequests( pid );
-        CheckHasPushRequests( pid );
-        CheckHasPutRequests( pid );
-        CheckHasSendRequests( pid );
-        CheckHasTagSizeUpdate( pid );
+        CheckHasGetRequests(pid);
+        CheckHasPopRequests(pid);
+        CheckHasPushRequests(pid);
+        CheckHasPutRequests(pid);
+        CheckHasSendRequests(pid);
+        CheckHasTagSizeUpdate(pid);
     }
 
-    inline bool CollectSyncBools( uint32_t pid )
+    inline bool CollectSyncBools(uint32_t pid)
     {
         auto &syncBools = mProcessorsData[pid].syncBools;
 
-        for ( uint32_t owner = 0; owner < mProcCount; ++owner )
+        for (uint32_t owner = 0; owner < mProcCount; ++owner)
         {
             syncBools.hasGetRequests |= mProcessorsData[owner].syncBools.hasGetRequests;
             syncBools.hasPopRequests |= mProcessorsData[owner].syncBools.hasPopRequests;
@@ -996,7 +996,7 @@ private:
                syncBools.hasSendRequests || syncBools.hasTagSizeUpdate;
     }
 
-    inline void ResetBools( uint32_t pid )
+    inline void ResetBools(uint32_t pid)
     {
         auto &syncBools = mProcessorsData[pid].syncBools;
         syncBools.hasGetRequests = false;
@@ -1007,86 +1007,86 @@ private:
         syncBools.hasTagSizeUpdate = false;
     }
 
-    inline void CheckHasPushRequests( size_t pid )
+    inline void CheckHasPushRequests(size_t pid)
     {
         ProcessorData &data = mProcessorsData[pid];
         data.syncBools.hasPushRequests = !data.pushRequests.Empty();
     }
 
-    inline void ProcessPushRequests( size_t pid )
+    inline void ProcessPushRequests(size_t pid)
     {
         ProcessorData &data = mProcessorsData[pid];
 
-        if ( !data.pushRequests.Empty() )
+        if (!data.pushRequests.Empty())
         {
-            for ( auto pushRequest = data.pushRequests.Begin(), end = data.pushRequests.End(); pushRequest != end; ++pushRequest )
+            for (auto pushRequest = data.pushRequests.Begin(), end = data.pushRequests.End(); pushRequest != end; ++pushRequest)
             {
-                data.threadRegisters.Insert( pushRequest->pushRegister, pushRequest->registerInfo );
+                data.threadRegisters.Insert(pushRequest->pushRegister, pushRequest->registerInfo);
             }
 
             data.pushRequests.Clear();
         }
     }
 
-    inline void CheckHasPutRequests( uint32_t pid )
+    inline void CheckHasPutRequests(uint32_t pid)
     {
         volatile bool &hasPutRequests = mProcessorsData[pid].syncBools.hasPutRequests;
         hasPutRequests = false;
 
-        for ( size_t target = 0; !hasPutRequests && target < mProcCount; ++target )
+        for (size_t target = 0; !hasPutRequests && target < mProcCount; ++target)
         {
             hasPutRequests = !mProcessorsData[pid].putRequests[target].Empty();
         }
     }
 
-    inline void ProcessPutRequests( uint32_t pid )
+    inline void ProcessPutRequests(uint32_t pid)
     {
-        BSPUtil::SplitFor( 0u, mProcCount, pid, [this, pid]( uint32_t owner )
+        BSPUtil::SplitFor(0u, mProcCount, pid, [this, pid](uint32_t owner)
         {
             BSPInternal::RequestVector< BSPInternal::PutRequest > &putQueue = mProcessorsData[owner].putRequests[pid];
 
-            if ( !putQueue.Empty() )
+            if (!putQueue.Empty())
             {
-                for ( auto putRequest = putQueue.RBegin(), end = putQueue.REnd(); putRequest != end; ++putRequest )
+                for (auto putRequest = putQueue.RBegin(), end = putQueue.REnd(); putRequest != end; ++putRequest)
                 {
-                    char *dstBuff = static_cast<char *>( const_cast<void *>( mProcessorsData[pid].threadRegisters.GlobalToLocal(
-                                                                                 putRequest->globalId ) ) ) + putRequest->offset;
+                    char *dstBuff = static_cast<char *>(const_cast<void *>(mProcessorsData[pid].threadRegisters.GlobalToLocal(
+                                                                               putRequest->globalId))) + putRequest->offset;
 
-                    mProcessorsData[owner].putBufferStack.Extract( putRequest->bufferLocation, putRequest->size, dstBuff );
+                    mProcessorsData[owner].putBufferStack.Extract(putRequest->bufferLocation, putRequest->size, dstBuff);
                 }
 
                 putQueue.Clear();
             }
-        } );
+        });
     }
 
-    inline void CheckHasGetRequests( uint32_t pid )
+    inline void CheckHasGetRequests(uint32_t pid)
     {
         volatile bool &hasGetRequests = mProcessorsData[pid].syncBools.hasGetRequests;
         hasGetRequests = false;
 
-        for ( size_t target = 0; !hasGetRequests && target < mProcCount; ++target )
+        for (size_t target = 0; !hasGetRequests && target < mProcCount; ++target)
         {
             hasGetRequests = !mProcessorsData[pid].getRequests[target].Empty();
         }
     }
 
-    inline void BufferGetRequests( uint32_t pid )
+    inline void BufferGetRequests(uint32_t pid)
     {
         ProcessorData &data = mProcessorsData[pid];
         data.getBufferStack.Clear();
 
-        BSPUtil::SplitFor( 0u, mProcCount, pid, [this, pid, &data]( uint32_t owner )
+        BSPUtil::SplitFor(0u, mProcCount, pid, [this, pid, &data](uint32_t owner)
         {
             BSPInternal::RequestVector< BSPInternal::GetRequest > &getQueue = mProcessorsData[owner].getRequests[pid];
 
-            for ( auto request = getQueue.RBegin(), end = getQueue.REnd(); request != end; ++request )
+            for (auto request = getQueue.RBegin(), end = getQueue.REnd(); request != end; ++request)
             {
                 //const char *srcBuff = reinterpret_cast<const char *>( request->source );
-                const char *srcBuff = reinterpret_cast<const char *>( mProcessorsData[pid].threadRegisters.GlobalToLocal(
-                                                                          request->globalId ) ) + request->offset;
+                const char *srcBuff = reinterpret_cast<const char *>(mProcessorsData[pid].threadRegisters.GlobalToLocal(
+                                                                         request->globalId)) + request->offset;
 
-                BSPInternal::StackAllocator::StackLocation bufferLocation = data.getBufferStack.Alloc( request->size, srcBuff );
+                BSPInternal::StackAllocator::StackLocation bufferLocation = data.getBufferStack.Alloc(request->size, srcBuff);
 
                 BSPInternal::BufferedGetRequest &bufferedGetRequest = mProcessorsData[pid].bufferedGetRequests[owner].InitRequest();
                 bufferedGetRequest.bufferLocation = bufferLocation;
@@ -1095,36 +1095,36 @@ private:
             }
 
             getQueue.Clear();
-        } );
+        });
     }
 
-    inline void ProcessGetRequests( uint32_t pid )
+    inline void ProcessGetRequests(uint32_t pid)
     {
-        BSPUtil::SplitFor( 0u, mProcCount, pid, [this, pid]( uint32_t owner )
+        BSPUtil::SplitFor(0u, mProcCount, pid, [this, pid](uint32_t owner)
         {
             BSPInternal::RequestVector< BSPInternal::BufferedGetRequest > &getQueue =
                 mProcessorsData[owner].bufferedGetRequests[pid];
 
-            if ( !getQueue.Empty() )
+            if (!getQueue.Empty())
             {
-                for ( auto getRequest = getQueue.RBegin(), end = getQueue.REnd(); getRequest != end; ++getRequest )
+                for (auto getRequest = getQueue.RBegin(), end = getQueue.REnd(); getRequest != end; ++getRequest)
                 {
-                    char *dstBuff = static_cast< char * >( const_cast< void * >( getRequest->destination ) );
+                    char *dstBuff = static_cast< char * >(const_cast< void * >(getRequest->destination));
 
-                    mProcessorsData[owner].getBufferStack.Extract( getRequest->bufferLocation, getRequest->size, dstBuff );
+                    mProcessorsData[owner].getBufferStack.Extract(getRequest->bufferLocation, getRequest->size, dstBuff);
                 }
 
                 getQueue.Clear();
             }
-        } );
+        });
     }
 
-    inline void CheckHasSendRequests( uint32_t pid )
+    inline void CheckHasSendRequests(uint32_t pid)
     {
         volatile bool &hasSendRequests = mProcessorsData[pid].syncBools.hasSendRequests;
         hasSendRequests = false;
 
-        for ( size_t target = 0; !hasSendRequests && target < mProcCount; ++target )
+        for (size_t target = 0; !hasSendRequests && target < mProcCount; ++target)
         {
             hasSendRequests = !mProcessorsData[pid].tmpSendBufferStacks[target].Empty();
         }
@@ -1132,7 +1132,7 @@ private:
 
 
 
-    inline void ProcessSendRequests( uint32_t pid )
+    inline void ProcessSendRequests(uint32_t pid)
     {
         ProcessorData &data = mProcessorsData[pid];
 
@@ -1143,62 +1143,62 @@ private:
         sendBuffer.Clear();
         data.sendReceivedIndex = 0;
 
-        BSPUtil::SplitFor( 0u, mProcCount, pid, [this, pid, &sendBuffer, &sendQueue, &data, &offset]( uint32_t owner )
+        BSPUtil::SplitFor(0u, mProcCount, pid, [this, pid, &sendBuffer, &sendQueue, &data, &offset](uint32_t owner)
         {
             BSPInternal::RequestVector< BSPInternal::SendRequest > &tmpQueue = mProcessorsData[owner].tmpSendRequests[pid];
             BSPInternal::StackAllocator &tmpBuffer = mProcessorsData[owner].tmpSendBufferStacks[pid];
 
-            for ( auto request = tmpQueue.Begin(), end = tmpQueue.End(); request != end; ++request )
+            for (auto request = tmpQueue.Begin(), end = tmpQueue.End(); request != end; ++request)
             {
                 request->bufferLocation += offset;
                 request->tagLocation += offset;
             }
 
             offset += tmpBuffer.Size();
-            sendBuffer.Merge( tmpBuffer );
-            sendQueue.Append( tmpQueue.Begin(), tmpQueue.End() );
-        } );
+            sendBuffer.Merge(tmpBuffer);
+            sendQueue.Append(tmpQueue.Begin(), tmpQueue.End());
+        });
     }
 
-    inline void ClearSendRequests( uint32_t pid )
+    inline void ClearSendRequests(uint32_t pid)
     {
-        for ( uint32_t target = 0; target < mProcCount; ++target )
+        for (uint32_t target = 0; target < mProcCount; ++target)
         {
             mProcessorsData[pid].tmpSendBufferStacks[target].Clear();
             mProcessorsData[pid].tmpSendRequests[target].Clear();
         }
     }
 
-    inline void CheckHasPopRequests( size_t pid )
+    inline void CheckHasPopRequests(size_t pid)
     {
         ProcessorData &data = mProcessorsData[pid];
         data.syncBools.hasPopRequests = !data.popRequests.Empty();
     }
 
-    inline void ProcessPopRequests( size_t pid )
+    inline void ProcessPopRequests(size_t pid)
     {
         ProcessorData &data = mProcessorsData[pid];
 
-        if ( !data.popRequests.Empty() )
+        if (!data.popRequests.Empty())
         {
-            for ( auto popRequest = data.popRequests.Begin(), end = data.popRequests.End(); popRequest != end; ++popRequest )
+            for (auto popRequest = data.popRequests.Begin(), end = data.popRequests.End(); popRequest != end; ++popRequest)
             {
-                data.threadRegisters.Erase( popRequest->popRegister );
+                data.threadRegisters.Erase(popRequest->popRegister);
             }
 
             data.popRequests.Clear();
         }
     }
 
-    inline void CheckHasTagSizeUpdate( size_t pid )
+    inline void CheckHasTagSizeUpdate(size_t pid)
     {
         ProcessorData &data = mProcessorsData[pid];
         data.syncBools.hasTagSizeUpdate = data.newTagSize != mTagSize;
     }
 
-    inline void ProcessTagSizeUpdate( size_t pid )
+    inline void ProcessTagSizeUpdate(size_t pid)
     {
-        if ( pid == 0 )
+        if (pid == 0)
         {
             mTagSize = mProcessorsData[0].newTagSize;
         }
