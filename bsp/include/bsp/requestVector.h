@@ -90,11 +90,12 @@ namespace BSPInternal
             return mCursor;
         }
 
-        void Reserve( size_t size )
+        void Reserve(size_t size)
         {
-            if ( size > mSize - mCursor )
+            if (size > mSize - mCursor)
             {
-                mRequests.resize( mCursor + size );
+                mRequests.resize(mCursor + size);
+                mSize = mRequests.size();
             }
         }
 
