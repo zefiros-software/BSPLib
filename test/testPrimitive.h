@@ -35,24 +35,24 @@ void PutPrimitiveTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sTarget = ( s + tOffset + nProc ) % nProc;
-    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+    uint32_t sTarget = (s + tOffset + nProc) % nProc;
+    uint32_t sSource = (s - tOffset + nProc) % nProc;
 
-    tPrimitive primitive = ( tPrimitive )s + 1;
+    tPrimitive primitive = (tPrimitive)s + 1;
 
     tPrimitive result = 0;
 
-    BSPLib::Push( result );
+    BSPLib::Push(result);
 
     BSPLib::Sync();
 
-    BSPLib::Put( sTarget, primitive, result );
+    BSPLib::Put(sTarget, primitive, result);
 
-    BSPLib::Pop( result );
+    BSPLib::Pop(result);
 
     BSPLib::Sync();
 
-    EXPECT_EQ( result, sSource + 1 );
+    EXPECT_EQ(result, sSource + 1);
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -61,22 +61,22 @@ void PutPrimitiveFPTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sTarget = ( s + tOffset + nProc ) % nProc;
-    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+    uint32_t sTarget = (s + tOffset + nProc) % nProc;
+    uint32_t sSource = (s - tOffset + nProc) % nProc;
 
-    tPrimitive primitive = ( tPrimitive )s + 1;
+    tPrimitive primitive = (tPrimitive)s + 1;
 
     tPrimitive result = 0;
 
-    BSPLib::Push( result );
+    BSPLib::Push(result);
 
     BSPLib::Sync();
 
-    BSPLib::Put( sTarget, primitive, result );
+    BSPLib::Put(sTarget, primitive, result);
 
     BSPLib::Sync();
 
-    ASSERT_DOUBLE_EQ( sSource + 1, result );
+    ASSERT_DOUBLE_EQ(sSource + 1, result);
 }
 
 template< int32_t tOffset >
@@ -85,37 +85,37 @@ void PutPrimitiveStringTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sTarget = ( s + tOffset + nProc ) % nProc;
-    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+    uint32_t sTarget = (s + tOffset + nProc) % nProc;
+    uint32_t sSource = (s - tOffset + nProc) % nProc;
 
-    std::string primitive = std::to_string( s + 1 );
+    std::string primitive = std::to_string(s + 1);
 
-    std::string result = std::to_string( 0 );
+    std::string result = std::to_string(0);
 
     size_t resultSize = result.size();
 
-    BSPLib::Push( resultSize );
+    BSPLib::Push(resultSize);
 
     BSPLib::Sync();
 
     resultSize = primitive.size();
-    BSPLib::Put( sTarget, resultSize );
+    BSPLib::Put(sTarget, resultSize);
 
     BSPLib::Sync();
 
-    result.resize( resultSize );
+    result.resize(resultSize);
 
-    BSPLib::Push( result );
-
-    BSPLib::Sync();
-
-    BSPLib::Put( sTarget, primitive, result );
+    BSPLib::Push(result);
 
     BSPLib::Sync();
 
-    std::string expected = std::to_string( sSource + 1 );
+    BSPLib::Put(sTarget, primitive, result);
 
-    EXPECT_EQ( expected, result );
+    BSPLib::Sync();
+
+    std::string expected = std::to_string(sSource + 1);
+
+    EXPECT_EQ(expected, result);
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -124,20 +124,20 @@ void PutSamePrimitiveTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sTarget = ( s + tOffset + nProc ) % nProc;
-    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+    uint32_t sTarget = (s + tOffset + nProc) % nProc;
+    uint32_t sSource = (s - tOffset + nProc) % nProc;
 
-    tPrimitive primitive = ( tPrimitive )s + 1;
+    tPrimitive primitive = (tPrimitive)s + 1;
 
-    BSPLib::Push( primitive );
-
-    BSPLib::Sync();
-
-    BSPLib::Put( sTarget, primitive );
+    BSPLib::Push(primitive);
 
     BSPLib::Sync();
 
-    EXPECT_EQ( primitive, sSource + 1 );
+    BSPLib::Put(sTarget, primitive);
+
+    BSPLib::Sync();
+
+    EXPECT_EQ(primitive, sSource + 1);
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -146,20 +146,20 @@ void PutSamePrimitiveFPTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sTarget = ( s + tOffset + nProc ) % nProc;
-    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+    uint32_t sTarget = (s + tOffset + nProc) % nProc;
+    uint32_t sSource = (s - tOffset + nProc) % nProc;
 
-    tPrimitive primitive = ( tPrimitive )s + 1;
+    tPrimitive primitive = (tPrimitive)s + 1;
 
-    BSPLib::Push( primitive );
-
-    BSPLib::Sync();
-
-    BSPLib::Put( sTarget, primitive );
+    BSPLib::Push(primitive);
 
     BSPLib::Sync();
 
-    ASSERT_DOUBLE_EQ( sSource + 1, primitive );
+    BSPLib::Put(sTarget, primitive);
+
+    BSPLib::Sync();
+
+    ASSERT_DOUBLE_EQ(sSource + 1, primitive);
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -168,23 +168,23 @@ void GetPrimitiveTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSource = (s - tOffset + nProc) % nProc;
 
-    tPrimitive primitive = ( tPrimitive )s + 1;
+    tPrimitive primitive = (tPrimitive)s + 1;
 
     tPrimitive result = 0;
 
-    BSPLib::Push( primitive );
+    BSPLib::Push(primitive);
 
     BSPLib::Sync();
 
-    BSPLib::Get( sSource, primitive, result );
+    BSPLib::Get(sSource, primitive, result);
 
-    BSPLib::Pop( primitive );
+    BSPLib::Pop(primitive);
 
     BSPLib::Sync();
 
-    EXPECT_EQ( result, sSource + 1 );
+    EXPECT_EQ(result, sSource + 1);
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -193,21 +193,21 @@ void GetPrimitiveFPTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSource = (s - tOffset + nProc) % nProc;
 
-    tPrimitive primitive = ( tPrimitive )s + 1;
+    tPrimitive primitive = (tPrimitive)s + 1;
 
     tPrimitive result = 0;
 
-    BSPLib::Push( primitive );
+    BSPLib::Push(primitive);
 
     BSPLib::Sync();
 
-    BSPLib::Get( sSource, primitive, result );
+    BSPLib::Get(sSource, primitive, result);
 
     BSPLib::Sync();
 
-    ASSERT_DOUBLE_EQ( sSource + 1, result );
+    ASSERT_DOUBLE_EQ(sSource + 1, result);
 }
 
 template< int32_t tOffset >
@@ -216,34 +216,34 @@ void GetPrimitiveStringTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSource = (s - tOffset + nProc) % nProc;
 
-    std::string primitive = std::to_string( s + 1 );
+    std::string primitive = std::to_string(s + 1);
 
-    std::string result = std::to_string( 0 );
+    std::string result = std::to_string(0);
 
     size_t primitiveSize = primitive.size();
 
-    BSPLib::Push( primitiveSize );
-    BSPLib::Push( primitive );
+    BSPLib::Push(primitiveSize);
+    BSPLib::Push(primitive);
 
     BSPLib::Sync();
 
-    BSPLib::Get( sSource, primitiveSize );
+    BSPLib::Get(sSource, primitiveSize);
 
     BSPLib::Sync();
 
-    result.resize( primitiveSize );
+    result.resize(primitiveSize);
 
-    BSPLib::Get( sSource, primitive, result );
-    BSPLib::Pop( primitive );
-    BSPLib::Pop( primitiveSize );
+    BSPLib::Get(sSource, primitive, result);
+    BSPLib::Pop(primitive);
+    BSPLib::Pop(primitiveSize);
 
     BSPLib::Sync();
 
-    std::string expected = std::to_string( sSource + 1 );
+    std::string expected = std::to_string(sSource + 1);
 
-    EXPECT_EQ( expected, result );
+    EXPECT_EQ(expected, result);
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -252,19 +252,19 @@ void GetSamePrimitiveTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSource = (s - tOffset + nProc) % nProc;
 
-    tPrimitive primitive = ( tPrimitive )s + 1;
+    tPrimitive primitive = (tPrimitive)s + 1;
 
-    BSPLib::Push( primitive );
-
-    BSPLib::Sync();
-
-    BSPLib::Get( sSource, primitive );
+    BSPLib::Push(primitive);
 
     BSPLib::Sync();
 
-    EXPECT_EQ( primitive, sSource + 1 );
+    BSPLib::Get(sSource, primitive);
+
+    BSPLib::Sync();
+
+    EXPECT_EQ(primitive, sSource + 1);
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -273,19 +273,19 @@ void GetSamePrimitiveFPTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSource = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSource = (s - tOffset + nProc) % nProc;
 
-    tPrimitive primitive = ( tPrimitive )s + 1;
+    tPrimitive primitive = (tPrimitive)s + 1;
 
-    BSPLib::Push( primitive );
-
-    BSPLib::Sync();
-
-    BSPLib::Get( sSource, primitive );
+    BSPLib::Push(primitive);
 
     BSPLib::Sync();
 
-    ASSERT_DOUBLE_EQ( sSource + 1, primitive );
+    BSPLib::Get(sSource, primitive);
+
+    BSPLib::Sync();
+
+    ASSERT_DOUBLE_EQ(sSource + 1, primitive);
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -294,21 +294,21 @@ void SendPrimitiveTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
-    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSend = (s + tOffset + nProc) % nProc;
+    uint32_t sReceive = (s - tOffset + nProc) % nProc;
 
-    tPrimitive message = ( tPrimitive )s + 1;
-    tPrimitive mailbox = ( tPrimitive )s;
+    tPrimitive message = (tPrimitive)s + 1;
+    tPrimitive mailbox = (tPrimitive)s;
 
-    tPrimitive expectedMail = ( tPrimitive )sReceive + 1;
+    tPrimitive expectedMail = (tPrimitive)sReceive + 1;
 
-    BSPLib::Send( sSend, message );
+    BSPLib::Send(sSend, message);
 
     BSPLib::Sync();
 
-    BSPLib::Move( mailbox );
+    BSPLib::Move(mailbox);
 
-    EXPECT_EQ( expectedMail, mailbox );
+    EXPECT_EQ(expectedMail, mailbox);
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -317,13 +317,13 @@ void SendPrimitiveOverloadTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
-    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSend = (s + tOffset + nProc) % nProc;
+    uint32_t sReceive = (s - tOffset + nProc) % nProc;
 
-    tPrimitive message = ( tPrimitive )s + 1;
-    tPrimitive mailbox = ( tPrimitive )s;
+    tPrimitive message = (tPrimitive)s + 1;
+    tPrimitive mailbox = (tPrimitive)s;
 
-    tPrimitive expectedMail = ( tPrimitive )sReceive + 1;
+    tPrimitive expectedMail = (tPrimitive)sReceive + 1;
 
     uint32_t tag = s;
     size_t status = 0;
@@ -332,15 +332,15 @@ void SendPrimitiveOverloadTest()
 
     BSPLib::Sync();
 
-    BSPLib::Send( sSend, &tag, message );
+    BSPLib::Send(sSend, &tag, message);
 
     BSPLib::Sync();
 
-    BSPLib::GetTagPtr( status, &tag );
-    BSPLib::Move( mailbox );
+    BSPLib::GetTagPtr(status, &tag);
+    BSPLib::Move(mailbox);
 
-    EXPECT_EQ( sReceive, tag );
-    EXPECT_EQ( expectedMail, mailbox );
+    EXPECT_EQ(sReceive, tag);
+    EXPECT_EQ(expectedMail, mailbox);
 }
 
 template< int32_t tOffset, typename tPrimitive >
@@ -349,21 +349,21 @@ void SendPrimitiveFPTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
-    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSend = (s + tOffset + nProc) % nProc;
+    uint32_t sReceive = (s - tOffset + nProc) % nProc;
 
-    tPrimitive message = ( tPrimitive )s + 1;
-    tPrimitive mailbox = ( tPrimitive )s;
+    tPrimitive message = (tPrimitive)s + 1;
+    tPrimitive mailbox = (tPrimitive)s;
 
-    tPrimitive expectedMail = ( tPrimitive )sReceive + 1;
+    tPrimitive expectedMail = (tPrimitive)sReceive + 1;
 
-    BSPLib::Send( sSend, message );
+    BSPLib::Send(sSend, message);
 
     BSPLib::Sync();
 
-    BSPLib::Move( mailbox );
+    BSPLib::Move(mailbox);
 
-    EXPECT_DOUBLE_EQ( expectedMail, mailbox );
+    EXPECT_DOUBLE_EQ(expectedMail, mailbox);
 }
 
 template< int32_t tOffset >
@@ -372,32 +372,32 @@ void SendPrimitiveStringTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
-    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSend = (s + tOffset + nProc) % nProc;
+    uint32_t sReceive = (s - tOffset + nProc) % nProc;
 
-    std::string message = std::to_string( s + 1 );
-    std::string mailbox = std::to_string( s );
+    std::string message = std::to_string(s + 1);
+    std::string mailbox = std::to_string(s);
 
-    std::string expectedMail = std::to_string( sReceive + 1 );
+    std::string expectedMail = std::to_string(sReceive + 1);
     size_t size = message.size();
 
     BSPLib::SetTagsize< size_t >();
 
     BSPLib::Sync();
 
-    BSPLib::Send( sSend, size, message );
+    BSPLib::Send(sSend, size, message);
 
     BSPLib::Sync();
 
     size_t status;
 
-    BSPLib::GetTag( status, size );
+    BSPLib::GetTag(status, size);
 
-    mailbox.resize( size );
+    mailbox.resize(size);
 
-    BSPLib::Move( mailbox );
+    BSPLib::Move(mailbox);
 
-    EXPECT_EQ( expectedMail, mailbox );
+    EXPECT_EQ(expectedMail, mailbox);
 }
 
 template< int32_t tOffset >
@@ -406,32 +406,32 @@ void SendPrimitiveStringOverloadTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
-    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSend = (s + tOffset + nProc) % nProc;
+    uint32_t sReceive = (s - tOffset + nProc) % nProc;
 
-    std::string message = std::to_string( s + 1 );
-    std::string mailbox = std::to_string( s );
+    std::string message = std::to_string(s + 1);
+    std::string mailbox = std::to_string(s);
 
-    std::string expectedMail = std::to_string( sReceive + 1 );
+    std::string expectedMail = std::to_string(sReceive + 1);
     size_t size = message.size();
 
     BSPLib::SetTagsize< size_t >();
 
     BSPLib::Sync();
 
-    BSPLib::Send( sSend, &size, message );
+    BSPLib::Send(sSend, &size, message);
 
     BSPLib::Sync();
 
     size_t status;
 
-    BSPLib::GetTagPtr( status, &size );
+    BSPLib::GetTagPtr(status, &size);
 
-    mailbox.resize( size );
+    mailbox.resize(size);
 
-    BSPLib::Move( mailbox );
+    BSPLib::Move(mailbox);
 
-    EXPECT_EQ( expectedMail, mailbox );
+    EXPECT_EQ(expectedMail, mailbox);
 }
 
 template< int32_t tOffset >
@@ -440,26 +440,26 @@ void SendPrimitiveStringOverloadTest2()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
-    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSend = (s + tOffset + nProc) % nProc;
+    uint32_t sReceive = (s - tOffset + nProc) % nProc;
 
-    std::string message = std::to_string( s + 1 );
-    std::string mailbox = std::to_string( s );
+    std::string message = std::to_string(s + 1);
+    std::string mailbox = std::to_string(s);
 
-    std::string expectedMail = std::to_string( sReceive + 1 );
+    std::string expectedMail = std::to_string(sReceive + 1);
     size_t size = message.size();
 
-    BSPLib::Send( sSend, message );
+    BSPLib::Send(sSend, message);
 
     BSPLib::Sync();
 
-    BSPLib::GetTagPtr( size, &size );
+    BSPLib::GetTagPtr(size, &size);
 
-    mailbox.resize( size );
+    mailbox.resize(size);
 
-    BSPLib::Move( mailbox );
+    BSPLib::Move(mailbox);
 
-    EXPECT_EQ( expectedMail, mailbox );
+    EXPECT_EQ(expectedMail, mailbox);
 }
 
 template< int32_t tOffset, size_t tCount >
@@ -468,38 +468,38 @@ void SendPrimitiveStringOverloadTest3()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
-    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSend = (s + tOffset + nProc) % nProc;
+    uint32_t sReceive = (s - tOffset + nProc) % nProc;
 
-    std::string message = std::to_string( s + 1 );
-    std::string mailbox = std::to_string( s );
+    std::string message = std::to_string(s + 1);
+    std::string mailbox = std::to_string(s);
 
-    std::string expectedMail = std::to_string( sReceive + 1 );
+    std::string expectedMail = std::to_string(sReceive + 1);
     size_t size = message.size();
 
     uint32_t tag[tCount];
-    std::fill_n( tag, tCount, s );
+    std::fill_n(tag, tCount, s);
 
-    BSPLib::SetTagsize< uint32_t >( tCount );
-
-    BSPLib::Sync();
-
-    BSPLib::SendWithCArray( sSend, tag, message );
+    BSPLib::SetTagsize< uint32_t >(tCount);
 
     BSPLib::Sync();
 
-    BSPLib::GetTagCArray( size, tag );
+    BSPLib::SendWithCArray(sSend, tag, message);
 
-    mailbox.resize( size );
+    BSPLib::Sync();
 
-    BSPLib::Move( mailbox );
+    BSPLib::GetTagCArray(size, tag);
 
-    for ( size_t i = 0; i < tCount; ++i )
+    mailbox.resize(size);
+
+    BSPLib::Move(mailbox);
+
+    for (size_t i = 0; i < tCount; ++i)
     {
-        EXPECT_EQ( sReceive, tag[i] );
+        EXPECT_EQ(sReceive, tag[i]);
     }
 
-    EXPECT_EQ( expectedMail, mailbox );
+    EXPECT_EQ(expectedMail, mailbox);
 }
 
 template< int32_t tOffset, typename tTag >
@@ -508,18 +508,18 @@ void TagPrimitiveOverloadTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
-    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSend = (s + tOffset + nProc) % nProc;
+    uint32_t sReceive = (s - tOffset + nProc) % nProc;
 
     uint32_t message = s + 1;
     uint32_t mailbox = s;
 
     uint32_t expectedMail = sReceive + 1;
 
-    tTag tag = static_cast<tTag>( ( s - 1 + nProc ) % nProc );
+    tTag tag = static_cast<tTag>((s - 1 + nProc) % nProc);
 
-    tTag receiveTag = static_cast<tTag>( s );
-    tTag expectedTag = static_cast<tTag>( ( sReceive - 1 + nProc ) % nProc );
+    tTag receiveTag = static_cast<tTag>(s);
+    tTag expectedTag = static_cast<tTag>((sReceive - 1 + nProc) % nProc);
 
     size_t status = 0;
 
@@ -527,16 +527,16 @@ void TagPrimitiveOverloadTest()
 
     BSPLib::Sync();
 
-    BSPLib::Send( sSend, tag, message );
+    BSPLib::Send(sSend, tag, message);
 
     BSPLib::Sync();
 
-    BSPLib::GetTag( status, receiveTag );
-    BSPLib::Move( mailbox );
+    BSPLib::GetTag(status, receiveTag);
+    BSPLib::Move(mailbox);
 
-    EXPECT_EQ( expectedMail, mailbox );
-    EXPECT_EQ( expectedTag, receiveTag );
-    EXPECT_EQ( sizeof( uint32_t ), status );
+    EXPECT_EQ(expectedMail, mailbox);
+    EXPECT_EQ(expectedTag, receiveTag);
+    EXPECT_EQ(sizeof(uint32_t), status);
 }
 
 template< int32_t tOffset, typename tTag >
@@ -545,18 +545,18 @@ void TagPrimitiveFPTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
-    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSend = (s + tOffset + nProc) % nProc;
+    uint32_t sReceive = (s - tOffset + nProc) % nProc;
 
     uint32_t message = s + 1;
     uint32_t mailbox = s;
 
     uint32_t expectedMail = sReceive + 1;
 
-    tTag tag = static_cast<tTag>( ( s - 1 + nProc ) % nProc );
+    tTag tag = static_cast<tTag>((s - 1 + nProc) % nProc);
 
-    tTag receiveTag = static_cast<tTag>( s );
-    tTag expectedTag = static_cast<tTag>( ( sReceive - 1 + nProc ) % nProc );
+    tTag receiveTag = static_cast<tTag>(s);
+    tTag expectedTag = static_cast<tTag>((sReceive - 1 + nProc) % nProc);
 
     size_t status = 0;
 
@@ -564,16 +564,16 @@ void TagPrimitiveFPTest()
 
     BSPLib::Sync();
 
-    BSPLib::Send( sSend, tag, message );
+    BSPLib::Send(sSend, tag, message);
 
     BSPLib::Sync();
 
-    BSPLib::GetTag( status, receiveTag );
-    BSPLib::Move( mailbox );
+    BSPLib::GetTag(status, receiveTag);
+    BSPLib::Move(mailbox);
 
-    EXPECT_EQ( expectedMail, mailbox );
-    EXPECT_DOUBLE_EQ( expectedTag, receiveTag );
-    EXPECT_EQ( sizeof( uint32_t ), status );
+    EXPECT_EQ(expectedMail, mailbox);
+    EXPECT_DOUBLE_EQ(expectedTag, receiveTag);
+    EXPECT_EQ(sizeof(uint32_t), status);
 }
 
 template< int32_t tOffset >
@@ -582,8 +582,8 @@ void TagPrimitiveStringTest()
     uint32_t s = BSPLib::ProcId();
     uint32_t nProc = BSPLib::NProcs();
 
-    uint32_t sSend = ( s + tOffset + nProc ) % nProc;
-    uint32_t sReceive = ( s - tOffset + nProc ) % nProc;
+    uint32_t sSend = (s + tOffset + nProc) % nProc;
+    uint32_t sReceive = (s - tOffset + nProc) % nProc;
 
     uint32_t message = s + 1;
     uint32_t mailbox = s;
@@ -592,283 +592,283 @@ void TagPrimitiveStringTest()
 
     std::stringstream ss;
 
-    ss << std::setfill( '0' ) << std::setw( 32 ) << ( ( s - 1 + nProc ) % nProc );
-    std::string tag( ss.str() );
-    ss.str( "" );
+    ss << std::setfill('0') << std::setw(32) << ((s - 1 + nProc) % nProc);
+    std::string tag(ss.str());
+    ss.str("");
 
-    ss << std::setfill( '0' ) << std::setw( 32 ) << s;
-    std::string receiveTag( ss.str() );
-    ss.str( "" );
+    ss << std::setfill('0') << std::setw(32) << s;
+    std::string receiveTag(ss.str());
+    ss.str("");
 
-    ss << std::setfill( '0' ) << std::setw( 32 ) << ( ( sReceive - 1 + nProc ) % nProc );
-    std::string expectedTag( ss.str() );
-    ss.str( "" );
+    ss << std::setfill('0') << std::setw(32) << ((sReceive - 1 + nProc) % nProc);
+    std::string expectedTag(ss.str());
+    ss.str("");
 
     size_t status = 0;
 
-    BSPLib::SetTagsize< char >( 32 );
+    BSPLib::SetTagsize< char >(32);
 
     BSPLib::Sync();
 
-    BSPLib::Send( sSend, tag, message );
+    BSPLib::Send(sSend, tag, message);
 
     BSPLib::Sync();
 
-    BSPLib::GetTag( status, receiveTag );
-    BSPLib::Move( mailbox );
+    BSPLib::GetTag(status, receiveTag);
+    BSPLib::Move(mailbox);
 
-    EXPECT_EQ( expectedMail, mailbox );
-    EXPECT_EQ( expectedTag, receiveTag );
-    EXPECT_EQ( sizeof( uint32_t ), status );
+    EXPECT_EQ(expectedMail, mailbox);
+    EXPECT_EQ(expectedTag, receiveTag);
+    EXPECT_EQ(sizeof(uint32_t), status);
 }
 
-BspTest2( Primitive, 2, PutPrimitiveTest, 1, uint8_t );
-BspTest2( Primitive, 4, PutPrimitiveTest, 3, uint8_t );
-BspTest2( Primitive, 8, PutPrimitiveTest, 7, uint8_t );
-BspTest2( Primitive, 16, PutPrimitiveTest, 5, uint8_t );
-BspTest2( Primitive, 32, PutPrimitiveTest, 13, uint8_t );
-BspTest2( Primitive, 2, PutPrimitiveTest, 1, uint16_t );
-BspTest2( Primitive, 4, PutPrimitiveTest, 3, uint16_t );
-BspTest2( Primitive, 8, PutPrimitiveTest, 7, uint16_t );
-BspTest2( Primitive, 16, PutPrimitiveTest, 5, uint16_t );
-BspTest2( Primitive, 32, PutPrimitiveTest, 13, uint16_t );
-BspTest2( Primitive, 2, PutPrimitiveTest, 1, uint32_t );
-BspTest2( Primitive, 4, PutPrimitiveTest, 3, uint32_t );
-BspTest2( Primitive, 8, PutPrimitiveTest, 7, uint32_t );
-BspTest2( Primitive, 16, PutPrimitiveTest, 5, uint32_t );
-BspTest2( Primitive, 32, PutPrimitiveTest, 13, uint32_t );
-BspTest2( Primitive, 2, PutPrimitiveTest, 1, uint64_t );
-BspTest2( Primitive, 4, PutPrimitiveTest, 3, uint64_t );
-BspTest2( Primitive, 8, PutPrimitiveTest, 7, uint64_t );
-BspTest2( Primitive, 16, PutPrimitiveTest, 5, uint64_t );
-BspTest2( Primitive, 32, PutPrimitiveTest, 13, uint64_t );
+BspTest2(Primitive, 2, PutPrimitiveTest, 1, uint8_t);
+BspTest2(Primitive, 4, PutPrimitiveTest, 3, uint8_t);
+BspTest2(Primitive, 8, PutPrimitiveTest, 7, uint8_t);
+BspTest2(Primitive, 16, PutPrimitiveTest, 5, uint8_t);
+BspTest2(Primitive, 32, PutPrimitiveTest, 13, uint8_t);
+BspTest2(Primitive, 2, PutPrimitiveTest, 1, uint16_t);
+BspTest2(Primitive, 4, PutPrimitiveTest, 3, uint16_t);
+BspTest2(Primitive, 8, PutPrimitiveTest, 7, uint16_t);
+BspTest2(Primitive, 16, PutPrimitiveTest, 5, uint16_t);
+BspTest2(Primitive, 32, PutPrimitiveTest, 13, uint16_t);
+BspTest2(Primitive, 2, PutPrimitiveTest, 1, uint32_t);
+BspTest2(Primitive, 4, PutPrimitiveTest, 3, uint32_t);
+BspTest2(Primitive, 8, PutPrimitiveTest, 7, uint32_t);
+BspTest2(Primitive, 16, PutPrimitiveTest, 5, uint32_t);
+BspTest2(Primitive, 32, PutPrimitiveTest, 13, uint32_t);
+BspTest2(Primitive, 2, PutPrimitiveTest, 1, uint64_t);
+BspTest2(Primitive, 4, PutPrimitiveTest, 3, uint64_t);
+BspTest2(Primitive, 8, PutPrimitiveTest, 7, uint64_t);
+BspTest2(Primitive, 16, PutPrimitiveTest, 5, uint64_t);
+BspTest2(Primitive, 32, PutPrimitiveTest, 13, uint64_t);
 
-BspTest2( Primitive, 2, PutPrimitiveFPTest, 1, float );
-BspTest2( Primitive, 4, PutPrimitiveFPTest, 3, float );
-BspTest2( Primitive, 8, PutPrimitiveFPTest, 7, float );
-BspTest2( Primitive, 16, PutPrimitiveFPTest, 5, float );
-BspTest2( Primitive, 32, PutPrimitiveFPTest, 13, float );
-BspTest2( Primitive, 2, PutPrimitiveFPTest, 1, double );
-BspTest2( Primitive, 4, PutPrimitiveFPTest, 3, double );
-BspTest2( Primitive, 8, PutPrimitiveFPTest, 7, double );
-BspTest2( Primitive, 16, PutPrimitiveFPTest, 5, double );
-BspTest2( Primitive, 32, PutPrimitiveFPTest, 13, double );
+BspTest2(Primitive, 2, PutPrimitiveFPTest, 1, float);
+BspTest2(Primitive, 4, PutPrimitiveFPTest, 3, float);
+BspTest2(Primitive, 8, PutPrimitiveFPTest, 7, float);
+BspTest2(Primitive, 16, PutPrimitiveFPTest, 5, float);
+BspTest2(Primitive, 32, PutPrimitiveFPTest, 13, float);
+BspTest2(Primitive, 2, PutPrimitiveFPTest, 1, double);
+BspTest2(Primitive, 4, PutPrimitiveFPTest, 3, double);
+BspTest2(Primitive, 8, PutPrimitiveFPTest, 7, double);
+BspTest2(Primitive, 16, PutPrimitiveFPTest, 5, double);
+BspTest2(Primitive, 32, PutPrimitiveFPTest, 13, double);
 
-BspTest1( Primitive, 2, PutPrimitiveStringTest, 1 );
-BspTest1( Primitive, 4, PutPrimitiveStringTest, 3 );
-BspTest1( Primitive, 8, PutPrimitiveStringTest, 7 );
-BspTest1( Primitive, 16, PutPrimitiveStringTest, 5 );
-BspTest1( Primitive, 32, PutPrimitiveStringTest, 13 );
+BspTest1(Primitive, 2, PutPrimitiveStringTest, 1);
+BspTest1(Primitive, 4, PutPrimitiveStringTest, 3);
+BspTest1(Primitive, 8, PutPrimitiveStringTest, 7);
+BspTest1(Primitive, 16, PutPrimitiveStringTest, 5);
+BspTest1(Primitive, 32, PutPrimitiveStringTest, 13);
 
-BspTest2( Primitive, 2, PutSamePrimitiveTest, 1, uint8_t );
-BspTest2( Primitive, 4, PutSamePrimitiveTest, 3, uint8_t );
-BspTest2( Primitive, 8, PutSamePrimitiveTest, 7, uint8_t );
-BspTest2( Primitive, 16, PutSamePrimitiveTest, 5, uint8_t );
-BspTest2( Primitive, 32, PutSamePrimitiveTest, 13, uint8_t );
-BspTest2( Primitive, 2, PutSamePrimitiveTest, 1, uint16_t );
-BspTest2( Primitive, 4, PutSamePrimitiveTest, 3, uint16_t );
-BspTest2( Primitive, 8, PutSamePrimitiveTest, 7, uint16_t );
-BspTest2( Primitive, 16, PutSamePrimitiveTest, 5, uint16_t );
-BspTest2( Primitive, 32, PutSamePrimitiveTest, 13, uint16_t );
-BspTest2( Primitive, 2, PutSamePrimitiveTest, 1, uint32_t );
-BspTest2( Primitive, 4, PutSamePrimitiveTest, 3, uint32_t );
-BspTest2( Primitive, 8, PutSamePrimitiveTest, 7, uint32_t );
-BspTest2( Primitive, 16, PutSamePrimitiveTest, 5, uint32_t );
-BspTest2( Primitive, 32, PutSamePrimitiveTest, 13, uint32_t );
-BspTest2( Primitive, 2, PutSamePrimitiveTest, 1, uint64_t );
-BspTest2( Primitive, 4, PutSamePrimitiveTest, 3, uint64_t );
-BspTest2( Primitive, 8, PutSamePrimitiveTest, 7, uint64_t );
-BspTest2( Primitive, 16, PutSamePrimitiveTest, 5, uint64_t );
-BspTest2( Primitive, 32, PutSamePrimitiveTest, 13, uint64_t );
+BspTest2(Primitive, 2, PutSamePrimitiveTest, 1, uint8_t);
+BspTest2(Primitive, 4, PutSamePrimitiveTest, 3, uint8_t);
+BspTest2(Primitive, 8, PutSamePrimitiveTest, 7, uint8_t);
+BspTest2(Primitive, 16, PutSamePrimitiveTest, 5, uint8_t);
+BspTest2(Primitive, 32, PutSamePrimitiveTest, 13, uint8_t);
+BspTest2(Primitive, 2, PutSamePrimitiveTest, 1, uint16_t);
+BspTest2(Primitive, 4, PutSamePrimitiveTest, 3, uint16_t);
+BspTest2(Primitive, 8, PutSamePrimitiveTest, 7, uint16_t);
+BspTest2(Primitive, 16, PutSamePrimitiveTest, 5, uint16_t);
+BspTest2(Primitive, 32, PutSamePrimitiveTest, 13, uint16_t);
+BspTest2(Primitive, 2, PutSamePrimitiveTest, 1, uint32_t);
+BspTest2(Primitive, 4, PutSamePrimitiveTest, 3, uint32_t);
+BspTest2(Primitive, 8, PutSamePrimitiveTest, 7, uint32_t);
+BspTest2(Primitive, 16, PutSamePrimitiveTest, 5, uint32_t);
+BspTest2(Primitive, 32, PutSamePrimitiveTest, 13, uint32_t);
+BspTest2(Primitive, 2, PutSamePrimitiveTest, 1, uint64_t);
+BspTest2(Primitive, 4, PutSamePrimitiveTest, 3, uint64_t);
+BspTest2(Primitive, 8, PutSamePrimitiveTest, 7, uint64_t);
+BspTest2(Primitive, 16, PutSamePrimitiveTest, 5, uint64_t);
+BspTest2(Primitive, 32, PutSamePrimitiveTest, 13, uint64_t);
 
-BspTest2( Primitive, 2, PutSamePrimitiveFPTest, 1, float );
-BspTest2( Primitive, 4, PutSamePrimitiveFPTest, 3, float );
-BspTest2( Primitive, 8, PutSamePrimitiveFPTest, 7, float );
-BspTest2( Primitive, 16, PutSamePrimitiveFPTest, 5, float );
-BspTest2( Primitive, 32, PutSamePrimitiveFPTest, 13, float );
-BspTest2( Primitive, 2, PutSamePrimitiveFPTest, 1, double );
-BspTest2( Primitive, 4, PutSamePrimitiveFPTest, 3, double );
-BspTest2( Primitive, 8, PutSamePrimitiveFPTest, 7, double );
-BspTest2( Primitive, 16, PutSamePrimitiveFPTest, 5, double );
-BspTest2( Primitive, 32, PutSamePrimitiveFPTest, 13, double );
+BspTest2(Primitive, 2, PutSamePrimitiveFPTest, 1, float);
+BspTest2(Primitive, 4, PutSamePrimitiveFPTest, 3, float);
+BspTest2(Primitive, 8, PutSamePrimitiveFPTest, 7, float);
+BspTest2(Primitive, 16, PutSamePrimitiveFPTest, 5, float);
+BspTest2(Primitive, 32, PutSamePrimitiveFPTest, 13, float);
+BspTest2(Primitive, 2, PutSamePrimitiveFPTest, 1, double);
+BspTest2(Primitive, 4, PutSamePrimitiveFPTest, 3, double);
+BspTest2(Primitive, 8, PutSamePrimitiveFPTest, 7, double);
+BspTest2(Primitive, 16, PutSamePrimitiveFPTest, 5, double);
+BspTest2(Primitive, 32, PutSamePrimitiveFPTest, 13, double);
 
-BspTest2( Primitive, 2, GetPrimitiveTest, 1, uint8_t );
-BspTest2( Primitive, 4, GetPrimitiveTest, 3, uint8_t );
-BspTest2( Primitive, 8, GetPrimitiveTest, 7, uint8_t );
-BspTest2( Primitive, 16, GetPrimitiveTest, 5, uint8_t );
-BspTest2( Primitive, 32, GetPrimitiveTest, 13, uint8_t );
-BspTest2( Primitive, 2, GetPrimitiveTest, 1, uint16_t );
-BspTest2( Primitive, 4, GetPrimitiveTest, 3, uint16_t );
-BspTest2( Primitive, 8, GetPrimitiveTest, 7, uint16_t );
-BspTest2( Primitive, 16, GetPrimitiveTest, 5, uint16_t );
-BspTest2( Primitive, 32, GetPrimitiveTest, 13, uint16_t );
-BspTest2( Primitive, 2, GetPrimitiveTest, 1, uint32_t );
-BspTest2( Primitive, 4, GetPrimitiveTest, 3, uint32_t );
-BspTest2( Primitive, 8, GetPrimitiveTest, 7, uint32_t );
-BspTest2( Primitive, 16, GetPrimitiveTest, 5, uint32_t );
-BspTest2( Primitive, 32, GetPrimitiveTest, 13, uint32_t );
-BspTest2( Primitive, 2, GetPrimitiveTest, 1, uint64_t );
-BspTest2( Primitive, 4, GetPrimitiveTest, 3, uint64_t );
-BspTest2( Primitive, 8, GetPrimitiveTest, 7, uint64_t );
-BspTest2( Primitive, 16, GetPrimitiveTest, 5, uint64_t );
-BspTest2( Primitive, 32, GetPrimitiveTest, 13, uint64_t );
+BspTest2(Primitive, 2, GetPrimitiveTest, 1, uint8_t);
+BspTest2(Primitive, 4, GetPrimitiveTest, 3, uint8_t);
+BspTest2(Primitive, 8, GetPrimitiveTest, 7, uint8_t);
+BspTest2(Primitive, 16, GetPrimitiveTest, 5, uint8_t);
+BspTest2(Primitive, 32, GetPrimitiveTest, 13, uint8_t);
+BspTest2(Primitive, 2, GetPrimitiveTest, 1, uint16_t);
+BspTest2(Primitive, 4, GetPrimitiveTest, 3, uint16_t);
+BspTest2(Primitive, 8, GetPrimitiveTest, 7, uint16_t);
+BspTest2(Primitive, 16, GetPrimitiveTest, 5, uint16_t);
+BspTest2(Primitive, 32, GetPrimitiveTest, 13, uint16_t);
+BspTest2(Primitive, 2, GetPrimitiveTest, 1, uint32_t);
+BspTest2(Primitive, 4, GetPrimitiveTest, 3, uint32_t);
+BspTest2(Primitive, 8, GetPrimitiveTest, 7, uint32_t);
+BspTest2(Primitive, 16, GetPrimitiveTest, 5, uint32_t);
+BspTest2(Primitive, 32, GetPrimitiveTest, 13, uint32_t);
+BspTest2(Primitive, 2, GetPrimitiveTest, 1, uint64_t);
+BspTest2(Primitive, 4, GetPrimitiveTest, 3, uint64_t);
+BspTest2(Primitive, 8, GetPrimitiveTest, 7, uint64_t);
+BspTest2(Primitive, 16, GetPrimitiveTest, 5, uint64_t);
+BspTest2(Primitive, 32, GetPrimitiveTest, 13, uint64_t);
 
-BspTest2( Primitive, 2, GetPrimitiveFPTest, 1, float );
-BspTest2( Primitive, 4, GetPrimitiveFPTest, 3, float );
-BspTest2( Primitive, 8, GetPrimitiveFPTest, 7, float );
-BspTest2( Primitive, 16, GetPrimitiveFPTest, 5, float );
-BspTest2( Primitive, 32, GetPrimitiveFPTest, 13, float );
-BspTest2( Primitive, 2, GetPrimitiveFPTest, 1, double );
-BspTest2( Primitive, 4, GetPrimitiveFPTest, 3, double );
-BspTest2( Primitive, 8, GetPrimitiveFPTest, 7, double );
-BspTest2( Primitive, 16, GetPrimitiveFPTest, 5, double );
-BspTest2( Primitive, 32, GetPrimitiveFPTest, 13, double );
+BspTest2(Primitive, 2, GetPrimitiveFPTest, 1, float);
+BspTest2(Primitive, 4, GetPrimitiveFPTest, 3, float);
+BspTest2(Primitive, 8, GetPrimitiveFPTest, 7, float);
+BspTest2(Primitive, 16, GetPrimitiveFPTest, 5, float);
+BspTest2(Primitive, 32, GetPrimitiveFPTest, 13, float);
+BspTest2(Primitive, 2, GetPrimitiveFPTest, 1, double);
+BspTest2(Primitive, 4, GetPrimitiveFPTest, 3, double);
+BspTest2(Primitive, 8, GetPrimitiveFPTest, 7, double);
+BspTest2(Primitive, 16, GetPrimitiveFPTest, 5, double);
+BspTest2(Primitive, 32, GetPrimitiveFPTest, 13, double);
 
-BspTest1( Primitive, 2, GetPrimitiveStringTest, 1 );
-BspTest1( Primitive, 4, GetPrimitiveStringTest, 3 );
-BspTest1( Primitive, 8, GetPrimitiveStringTest, 7 );
-BspTest1( Primitive, 16, GetPrimitiveStringTest, 5 );
-BspTest1( Primitive, 32, GetPrimitiveStringTest, 13 );
+BspTest1(Primitive, 2, GetPrimitiveStringTest, 1);
+BspTest1(Primitive, 4, GetPrimitiveStringTest, 3);
+BspTest1(Primitive, 8, GetPrimitiveStringTest, 7);
+BspTest1(Primitive, 16, GetPrimitiveStringTest, 5);
+BspTest1(Primitive, 32, GetPrimitiveStringTest, 13);
 
-BspTest2( Primitive, 2, GetSamePrimitiveTest, 1, uint8_t );
-BspTest2( Primitive, 4, GetSamePrimitiveTest, 3, uint8_t );
-BspTest2( Primitive, 8, GetSamePrimitiveTest, 7, uint8_t );
-BspTest2( Primitive, 16, GetSamePrimitiveTest, 5, uint8_t );
-BspTest2( Primitive, 32, GetSamePrimitiveTest, 13, uint8_t );
-BspTest2( Primitive, 2, GetSamePrimitiveTest, 1, uint16_t );
-BspTest2( Primitive, 4, GetSamePrimitiveTest, 3, uint16_t );
-BspTest2( Primitive, 8, GetSamePrimitiveTest, 7, uint16_t );
-BspTest2( Primitive, 16, GetSamePrimitiveTest, 5, uint16_t );
-BspTest2( Primitive, 32, GetSamePrimitiveTest, 13, uint16_t );
-BspTest2( Primitive, 2, GetSamePrimitiveTest, 1, uint32_t );
-BspTest2( Primitive, 4, GetSamePrimitiveTest, 3, uint32_t );
-BspTest2( Primitive, 8, GetSamePrimitiveTest, 7, uint32_t );
-BspTest2( Primitive, 16, GetSamePrimitiveTest, 5, uint32_t );
-BspTest2( Primitive, 32, GetSamePrimitiveTest, 13, uint32_t );
-BspTest2( Primitive, 2, GetSamePrimitiveTest, 1, uint64_t );
-BspTest2( Primitive, 4, GetSamePrimitiveTest, 3, uint64_t );
-BspTest2( Primitive, 8, GetSamePrimitiveTest, 7, uint64_t );
-BspTest2( Primitive, 16, GetSamePrimitiveTest, 5, uint64_t );
-BspTest2( Primitive, 32, GetSamePrimitiveTest, 13, uint64_t );
+BspTest2(Primitive, 2, GetSamePrimitiveTest, 1, uint8_t);
+BspTest2(Primitive, 4, GetSamePrimitiveTest, 3, uint8_t);
+BspTest2(Primitive, 8, GetSamePrimitiveTest, 7, uint8_t);
+BspTest2(Primitive, 16, GetSamePrimitiveTest, 5, uint8_t);
+BspTest2(Primitive, 32, GetSamePrimitiveTest, 13, uint8_t);
+BspTest2(Primitive, 2, GetSamePrimitiveTest, 1, uint16_t);
+BspTest2(Primitive, 4, GetSamePrimitiveTest, 3, uint16_t);
+BspTest2(Primitive, 8, GetSamePrimitiveTest, 7, uint16_t);
+BspTest2(Primitive, 16, GetSamePrimitiveTest, 5, uint16_t);
+BspTest2(Primitive, 32, GetSamePrimitiveTest, 13, uint16_t);
+BspTest2(Primitive, 2, GetSamePrimitiveTest, 1, uint32_t);
+BspTest2(Primitive, 4, GetSamePrimitiveTest, 3, uint32_t);
+BspTest2(Primitive, 8, GetSamePrimitiveTest, 7, uint32_t);
+BspTest2(Primitive, 16, GetSamePrimitiveTest, 5, uint32_t);
+BspTest2(Primitive, 32, GetSamePrimitiveTest, 13, uint32_t);
+BspTest2(Primitive, 2, GetSamePrimitiveTest, 1, uint64_t);
+BspTest2(Primitive, 4, GetSamePrimitiveTest, 3, uint64_t);
+BspTest2(Primitive, 8, GetSamePrimitiveTest, 7, uint64_t);
+BspTest2(Primitive, 16, GetSamePrimitiveTest, 5, uint64_t);
+BspTest2(Primitive, 32, GetSamePrimitiveTest, 13, uint64_t);
 
-BspTest2( Primitive, 2, GetSamePrimitiveFPTest, 1, float );
-BspTest2( Primitive, 4, GetSamePrimitiveFPTest, 3, float );
-BspTest2( Primitive, 8, GetSamePrimitiveFPTest, 7, float );
-BspTest2( Primitive, 16, GetSamePrimitiveFPTest, 5, float );
-BspTest2( Primitive, 32, GetSamePrimitiveFPTest, 13, float );
-BspTest2( Primitive, 2, GetSamePrimitiveFPTest, 1, double );
-BspTest2( Primitive, 4, GetSamePrimitiveFPTest, 3, double );
-BspTest2( Primitive, 8, GetSamePrimitiveFPTest, 7, double );
-BspTest2( Primitive, 16, GetSamePrimitiveFPTest, 5, double );
-BspTest2( Primitive, 32, GetSamePrimitiveFPTest, 13, double );
-
-
-
-BspTest2( Primitive, 2, SendPrimitiveTest, 1, uint8_t );
-BspTest2( Primitive, 4, SendPrimitiveTest, 3, uint8_t );
-BspTest2( Primitive, 8, SendPrimitiveTest, 7, uint8_t );
-BspTest2( Primitive, 16, SendPrimitiveTest, 5, uint8_t );
-BspTest2( Primitive, 32, SendPrimitiveTest, 13, uint8_t );
-BspTest2( Primitive, 2, SendPrimitiveTest, 1, uint16_t );
-BspTest2( Primitive, 4, SendPrimitiveTest, 3, uint16_t );
-BspTest2( Primitive, 8, SendPrimitiveTest, 7, uint16_t );
-BspTest2( Primitive, 16, SendPrimitiveTest, 5, uint16_t );
-BspTest2( Primitive, 32, SendPrimitiveTest, 13, uint16_t );
-BspTest2( Primitive, 2, SendPrimitiveTest, 1, uint32_t );
-BspTest2( Primitive, 4, SendPrimitiveTest, 3, uint32_t );
-BspTest2( Primitive, 8, SendPrimitiveTest, 7, uint32_t );
-BspTest2( Primitive, 16, SendPrimitiveTest, 5, uint32_t );
-BspTest2( Primitive, 32, SendPrimitiveTest, 13, uint32_t );
-BspTest2( Primitive, 2, SendPrimitiveTest, 1, uint64_t );
-BspTest2( Primitive, 4, SendPrimitiveTest, 3, uint64_t );
-BspTest2( Primitive, 8, SendPrimitiveTest, 7, uint64_t );
-BspTest2( Primitive, 16, SendPrimitiveTest, 5, uint64_t );
-BspTest2( Primitive, 32, SendPrimitiveTest, 13, uint64_t );
-
-BspTest2( Primitive, 2, SendPrimitiveOverloadTest, 1, uint8_t );
-BspTest2( Primitive, 4, SendPrimitiveOverloadTest, 3, uint8_t );
-BspTest2( Primitive, 8, SendPrimitiveOverloadTest, 7, uint8_t );
-BspTest2( Primitive, 16, SendPrimitiveOverloadTest, 5, uint8_t );
-BspTest2( Primitive, 32, SendPrimitiveOverloadTest, 13, uint8_t );
-
-BspTest2( Primitive, 2, SendPrimitiveFPTest, 1, float );
-BspTest2( Primitive, 4, SendPrimitiveFPTest, 3, float );
-BspTest2( Primitive, 8, SendPrimitiveFPTest, 7, float );
-BspTest2( Primitive, 16, SendPrimitiveFPTest, 5, float );
-BspTest2( Primitive, 32, SendPrimitiveFPTest, 13, float );
-BspTest2( Primitive, 2, SendPrimitiveFPTest, 1, double );
-BspTest2( Primitive, 4, SendPrimitiveFPTest, 3, double );
-BspTest2( Primitive, 8, SendPrimitiveFPTest, 7, double );
-BspTest2( Primitive, 16, SendPrimitiveFPTest, 5, double );
-BspTest2( Primitive, 32, SendPrimitiveFPTest, 13, double );
-
-BspTest1( Primitive, 2, SendPrimitiveStringTest, 1 );
-BspTest1( Primitive, 4, SendPrimitiveStringTest, 3 );
-BspTest1( Primitive, 8, SendPrimitiveStringTest, 7 );
-BspTest1( Primitive, 16, SendPrimitiveStringTest, 5 );
-BspTest1( Primitive, 32, SendPrimitiveStringTest, 13 );
-
-BspTest1( Primitive, 2, SendPrimitiveStringOverloadTest, 1 );
-BspTest1( Primitive, 4, SendPrimitiveStringOverloadTest, 3 );
-BspTest1( Primitive, 8, SendPrimitiveStringOverloadTest, 7 );
-BspTest1( Primitive, 16, SendPrimitiveStringOverloadTest, 5 );
-BspTest1( Primitive, 32, SendPrimitiveStringOverloadTest, 13 );
-
-BspTest1( Primitive, 2, SendPrimitiveStringOverloadTest2, 1 );
-BspTest1( Primitive, 4, SendPrimitiveStringOverloadTest2, 3 );
-BspTest1( Primitive, 8, SendPrimitiveStringOverloadTest2, 7 );
-BspTest1( Primitive, 16, SendPrimitiveStringOverloadTest2, 5 );
-BspTest1( Primitive, 32, SendPrimitiveStringOverloadTest2, 13 );
-
-BspTest2( Primitive, 2, SendPrimitiveStringOverloadTest3, 1, 20 );
-BspTest2( Primitive, 4, SendPrimitiveStringOverloadTest3, 3, 20 );
-BspTest2( Primitive, 8, SendPrimitiveStringOverloadTest3, 7, 20 );
-BspTest2( Primitive, 16, SendPrimitiveStringOverloadTest3, 5, 20 );
-BspTest2( Primitive, 32, SendPrimitiveStringOverloadTest3, 13, 20 );
-BspTest2( Primitive, 2, SendPrimitiveStringOverloadTest3, 1, 50 );
-BspTest2( Primitive, 4, SendPrimitiveStringOverloadTest3, 3, 50 );
-BspTest2( Primitive, 8, SendPrimitiveStringOverloadTest3, 7, 50 );
-BspTest2( Primitive, 16, SendPrimitiveStringOverloadTest3, 5, 50 );
-BspTest2( Primitive, 32, SendPrimitiveStringOverloadTest3, 13, 50 );
+BspTest2(Primitive, 2, GetSamePrimitiveFPTest, 1, float);
+BspTest2(Primitive, 4, GetSamePrimitiveFPTest, 3, float);
+BspTest2(Primitive, 8, GetSamePrimitiveFPTest, 7, float);
+BspTest2(Primitive, 16, GetSamePrimitiveFPTest, 5, float);
+BspTest2(Primitive, 32, GetSamePrimitiveFPTest, 13, float);
+BspTest2(Primitive, 2, GetSamePrimitiveFPTest, 1, double);
+BspTest2(Primitive, 4, GetSamePrimitiveFPTest, 3, double);
+BspTest2(Primitive, 8, GetSamePrimitiveFPTest, 7, double);
+BspTest2(Primitive, 16, GetSamePrimitiveFPTest, 5, double);
+BspTest2(Primitive, 32, GetSamePrimitiveFPTest, 13, double);
 
 
 
-BspTest2( Primitive, 2, TagPrimitiveOverloadTest, 1, uint8_t );
-BspTest2( Primitive, 4, TagPrimitiveOverloadTest, 3, uint8_t );
-BspTest2( Primitive, 8, TagPrimitiveOverloadTest, 7, uint8_t );
-BspTest2( Primitive, 16, TagPrimitiveOverloadTest, 5, uint8_t );
-BspTest2( Primitive, 32, TagPrimitiveOverloadTest, 13, uint8_t );
-BspTest2( Primitive, 2, TagPrimitiveOverloadTest, 1, uint16_t );
-BspTest2( Primitive, 4, TagPrimitiveOverloadTest, 3, uint16_t );
-BspTest2( Primitive, 8, TagPrimitiveOverloadTest, 7, uint16_t );
-BspTest2( Primitive, 16, TagPrimitiveOverloadTest, 5, uint16_t );
-BspTest2( Primitive, 32, TagPrimitiveOverloadTest, 13, uint16_t );
-BspTest2( Primitive, 2, TagPrimitiveOverloadTest, 1, uint32_t );
-BspTest2( Primitive, 4, TagPrimitiveOverloadTest, 3, uint32_t );
-BspTest2( Primitive, 8, TagPrimitiveOverloadTest, 7, uint32_t );
-BspTest2( Primitive, 16, TagPrimitiveOverloadTest, 5, uint32_t );
-BspTest2( Primitive, 32, TagPrimitiveOverloadTest, 13, uint32_t );
-BspTest2( Primitive, 2, TagPrimitiveOverloadTest, 1, uint64_t );
-BspTest2( Primitive, 4, TagPrimitiveOverloadTest, 3, uint64_t );
-BspTest2( Primitive, 8, TagPrimitiveOverloadTest, 7, uint64_t );
-BspTest2( Primitive, 16, TagPrimitiveOverloadTest, 5, uint64_t );
-BspTest2( Primitive, 32, TagPrimitiveOverloadTest, 13, uint64_t );
+BspTest2(Primitive, 2, SendPrimitiveTest, 1, uint8_t);
+BspTest2(Primitive, 4, SendPrimitiveTest, 3, uint8_t);
+BspTest2(Primitive, 8, SendPrimitiveTest, 7, uint8_t);
+BspTest2(Primitive, 16, SendPrimitiveTest, 5, uint8_t);
+BspTest2(Primitive, 32, SendPrimitiveTest, 13, uint8_t);
+BspTest2(Primitive, 2, SendPrimitiveTest, 1, uint16_t);
+BspTest2(Primitive, 4, SendPrimitiveTest, 3, uint16_t);
+BspTest2(Primitive, 8, SendPrimitiveTest, 7, uint16_t);
+BspTest2(Primitive, 16, SendPrimitiveTest, 5, uint16_t);
+BspTest2(Primitive, 32, SendPrimitiveTest, 13, uint16_t);
+BspTest2(Primitive, 2, SendPrimitiveTest, 1, uint32_t);
+BspTest2(Primitive, 4, SendPrimitiveTest, 3, uint32_t);
+BspTest2(Primitive, 8, SendPrimitiveTest, 7, uint32_t);
+BspTest2(Primitive, 16, SendPrimitiveTest, 5, uint32_t);
+BspTest2(Primitive, 32, SendPrimitiveTest, 13, uint32_t);
+BspTest2(Primitive, 2, SendPrimitiveTest, 1, uint64_t);
+BspTest2(Primitive, 4, SendPrimitiveTest, 3, uint64_t);
+BspTest2(Primitive, 8, SendPrimitiveTest, 7, uint64_t);
+BspTest2(Primitive, 16, SendPrimitiveTest, 5, uint64_t);
+BspTest2(Primitive, 32, SendPrimitiveTest, 13, uint64_t);
 
-BspTest2( Primitive, 2, TagPrimitiveFPTest, 1, float );
-BspTest2( Primitive, 4, TagPrimitiveFPTest, 3, float );
-BspTest2( Primitive, 8, TagPrimitiveFPTest, 7, float );
-BspTest2( Primitive, 16, TagPrimitiveFPTest, 5, float );
-BspTest2( Primitive, 32, TagPrimitiveFPTest, 13, float );
-BspTest2( Primitive, 2, TagPrimitiveFPTest, 1, double );
-BspTest2( Primitive, 4, TagPrimitiveFPTest, 3, double );
-BspTest2( Primitive, 8, TagPrimitiveFPTest, 7, double );
-BspTest2( Primitive, 16, TagPrimitiveFPTest, 5, double );
-BspTest2( Primitive, 32, TagPrimitiveFPTest, 13, double );
+BspTest2(Primitive, 2, SendPrimitiveOverloadTest, 1, uint8_t);
+BspTest2(Primitive, 4, SendPrimitiveOverloadTest, 3, uint8_t);
+BspTest2(Primitive, 8, SendPrimitiveOverloadTest, 7, uint8_t);
+BspTest2(Primitive, 16, SendPrimitiveOverloadTest, 5, uint8_t);
+BspTest2(Primitive, 32, SendPrimitiveOverloadTest, 13, uint8_t);
 
-BspTest1( Primitive, 2, TagPrimitiveStringTest, 1 );
-BspTest1( Primitive, 4, TagPrimitiveStringTest, 3 );
-BspTest1( Primitive, 8, TagPrimitiveStringTest, 7 );
-BspTest1( Primitive, 16, TagPrimitiveStringTest, 5 );
-BspTest1( Primitive, 32, TagPrimitiveStringTest, 13 );
+BspTest2(Primitive, 2, SendPrimitiveFPTest, 1, float);
+BspTest2(Primitive, 4, SendPrimitiveFPTest, 3, float);
+BspTest2(Primitive, 8, SendPrimitiveFPTest, 7, float);
+BspTest2(Primitive, 16, SendPrimitiveFPTest, 5, float);
+BspTest2(Primitive, 32, SendPrimitiveFPTest, 13, float);
+BspTest2(Primitive, 2, SendPrimitiveFPTest, 1, double);
+BspTest2(Primitive, 4, SendPrimitiveFPTest, 3, double);
+BspTest2(Primitive, 8, SendPrimitiveFPTest, 7, double);
+BspTest2(Primitive, 16, SendPrimitiveFPTest, 5, double);
+BspTest2(Primitive, 32, SendPrimitiveFPTest, 13, double);
+
+BspTest1(Primitive, 2, SendPrimitiveStringTest, 1);
+BspTest1(Primitive, 4, SendPrimitiveStringTest, 3);
+BspTest1(Primitive, 8, SendPrimitiveStringTest, 7);
+BspTest1(Primitive, 16, SendPrimitiveStringTest, 5);
+BspTest1(Primitive, 32, SendPrimitiveStringTest, 13);
+
+BspTest1(Primitive, 2, SendPrimitiveStringOverloadTest, 1);
+BspTest1(Primitive, 4, SendPrimitiveStringOverloadTest, 3);
+BspTest1(Primitive, 8, SendPrimitiveStringOverloadTest, 7);
+BspTest1(Primitive, 16, SendPrimitiveStringOverloadTest, 5);
+BspTest1(Primitive, 32, SendPrimitiveStringOverloadTest, 13);
+
+BspTest1(Primitive, 2, SendPrimitiveStringOverloadTest2, 1);
+BspTest1(Primitive, 4, SendPrimitiveStringOverloadTest2, 3);
+BspTest1(Primitive, 8, SendPrimitiveStringOverloadTest2, 7);
+BspTest1(Primitive, 16, SendPrimitiveStringOverloadTest2, 5);
+BspTest1(Primitive, 32, SendPrimitiveStringOverloadTest2, 13);
+
+BspTest2(Primitive, 2, SendPrimitiveStringOverloadTest3, 1, 20);
+BspTest2(Primitive, 4, SendPrimitiveStringOverloadTest3, 3, 20);
+BspTest2(Primitive, 8, SendPrimitiveStringOverloadTest3, 7, 20);
+BspTest2(Primitive, 16, SendPrimitiveStringOverloadTest3, 5, 20);
+BspTest2(Primitive, 32, SendPrimitiveStringOverloadTest3, 13, 20);
+BspTest2(Primitive, 2, SendPrimitiveStringOverloadTest3, 1, 50);
+BspTest2(Primitive, 4, SendPrimitiveStringOverloadTest3, 3, 50);
+BspTest2(Primitive, 8, SendPrimitiveStringOverloadTest3, 7, 50);
+BspTest2(Primitive, 16, SendPrimitiveStringOverloadTest3, 5, 50);
+BspTest2(Primitive, 32, SendPrimitiveStringOverloadTest3, 13, 50);
+
+
+
+BspTest2(Primitive, 2, TagPrimitiveOverloadTest, 1, uint8_t);
+BspTest2(Primitive, 4, TagPrimitiveOverloadTest, 3, uint8_t);
+BspTest2(Primitive, 8, TagPrimitiveOverloadTest, 7, uint8_t);
+BspTest2(Primitive, 16, TagPrimitiveOverloadTest, 5, uint8_t);
+BspTest2(Primitive, 32, TagPrimitiveOverloadTest, 13, uint8_t);
+BspTest2(Primitive, 2, TagPrimitiveOverloadTest, 1, uint16_t);
+BspTest2(Primitive, 4, TagPrimitiveOverloadTest, 3, uint16_t);
+BspTest2(Primitive, 8, TagPrimitiveOverloadTest, 7, uint16_t);
+BspTest2(Primitive, 16, TagPrimitiveOverloadTest, 5, uint16_t);
+BspTest2(Primitive, 32, TagPrimitiveOverloadTest, 13, uint16_t);
+BspTest2(Primitive, 2, TagPrimitiveOverloadTest, 1, uint32_t);
+BspTest2(Primitive, 4, TagPrimitiveOverloadTest, 3, uint32_t);
+BspTest2(Primitive, 8, TagPrimitiveOverloadTest, 7, uint32_t);
+BspTest2(Primitive, 16, TagPrimitiveOverloadTest, 5, uint32_t);
+BspTest2(Primitive, 32, TagPrimitiveOverloadTest, 13, uint32_t);
+BspTest2(Primitive, 2, TagPrimitiveOverloadTest, 1, uint64_t);
+BspTest2(Primitive, 4, TagPrimitiveOverloadTest, 3, uint64_t);
+BspTest2(Primitive, 8, TagPrimitiveOverloadTest, 7, uint64_t);
+BspTest2(Primitive, 16, TagPrimitiveOverloadTest, 5, uint64_t);
+BspTest2(Primitive, 32, TagPrimitiveOverloadTest, 13, uint64_t);
+
+BspTest2(Primitive, 2, TagPrimitiveFPTest, 1, float);
+BspTest2(Primitive, 4, TagPrimitiveFPTest, 3, float);
+BspTest2(Primitive, 8, TagPrimitiveFPTest, 7, float);
+BspTest2(Primitive, 16, TagPrimitiveFPTest, 5, float);
+BspTest2(Primitive, 32, TagPrimitiveFPTest, 13, float);
+BspTest2(Primitive, 2, TagPrimitiveFPTest, 1, double);
+BspTest2(Primitive, 4, TagPrimitiveFPTest, 3, double);
+BspTest2(Primitive, 8, TagPrimitiveFPTest, 7, double);
+BspTest2(Primitive, 16, TagPrimitiveFPTest, 5, double);
+BspTest2(Primitive, 32, TagPrimitiveFPTest, 13, double);
+
+BspTest1(Primitive, 2, TagPrimitiveStringTest, 1);
+BspTest1(Primitive, 4, TagPrimitiveStringTest, 3);
+BspTest1(Primitive, 8, TagPrimitiveStringTest, 7);
+BspTest1(Primitive, 16, TagPrimitiveStringTest, 5);
+BspTest1(Primitive, 32, TagPrimitiveStringTest, 13);
 
 #endif

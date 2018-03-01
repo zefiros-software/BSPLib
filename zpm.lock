@@ -13,19 +13,19 @@
     } ],
     "modules": [ {
       "definition": "https://github.com/Zefiros-Software/ZefirosDefaults.git",
-      "hash": "130feb5efe53d69a63c995e4d37e0edd0f9bbb80",
+      "hash": "9ec8e43e7ca1d9eab61e4514a8741234c2b8232f",
       "name": "Zefiros-Software/Defaults",
       "public": {
         "libraries": [ {
           "definition": "https://github.com/Zefiros-Software/GoogleTest.git",
-          "hash": "a3c73ed28d7995b18d48027aee740ad827fcc157",
+          "hash": "9557d29b7a5f3476ce024ae54410c997b9088f4a",
           "name": "Zefiros-Software/GoogleTest",
           "repository": "https://github.com/google/googletest.git",
           "tag": "HEAD",
           "versionRequirement": "@head || ^1.0.0"
         }, {
           "definition": "https://github.com/Zefiros-Software/GoogleBenchmark.git",
-          "hash": "bc83262f9d687ac7e31509b3f5177ff391a7452a",
+          "hash": "56f52ee228783547f544d9ac4a533574b9010e3f",
           "name": "Zefiros-Software/GoogleBenchmark",
           "repository": "https://github.com/google/benchmark.git",
           "tag": "HEAD",
@@ -71,7 +71,7 @@
       "versionRequirement": "^2.0.0"
     }, {
       "definition": "https://github.com/Zefiros-Software/ArmadilloBuild.git",
-      "hash": "248f7d0a2a733bbb7adeed8bdbb41fb621284c43",
+      "hash": "e80d8a1642ff06371db57d964cd02be9752fcee3",
       "name": "Zefiros-Software/Armadillo",
       "optionals": {
         "libraries": [ {
