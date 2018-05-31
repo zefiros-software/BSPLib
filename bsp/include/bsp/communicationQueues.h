@@ -45,7 +45,7 @@ namespace BSPInternal
     public:
 
         CommunicationQueues()
-            : mProcCount( 0 )
+            : mProcCount(0)
         {
         }
 
@@ -55,11 +55,11 @@ namespace BSPInternal
          * @param   nProcs The amount of processors that can use the queue.
          */
 
-        explicit CommunicationQueues( std::size_t nProcs )
-            : mQueues( 0 ),
-              mProcCount( nProcs )
+        explicit CommunicationQueues(std::size_t nProcs)
+            : mQueues(0),
+              mProcCount(nProcs)
         {
-            ResetResize( nProcs );
+            ResetResize(nProcs);
         }
 
         /**
@@ -69,15 +69,15 @@ namespace BSPInternal
          * @param   maxProcs The maximum number of processors.
          */
 
-        void ResetResize( std::size_t maxProcs )
+        void ResetResize(std::size_t maxProcs)
         {
             //std::size_t maxProcsSqr = maxProcs * maxProcs;
             mQueues.clear();
-            mQueues.resize( maxProcs );
+            mQueues.resize(maxProcs);
 
-            for ( auto &queue : mQueues )
+            for (auto &queue : mQueues)
             {
-                queue.resize( maxProcs );
+                queue.resize(maxProcs);
             }
 
             mProcCount = maxProcs;
@@ -92,9 +92,9 @@ namespace BSPInternal
          * @return The queue.
          */
 
-        inline tQueue &GetQueueToMe( std::size_t source, std::size_t me )
+        inline tQueue &GetQueueToMe(std::size_t source, std::size_t me)
         {
-            return GetQueue( source, me );
+            return GetQueue(source, me);
         }
 
         /**
@@ -106,19 +106,19 @@ namespace BSPInternal
          * @return The queue.
          */
 
-        inline tQueue &GetQueueFromMe( std::size_t target, std::size_t me )
+        inline tQueue &GetQueueFromMe(std::size_t target, std::size_t me)
         {
-            return GetQueue( me, target );
+            return GetQueue(me, target);
         }
 
     private:
 
-        std::vector< std::vector< tQueue > > mQueues;
+        std::vector< std::vector< tQueue >> mQueues;
 
         /// The amount of processors that may use the queue
         std::size_t mProcCount;
 
-        tQueue &GetQueue( std::size_t owner, std::size_t target )
+        tQueue &GetQueue(std::size_t owner, std::size_t target)
         {
             return mQueues[owner][target];
         }

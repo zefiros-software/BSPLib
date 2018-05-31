@@ -33,55 +33,55 @@ class VoidRecorder
 {
 public:
 
-    void ResetResize( uint32_t /*size*/ )
+    void ResetResize(uint32_t /*size*/)
     {
     }
 
-    void PauseRecording( uint32_t /*pid*/ )
+    void PauseRecording(uint32_t /*pid*/)
     {
     }
 
-    void ResumeRecording( uint32_t /*pid*/ )
+    void ResumeRecording(uint32_t /*pid*/)
     {
     }
 
-    void InitSyncTimer( uint32_t /*pid*/ )
+    void InitSyncTimer(uint32_t /*pid*/)
     {
     }
 
-    void RecordPreSync( uint32_t /*pid*/ )
+    void RecordPreSync(uint32_t /*pid*/)
     {
     }
 
-    void RecordPostSync( uint32_t /*pid*/ )
+    void RecordPostSync(uint32_t /*pid*/)
     {
     }
 
-    void InitCommunication( uint32_t /*pid*/ )
+    void InitCommunication(uint32_t /*pid*/)
     {
     }
 
-    void ManualInitCommunicaion( uint32_t /*pid*/ )
+    void ManualInitCommunicaion(uint32_t /*pid*/)
     {
     }
 
-    void FinishCommunication( uint32_t /*pid*/ )
+    void FinishCommunication(uint32_t /*pid*/)
     {
     }
 
-    void ManualFinishCommunicaion( uint32_t /*pid*/ )
+    void ManualFinishCommunicaion(uint32_t /*pid*/)
     {
     }
 
-    void MarkSuperstep( uint32_t /*pid*/ )
+    void MarkSuperstep(uint32_t /*pid*/)
     {
     }
 
-    void MarkSuperstep( uint32_t /*pid*/, uint32_t /*superstep*/ )
+    void MarkSuperstep(uint32_t /*pid*/, uint32_t /*superstep*/)
     {
     }
 
-    void RecordProcessorsData( uint32_t /*pid*/, const std::vector<ProcessorData> &/*processorsData*/ )
+    void RecordProcessorsData(uint32_t /*pid*/, const std::vector<ProcessorData> &/*processorsData*/)
     {
     }
 

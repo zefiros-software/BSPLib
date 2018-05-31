@@ -40,17 +40,17 @@ namespace BSPInternal
     public:
 
         ThreadRegisterVector()
-            : mRegisterCache( nullptr ),
-              mLocationCache( ( uint32_t )( -1 ) )
+            : mRegisterCache(nullptr),
+              mLocationCache((uint32_t)(-1))
         {
 
         }
 
-        BSP_FORCEINLINE uint32_t LocalToGlobal( const void *reg )
+        BSP_FORCEINLINE uint32_t LocalToGlobal(const void *reg)
         {
-            if ( reg != mRegisterCache )
+            if (reg != mRegisterCache)
             {
-                auto l = std::lower_bound( mRegisters.begin(), mRegisters.end(), reg );
+                auto l = std::lower_bound(mRegisters.begin(), mRegisters.end(), reg);
 
                 mRegisterCache = reg;
                 mLocationCache = mRegistersInfo[l - mRegisters.begin()].registerCount;
@@ -59,9 +59,9 @@ namespace BSPInternal
             return mLocationCache;
         }
 
-        BSP_FORCEINLINE const void *GlobalToLocal( uint32_t globalId )
+        BSP_FORCEINLINE const void *GlobalToLocal(uint32_t globalId)
         {
-            if ( mLocationCache == globalId )
+            if (mLocationCache == globalId)
             {
                 return mRegisterCache;
             }
@@ -72,39 +72,39 @@ namespace BSPInternal
             return mRegisterCache;
         }
 
-        inline void Insert( const void *reg, const BSPInternal::RegisterInfo &registerInfo )
+        inline void Insert(const void *reg, const BSPInternal::RegisterInfo &registerInfo)
         {
-            if ( mRegisters.empty() )
+            if (mRegisters.empty())
             {
-                mRegisters.push_back( reg );
-                mRegistersInfo.emplace_back( registerInfo );
-                mThreadRegisterLocations.push_back( reg );
+                mRegisters.push_back(reg);
+                mRegistersInfo.emplace_back(registerInfo);
+                mThreadRegisterLocations.push_back(reg);
                 return;
             }
 
-            auto l = std::lower_bound( mRegisters.begin(), mRegisters.end(), reg );
+            auto l = std::lower_bound(mRegisters.begin(), mRegisters.end(), reg);
 
-            if ( l != mRegisters.end() && *l == reg )
+            if (l != mRegisters.end() && *l == reg)
             {
                 mRegistersInfo[l - mRegisters.begin()] = registerInfo;
-                mThreadRegisterLocations.push_back( reg );
+                mThreadRegisterLocations.push_back(reg);
             }
             else
             {
-                mRegistersInfo.insert( mRegistersInfo.begin() + ( l - mRegisters.begin() ), registerInfo );
-                mRegisters.insert( l, reg );
-                mThreadRegisterLocations.push_back( reg );
+                mRegistersInfo.insert(mRegistersInfo.begin() + (l - mRegisters.begin()), registerInfo);
+                mRegisters.insert(l, reg);
+                mThreadRegisterLocations.push_back(reg);
             }
         }
 
-        inline void Erase( const void *reg )
+        inline void Erase(const void *reg)
         {
-            auto regIt = std::find( mRegisters.begin(), mRegisters.end(), reg );
+            auto regIt = std::find(mRegisters.begin(), mRegisters.end(), reg);
 
-            if ( regIt != mRegisters.end() )
+            if (regIt != mRegisters.end())
             {
-                mRegistersInfo.erase( mRegistersInfo.begin() + ( regIt - mRegisters.begin() ) );
-                mRegisters.erase( regIt );
+                mRegistersInfo.erase(mRegistersInfo.begin() + (regIt - mRegisters.begin()));
+                mRegisters.erase(regIt);
             }
         }
 

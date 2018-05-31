@@ -35,19 +35,19 @@
 struct ProcessorData
 {
     ProcessorData()
-        : sendReceivedIndex( 0 ),
-          registerCount( 0 ),
-          newTagSize( 0 ),
-          sendRequestsSize( 0 ),
-          pushRequestsSize( 0 ),
-          popRequestsSize( 0 ),
-          putBufferStack( 9064 ),
-          getBufferStack( 9064 ),
-          sendBufferStack( 9064 )
+        : sendReceivedIndex(0),
+          registerCount(0),
+          newTagSize(0),
+          sendRequestsSize(0),
+          pushRequestsSize(0),
+          popRequestsSize(0),
+          putBufferStack(9064),
+          getBufferStack(9064),
+          sendBufferStack(9064)
     {
-        sendRequests.Reserve( 9064 );
-        pushRequests.Reserve( 9064 );
-        popRequests.Reserve( 9064 );
+        sendRequests.Reserve(9064);
+        pushRequests.Reserve(9064);
+        popRequests.Reserve(9064);
 
     }
 

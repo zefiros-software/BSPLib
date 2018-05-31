@@ -38,26 +38,26 @@ namespace BSPInternal
     {
     public:
 
-        inline uint32_t LocalToGlobal( const void *reg )
+        inline uint32_t LocalToGlobal(const void *reg)
         {
-            return mRegisters.find( reg )->second.registerCount;
+            return mRegisters.find(reg)->second.registerCount;
         }
 
-        inline const void *GlobalToLocal( uint32_t globalId )
+        inline const void *GlobalToLocal(uint32_t globalId)
         {
             return mThreadRegisterLocations[globalId];
         }
 
-        inline void Insert( const void *reg, const BSPInternal::RegisterInfo &registerInfo )
+        inline void Insert(const void *reg, const BSPInternal::RegisterInfo &registerInfo)
         {
             mRegisters[reg] = registerInfo;
-            mThreadRegisterLocations.push_back( reg );
+            mThreadRegisterLocations.push_back(reg);
         }
 
-        inline void Erase( const void *reg )
+        inline void Erase(const void *reg)
         {
             //mThreadRegisterLocations[LocalToGlobal( reg )] = nullptr;
-            mRegisters.erase( reg );
+            mRegisters.erase(reg);
         }
 
     private:

@@ -949,7 +949,7 @@ private:
 
     std::vector< ProcessorData > mProcessorsData;
 
-    std::vector< std::future< void > > mThreads;
+    std::vector< std::future< void >> mThreads;
 
     tHistoryRecorder mHistoryRecorder;
 

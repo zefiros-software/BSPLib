@@ -41,26 +41,26 @@ namespace BSPInternal
 
         void lock()
         {
-            while ( mLockValue.test_and_set( std::memory_order_acquire ) )
+            while (mLockValue.test_and_set(std::memory_order_acquire))
             {
             }
         }
 
         bool try_lock()
         {
-            return !mLockValue.test_and_set( std::memory_order_acquire );
+            return !mLockValue.test_and_set(std::memory_order_acquire);
         }
 
         void unlock()
         {
-            mLockValue.clear( std::memory_order_release );
+            mLockValue.clear(std::memory_order_release);
         }
 
     private:
 
         std::atomic_flag mLockValue;
 
-        SpinLock( const SpinLock & );
+        SpinLock(const SpinLock &);
     };
 }
 

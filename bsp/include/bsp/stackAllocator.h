@@ -51,9 +51,9 @@ namespace BSPInternal
          */
 
         StackAllocator()
-            : mStack( 10, '@' ),
-              mCursor( 0 ),
-              mSize( 10 )
+            : mStack(10, '@'),
+              mCursor(0),
+              mSize(10)
         {
         }
 
@@ -63,10 +63,10 @@ namespace BSPInternal
          * @param   size The size in bytes.
          */
 
-        StackAllocator( size_t size )
-            : mStack( size, '@' ),
-              mCursor( 0 ),
-              mSize( size )
+        StackAllocator(size_t size)
+            : mStack(size, '@'),
+              mCursor(0),
+              mSize(size)
         {
         }
 
@@ -78,7 +78,7 @@ namespace BSPInternal
          * @return true if it will succeed, false if it fails.
          */
 
-        BSP_FORCEINLINE bool FitsInStack( size_t size ) const
+        BSP_FORCEINLINE bool FitsInStack(size_t size) const
         {
             return mCursor + size < mSize;
         }
@@ -93,16 +93,16 @@ namespace BSPInternal
          * @return A StackLocation that refers to the object.
          */
 
-        BSP_FORCEINLINE StackLocation Alloc( size_t size, const char *content )
+        BSP_FORCEINLINE StackLocation Alloc(size_t size, const char *content)
         {
-            if ( !FitsInStack( size ) )
+            if (!FitsInStack(size))
             {
-                Grow( size );
+                Grow(size);
             }
 
             const StackLocation loc = mCursor;
             char *buffer = mStack.data() + loc;
-            memcpy( buffer, content, size );
+            memcpy(buffer, content, size);
 
             mCursor += size;
 
@@ -117,9 +117,9 @@ namespace BSPInternal
          * @param [in,out]  dst If non-null, destination to read the object to.
          */
 
-        inline void Extract( StackLocation location, size_t size, char *dst ) const
+        inline void Extract(StackLocation location, size_t size, char *dst) const
         {
-            memcpy( dst, mStack.data() + location, size );
+            memcpy(dst, mStack.data() + location, size);
         }
 
         /**
@@ -137,9 +137,9 @@ namespace BSPInternal
          * @param [in,out]  sa The stack allocator.
          */
 
-        inline void Merge( StackAllocator &sa )
+        inline void Merge(StackAllocator &sa)
         {
-            Alloc( sa.mCursor, sa.mStack.data() );
+            Alloc(sa.mCursor, sa.mStack.data());
         }
 
         /**
@@ -173,9 +173,9 @@ namespace BSPInternal
          * @param   size The size to at least be able to allocate.
          */
 
-        BSP_FORCEINLINE void Grow( size_t size )
+        BSP_FORCEINLINE void Grow(size_t size)
         {
-            mStack.resize( static_cast<size_t>( mSize * 1.6f ) + size, '~' );
+            mStack.resize(static_cast<size_t>(mSize * 1.6f) + size, '~');
             mSize = mStack.size();
         }
     };

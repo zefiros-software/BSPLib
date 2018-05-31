@@ -56,16 +56,16 @@
 namespace BSPUtil
 {
     template< typename tLoopIterator, typename tFunc>
-    BSP_FORCEINLINE void SplitFor( tLoopIterator begin, tLoopIterator end, tLoopIterator start, const tFunc &body )
+    BSP_FORCEINLINE void SplitFor(tLoopIterator begin, tLoopIterator end, tLoopIterator start, const tFunc &body)
     {
-        for ( tLoopIterator it = start; it < end; ++it )
+        for (tLoopIterator it = start; it < end; ++it)
         {
-            body( it );
+            body(it);
         }
 
-        for ( tLoopIterator it = begin; it < start; ++it )
+        for (tLoopIterator it = begin; it < start; ++it)
         {
-            body( it );
+            body(it);
         }
     }
 
@@ -75,18 +75,18 @@ namespace BSPUtil
     public:
 
         template< typename tFuncIf >
-        StaticIfUnreached( const tFuncIf & )
+        StaticIfUnreached(const tFuncIf &)
         {
         }
 
         template< bool tElseIfCondition, typename tFuncElseIf >
-        StaticIfUnreached< tElseIfCondition > ElseIf( const tFuncElseIf &elseIfBody )
+        StaticIfUnreached< tElseIfCondition > ElseIf(const tFuncElseIf &elseIfBody)
         {
-            return StaticIfUnreached< tElseIfCondition >( elseIfBody );
+            return StaticIfUnreached< tElseIfCondition >(elseIfBody);
         }
 
         template< typename tFuncElse >
-        void Else( const tFuncElse & )
+        void Else(const tFuncElse &)
         {
         }
     };
@@ -97,19 +97,19 @@ namespace BSPUtil
     public:
 
         template< typename tFuncIf >
-        StaticIf( const tFuncIf &ifBody )
+        StaticIf(const tFuncIf &ifBody)
         {
             ifBody();
         }
 
         template< bool tElseIfCondition, typename tFuncElseIf >
-        StaticIfUnreached< tElseIfCondition > ElseIf( const tFuncElseIf &elseIfBody )
+        StaticIfUnreached< tElseIfCondition > ElseIf(const tFuncElseIf &elseIfBody)
         {
-            return StaticIfUnreached< tElseIfCondition >( elseIfBody );
+            return StaticIfUnreached< tElseIfCondition >(elseIfBody);
         }
 
         template< typename tFuncElse >
-        void Else( const tFuncElse & )
+        void Else(const tFuncElse &)
         {
         }
     };
@@ -120,18 +120,18 @@ namespace BSPUtil
     public:
 
         template< typename tFuncIf >
-        StaticIf( const tFuncIf & )
+        StaticIf(const tFuncIf &)
         {
         }
 
         template< bool tElseIfCondition, typename tFuncElseIf >
-        StaticIf< tElseIfCondition > ElseIf( const tFuncElseIf &elseIfBody )
+        StaticIf< tElseIfCondition > ElseIf(const tFuncElseIf &elseIfBody)
         {
-            return StaticIf< tElseIfCondition >( elseIfBody );
+            return StaticIf< tElseIfCondition >(elseIfBody);
         }
 
         template< typename tFuncElse >
-        void Else( const tFuncElse &elseBody )
+        void Else(const tFuncElse &elseBody)
         {
             elseBody();
         }
@@ -142,7 +142,7 @@ namespace BSPUtil
     public:
 
         TicTimer()
-            : mTicTime( std::chrono::high_resolution_clock::now() )
+            : mTicTime(std::chrono::high_resolution_clock::now())
         {
 
         }

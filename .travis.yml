@@ -3,25 +3,13 @@ language: generic
 matrix:
   include:
   - os: osx
-    osx_image: xcode8.3
-    language: generic
-    env:
-    - BUILD_CONFIG=release
-    - BUILD_ARCHITECTURE=x86
-  - os: osx
-    osx_image: xcode8.3
-    language: generic
-    env:
-    - BUILD_CONFIG=debug
-    - BUILD_ARCHITECTURE=x86
-  - os: osx
-    osx_image: xcode8.3
+    osx_image: xcode9.2
     language: generic
     env:
     - BUILD_CONFIG=release
     - BUILD_ARCHITECTURE=x86_64
   - os: osx
-    osx_image: xcode8.3
+    osx_image: xcode9.2
     language: generic
     env:
     - BUILD_CONFIG=debug
@@ -61,34 +49,28 @@ matrix:
     env:
     - BUILD_CONFIG=debug
     - BUILD_ARCHITECTURE=x86_64
-    - GCC_VERSION=5
-  - os: linux
-    dist: trusty
-    env:
-    - BUILD_CONFIG=release
-    - BUILD_ARCHITECTURE=x86_64
-    - GCC_VERSION=5
+    - GCC_VERSION=6
   - os: linux
     dist: trusty
     env:
     - BUILD_CONFIG=release
     - BUILD_ARCHITECTURE=x86
-    - GCC_VERSION=5
+    - GCC_VERSION=6
   - os: linux
     dist: trusty
     env:
     - BUILD_CONFIG=zpm
-    - GCC_VERSION=5
+    - GCC_VERSION=6
 global:
   env:
   - PROJECT=BSPLib
   - PROJECT_DIRECTORY=bsp
 install:
-- source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/Zefiros-Software/ZPM/features/refactor/script/install-zpm.sh)"
+- source /dev/stdin <<< "$(curl -s https://raw.githubusercontent.com/Zefiros-Software/ZPM/dev/script/install-zpm.sh)"
 script:
 - zpm run build-ci-library
 after_success:
 - zpm run deploy-ci-library
 notifications:
   slack:
-    secure: Uq7fSYclqmlhUU7igX5KHpQfvSxPnyJ2bYVYOv+c3znmsUFhywnWFwxN1UZWhpzZE6S8lyWSqRrFPT6wqvtDJWWTAgFIJ/5xLD7wywK342ms8XQf7p3kZB+V7J8Tn9mRvJSKUCOlMVD3avTKxvzplhG21Kk0U6s3+Ii75aK2iMHxtR7MnAKhjDWnjxmk8+VSBO5bMwbtDK08Rw6HdpWM+6zldmb+MGd1eQLwMA17Jw9/yvb6SrLBMySd/1BCXurOF0mM7Mh1YT9UvLH5vnWW80AXZrWxhRWtbjlTTZmwnzaLdBB2Z5q8IxqFCOm4eeSsLKVVqCSLsXtfR+Ez5TpVAXs12NueF/H3umlGP47yf+BOzJ1whVn4FtDXfWGWlRrHE/5PZ9ySf4P7qcCmOYxjSCOZj6DthDFd3x9K05lYkmB3V2Pp6nyPZbMfIXezQUzDEpUtjfLYWRy6WpjB+ABuByZ9jBCEIA9qZS0njIuNKoxTDttLk9tuWKrI+dMSbBjtIu4IBIEZH2+jga2ClzSaPTQ0cydyigssOmV0tKWu3vdiK1SXp4dC9AGwXQs5D9wGhyWf82LIxd1+6S3kF+L/O56dgtEo5Maxu7fhz2OCWE58qOdgOvU9kNScnXUjXb9MrvJF3a0ShqhEeg5bED4TfAkyMkIJVgB4w7Jb9RxQW3I=
+    secure: p2/koHdeVJyGte6N5ecYQIwKORdjj6V6f19X1CVulnUmhefIcsX1QHZ5rKIS7+xss4sPOvFXLN8yT9n+pRCjqEWzh927meyLINiVx19+Isl1R042m4qutmCpr0TrqsOqwJQc5HhMRusiz7tXeClhUZ6fOxZ3dGjzZmibs3jg8ntO+OSYJm2Wv9CcbR81xdYKzwGu+ujBI55QaXFuXn0QDRVl5amLYFQYb3RMSaY5ozEkmvhY5dO7Ha+zFesLmh4vlYyulWzT/wa8Pws+vuVd7Wweek1DTOIn+PQxn6JxtDKmtNthYJD8Mg8YR618NMjUUj6UvW9PozeWi+Vtja/giqHMgYrXqH7RaSDLV1S4jPexqlAQYaMJYuEcyeFWCyV783G+jkPD13x4as9gRCXqh9CMNEv7h+vQI/fLWuN4hQV1BkAWt0JEuLUZMq6zShzHOvbeueywtxlktPpEsKDk8pDqUUEenrvhx4H/eYMv4/wiIwzn+4KO4uhdm8uM4kV+Px8ipTfGSLFOieiPomSq09IbcmTj0fFGF3MlHpPaCoOJuZ1Sgt7r/CPUdzihyHr7paxYs/1QxmJKtKyJFDNkaOsrSjDyY8E6S7213vE9FQLu9MvaTeHbEOuo/u+oI4aEJjxog2Zpf1AX5XoK9BftJUhG0YbFSp31D6EY0H/m80E=

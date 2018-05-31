@@ -43,14 +43,14 @@ namespace BSPLib
 
     namespace Classic
     {
-        BSP_FORCEINLINE void Init( std::function< void() >spmd, int32_t argc, char **argv )
+        BSP_FORCEINLINE void Init(std::function< void() >spmd, int32_t argc, char **argv)
         {
-            BSP::GetInstance().Init( spmd, argc, argv );
+            BSP::GetInstance().Init(spmd, argc, argv);
         }
 
-        BSP_FORCEINLINE void Begin( uint32_t p )
+        BSP_FORCEINLINE void Begin(uint32_t p)
         {
-            BSP::GetInstance().Begin( p );
+            BSP::GetInstance().Begin(p);
         }
 
         BSP_FORCEINLINE void End()
@@ -68,14 +68,14 @@ namespace BSPLib
             return BSP::GetInstance().NProcs();
         }
 
-        inline void Abort( const char *errorMessage, ... )
+        inline void Abort(const char *errorMessage, ...)
         {
-            BSP::GetInstance().Abort( errorMessage );
+            BSP::GetInstance().Abort(errorMessage);
         }
 
-        BSP_FORCEINLINE void VAbort( const char *errorMessage, va_list args )
+        BSP_FORCEINLINE void VAbort(const char *errorMessage, va_list args)
         {
-            BSP::GetInstance().VAbort( errorMessage, args );
+            BSP::GetInstance().VAbort(errorMessage, args);
         }
 
         BSP_FORCEINLINE void Sync()
@@ -88,73 +88,73 @@ namespace BSPLib
             return BSP::GetInstance().Time();
         }
 
-        BSP_FORCEINLINE void Push( const void *ident, size_t size )
+        BSP_FORCEINLINE void Push(const void *ident, size_t size)
         {
-            BSP::GetInstance().PushReg( ident, size );
+            BSP::GetInstance().PushReg(ident, size);
         }
 
-        BSP_FORCEINLINE void Pop( const void *ident )
+        BSP_FORCEINLINE void Pop(const void *ident)
         {
-            BSP::GetInstance().PopReg( ident );
+            BSP::GetInstance().PopReg(ident);
         }
 
-        BSP_FORCEINLINE void Put( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
+        BSP_FORCEINLINE void Put(uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes)
         {
-            BSP::GetInstance().Put( pid, src, dst, offset, nbytes );
+            BSP::GetInstance().Put(pid, src, dst, offset, nbytes);
         }
 
-        BSP_FORCEINLINE void Get( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
+        BSP_FORCEINLINE void Get(uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes)
         {
-            BSP::GetInstance().Get( pid, src, offset, dst, nbytes );
+            BSP::GetInstance().Get(pid, src, offset, dst, nbytes);
         }
 
-        BSP_FORCEINLINE void SetTagSize( size_t *size )
+        BSP_FORCEINLINE void SetTagSize(size_t *size)
         {
-            BSP::GetInstance().SetTagsize( size );
+            BSP::GetInstance().SetTagsize(size);
         }
 
-        BSP_FORCEINLINE void Send( uint32_t pid, const void *tag, const void *payload, size_t size )
+        BSP_FORCEINLINE void Send(uint32_t pid, const void *tag, const void *payload, size_t size)
         {
-            BSP::GetInstance().Send( pid, tag, payload, size );
+            BSP::GetInstance().Send(pid, tag, payload, size);
         }
 
-        BSP_FORCEINLINE void HPSend( uint32_t pid, const void *tag, const void *payload, size_t size )
+        BSP_FORCEINLINE void HPSend(uint32_t pid, const void *tag, const void *payload, size_t size)
         {
-            BSP::GetInstance().Send( pid, tag, payload, size );
+            BSP::GetInstance().Send(pid, tag, payload, size);
         }
 
-        BSP_FORCEINLINE void QSize( size_t *packets, size_t *accumulatedSize )
+        BSP_FORCEINLINE void QSize(size_t *packets, size_t *accumulatedSize)
         {
-            BSP::GetInstance().QSize( packets, accumulatedSize );
+            BSP::GetInstance().QSize(packets, accumulatedSize);
         }
 
-        BSP_FORCEINLINE void GetTag( size_t *status, void *tag )
+        BSP_FORCEINLINE void GetTag(size_t *status, void *tag)
         {
-            BSP::GetInstance().GetTag( status, tag );
+            BSP::GetInstance().GetTag(status, tag);
         }
 
-        BSP_FORCEINLINE void Move( void *payload, size_t maxCopySize )
+        BSP_FORCEINLINE void Move(void *payload, size_t maxCopySize)
         {
-            BSP::GetInstance().Move( payload, maxCopySize );
+            BSP::GetInstance().Move(payload, maxCopySize);
         }
 
-        BSP_FORCEINLINE size_t HPMove( void **tagPtr, void **payloadPtr )
+        BSP_FORCEINLINE size_t HPMove(void **tagPtr, void **payloadPtr)
         {
             BSP &bsp = BSP::GetInstance();
             size_t status;
-            bsp.GetTag( &status, *tagPtr );
-            bsp.Move( *payloadPtr, status );
+            bsp.GetTag(&status, *tagPtr);
+            bsp.Move(*payloadPtr, status);
             return status;
         }
 
-        BSP_FORCEINLINE void HPPut( uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes )
+        BSP_FORCEINLINE void HPPut(uint32_t pid, const void *src, void *dst, ptrdiff_t offset, size_t nbytes)
         {
-            BSP::GetInstance().Put( pid, src, dst, offset, nbytes );
+            BSP::GetInstance().Put(pid, src, dst, offset, nbytes);
         }
 
-        BSP_FORCEINLINE void HPGet( uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes )
+        BSP_FORCEINLINE void HPGet(uint32_t pid, const void *src, ptrdiff_t offset, void *dst, size_t nbytes)
         {
-            BSP::GetInstance().Get( pid, src, offset, dst, nbytes );
+            BSP::GetInstance().Get(pid, src, offset, dst, nbytes);
         }
     }
 
@@ -209,624 +209,624 @@ namespace BSPLib
     }
 
     template< typename tPrimitive >
-    void Push( tPrimitive &ident )
+    void Push(tPrimitive &ident)
     {
-        Classic::Push( &ident, sizeof( tPrimitive ) );
+        Classic::Push(&ident, sizeof(tPrimitive));
     }
 
-    inline void Push( const void *ident, size_t byteSize )
+    inline void Push(const void *ident, size_t byteSize)
     {
-        Classic::Push( ident, byteSize );
+        Classic::Push(ident, byteSize);
     }
 
     inline void Push()
     {
-        Classic::Push( nullptr, 0 );
+        Classic::Push(nullptr, 0);
     }
 
     template< typename tPrimitive >
-    void Pop( tPrimitive &ident )
+    void Pop(tPrimitive &ident)
     {
-        Classic::Pop( &ident );
+        Classic::Pop(&ident);
     }
 
-    inline void Pop( const void *ident )
+    inline void Pop(const void *ident)
     {
-        Classic::Pop( ident );
+        Classic::Pop(ident);
     }
 
     inline void Pop()
     {
-        Classic::Pop( nullptr );
+        Classic::Pop(nullptr);
     }
 
     template<>
-    inline void Push( std::string &string )
+    inline void Push(std::string &string)
     {
-        Classic::Push( string.data(), string.size() );
+        Classic::Push(string.data(), string.size());
     }
 
     template<>
-    inline void Pop( std::string &string )
+    inline void Pop(std::string &string)
     {
-        Classic::Pop( string.data() );
+        Classic::Pop(string.data());
     }
 
     template< typename tPrimitive >
-    void Put( uint32_t pid, tPrimitive &src, tPrimitive &dst )
+    void Put(uint32_t pid, tPrimitive &src, tPrimitive &dst)
     {
-        Classic::Put( pid, &src, &dst, 0, sizeof( tPrimitive ) );
+        Classic::Put(pid, &src, &dst, 0, sizeof(tPrimitive));
     }
 
     template <>
-    inline void Put( uint32_t pid, std::string &src, std::string &dst )
+    inline void Put(uint32_t pid, std::string &src, std::string &dst)
     {
-        Classic::Put( pid, src.data(), &*dst.begin(), 0, src.size() );
+        Classic::Put(pid, src.data(), &*dst.begin(), 0, src.size());
     }
 
     template< typename tPrimitive >
-    void Put( uint32_t pid, tPrimitive &var )
+    void Put(uint32_t pid, tPrimitive &var)
     {
-        Put( pid, var, var );
+        Put(pid, var, var);
     }
 
     template< typename tPrimitive >
-    void Get( uint32_t pid, tPrimitive &src, tPrimitive &dst )
+    void Get(uint32_t pid, tPrimitive &src, tPrimitive &dst)
     {
-        Classic::Get( pid, &src, 0, &dst, sizeof( tPrimitive ) );
+        Classic::Get(pid, &src, 0, &dst, sizeof(tPrimitive));
     }
 
     template<>
-    inline void Get( uint32_t pid, std::string &src, std::string &dst )
+    inline void Get(uint32_t pid, std::string &src, std::string &dst)
     {
-        Classic::Get( pid, &*src.begin(), 0, &*dst.begin(), dst.size() );
+        Classic::Get(pid, &*src.begin(), 0, &*dst.begin(), dst.size());
     }
 
     template< typename tPrimitive >
-    void Get( uint32_t pid, tPrimitive &var )
+    void Get(uint32_t pid, tPrimitive &var)
     {
-        Get( pid, var, var );
+        Get(pid, var, var);
     }
 
     template< typename tPrimitive >
-    void Move( tPrimitive &payload )
+    void Move(tPrimitive &payload)
     {
-        Classic::Move( &payload, sizeof( tPrimitive ) );
+        Classic::Move(&payload, sizeof(tPrimitive));
     }
 
     template<>
-    inline void Move( std::string &payload )
+    inline void Move(std::string &payload)
     {
-        Classic::Move( &*payload.begin(), payload.size() );
+        Classic::Move(&*payload.begin(), payload.size());
     }
 
     template< typename tPrimitive >
-    void PushPtrs( tPrimitive *begin, size_t count )
+    void PushPtrs(tPrimitive *begin, size_t count)
     {
-        Classic::Push( begin, count * sizeof( tPrimitive ) );
+        Classic::Push(begin, count * sizeof(tPrimitive));
     }
 
     template< typename tPrimitive >
-    void PushPtrs( tPrimitive *begin, tPrimitive *end )
+    void PushPtrs(tPrimitive *begin, tPrimitive *end)
     {
-        PushPtrs( begin, end - begin );
+        PushPtrs(begin, end - begin);
     }
 
     template< typename tPrimitive >
-    void PopPtrs( tPrimitive *begin )
+    void PopPtrs(tPrimitive *begin)
     {
-        Classic::Pop( begin );
+        Classic::Pop(begin);
     }
 
     template< typename tPrimitive >
-    BSP_FORCEINLINE void PutPtrs( uint32_t pid, tPrimitive *srcBegin, size_t count, tPrimitive *resultBegin, size_t offset )
+    BSP_FORCEINLINE void PutPtrs(uint32_t pid, tPrimitive *srcBegin, size_t count, tPrimitive *resultBegin, size_t offset)
     {
-        Classic::Put( pid, srcBegin, resultBegin, offset * sizeof( tPrimitive ), count * sizeof( tPrimitive ) );
+        Classic::Put(pid, srcBegin, resultBegin, offset * sizeof(tPrimitive), count * sizeof(tPrimitive));
     }
 
     template< typename tPrimitive >
-    void PutPtrs( uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcEnd, tPrimitive *resultBegin, tPrimitive *resultDst )
+    void PutPtrs(uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcEnd, tPrimitive *resultBegin, tPrimitive *resultDst)
     {
-        PutPtrs( pid, srcBegin, srcEnd - srcBegin, resultBegin, resultDst - resultBegin );
+        PutPtrs(pid, srcBegin, srcEnd - srcBegin, resultBegin, resultDst - resultBegin);
     }
 
     template< typename tPrimitive >
-    void PutPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *end )
+    void PutPtrs(uint32_t pid, tPrimitive *begin, tPrimitive *end)
     {
-        PutPtrs( pid, begin, end, begin, begin );
+        PutPtrs(pid, begin, end, begin, begin);
     }
 
     template< typename tPrimitive >
-    void PutPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *cursor, tPrimitive *end )
+    void PutPtrs(uint32_t pid, tPrimitive *begin, tPrimitive *cursor, tPrimitive *end)
     {
-        PutPtrs( pid, cursor, end, begin, cursor );
+        PutPtrs(pid, cursor, end, begin, cursor);
     }
 
     template< typename tPrimitive >
-    void PutPtrs( uint32_t pid, tPrimitive *begin, size_t count )
+    void PutPtrs(uint32_t pid, tPrimitive *begin, size_t count)
     {
-        PutPtrs( pid, begin, begin, begin + count );
+        PutPtrs(pid, begin, begin, begin + count);
     }
 
     template< typename tPrimitive >
-    void PutPtrs( uint32_t pid, tPrimitive *begin, size_t offset, size_t count )
+    void PutPtrs(uint32_t pid, tPrimitive *begin, size_t offset, size_t count)
     {
-        PutPtrs( pid, begin + offset, count, begin, offset );
+        PutPtrs(pid, begin + offset, count, begin, offset);
     }
 
     template< typename tPrimitive >
-    void GetPtrs( uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcCursor, tPrimitive *resultBegin,
-                  tPrimitive *resultEnd )
+    void GetPtrs(uint32_t pid, tPrimitive *srcBegin, tPrimitive *srcCursor, tPrimitive *resultBegin,
+                 tPrimitive *resultEnd)
     {
-        Classic::Get( pid, srcBegin, ( srcCursor - srcBegin ) * sizeof( tPrimitive ), resultBegin,
-                      ( resultEnd - resultBegin ) * sizeof( tPrimitive ) );
+        Classic::Get(pid, srcBegin, (srcCursor - srcBegin) * sizeof(tPrimitive), resultBegin,
+                     (resultEnd - resultBegin) * sizeof(tPrimitive));
     }
 
     template< typename tPrimitive >
-    void GetPtrs( uint32_t pid, tPrimitive *srcBegin, size_t offset, tPrimitive *resultBegin, size_t count )
+    void GetPtrs(uint32_t pid, tPrimitive *srcBegin, size_t offset, tPrimitive *resultBegin, size_t count)
     {
-        GetPtrs( pid, srcBegin, srcBegin + offset, resultBegin, resultBegin + count );
+        GetPtrs(pid, srcBegin, srcBegin + offset, resultBegin, resultBegin + count);
     }
 
     template< typename tPrimitive >
-    void GetPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *cursor, tPrimitive *end )
+    void GetPtrs(uint32_t pid, tPrimitive *begin, tPrimitive *cursor, tPrimitive *end)
     {
-        GetPtrs( pid, begin, cursor, cursor, end );
+        GetPtrs(pid, begin, cursor, cursor, end);
     }
 
     template< typename tPrimitive >
-    void GetPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *end )
+    void GetPtrs(uint32_t pid, tPrimitive *begin, tPrimitive *end)
     {
-        GetPtrs( pid, begin, begin, end );
+        GetPtrs(pid, begin, begin, end);
     }
 
     template< typename tPrimitive >
-    void GetPtrs( uint32_t pid, tPrimitive *begin, size_t offset, size_t count )
+    void GetPtrs(uint32_t pid, tPrimitive *begin, size_t offset, size_t count)
     {
-        GetPtrs( pid, begin, offset, begin + offset, count );
+        GetPtrs(pid, begin, offset, begin + offset, count);
     }
 
     template< typename tPrimitive >
-    void GetPtrs( uint32_t pid, tPrimitive *begin, size_t count )
+    void GetPtrs(uint32_t pid, tPrimitive *begin, size_t count)
     {
-        GetPtrs( pid, begin, begin, begin + count );
+        GetPtrs(pid, begin, begin, begin + count);
     }
 
     template< typename tPrimitive, typename tTagPrimitive >
-    void SendPtrs( uint32_t pid, tTagPrimitive *tag, tPrimitive *begin, size_t count )
+    void SendPtrs(uint32_t pid, tTagPrimitive *tag, tPrimitive *begin, size_t count)
     {
-        Classic::Send( pid, tag, begin, count * sizeof( tPrimitive ) );
+        Classic::Send(pid, tag, begin, count * sizeof(tPrimitive));
     }
 
     template< typename tPrimitive, typename tTagPrimitive >
-    void SendPtrs( uint32_t pid, tTagPrimitive *tag, tPrimitive *begin, tPrimitive *end )
+    void SendPtrs(uint32_t pid, tTagPrimitive *tag, tPrimitive *begin, tPrimitive *end)
     {
-        SendPtrs( pid, tag, begin, end - begin );
+        SendPtrs(pid, tag, begin, end - begin);
     }
 
     template< typename tPrimitive, typename tTagPrimitive >
-    void SendPtrs( uint32_t pid, std::vector< tTagPrimitive > &tagContainer, tPrimitive *begin, tPrimitive *end )
+    void SendPtrs(uint32_t pid, std::vector< tTagPrimitive > &tagContainer, tPrimitive *begin, tPrimitive *end)
     {
-        SendPtrs( pid, tagContainer.data(), begin, end );
+        SendPtrs(pid, tagContainer.data(), begin, end);
     }
 
     template< typename tPrimitive, typename tTagPrimitive >
-    void SendPtrs( uint32_t pid, std::vector< tTagPrimitive > &tagContainer, tPrimitive *begin, size_t count )
+    void SendPtrs(uint32_t pid, std::vector< tTagPrimitive > &tagContainer, tPrimitive *begin, size_t count)
     {
-        SendPtrs( pid, tagContainer.data(), begin, count );
+        SendPtrs(pid, tagContainer.data(), begin, count);
     }
 
     template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
-    void SendPtrs( uint32_t pid, std::array< tTagPrimitive, tTagSize > &tagContainer, tPrimitive *begin, tPrimitive *end )
+    void SendPtrs(uint32_t pid, std::array< tTagPrimitive, tTagSize > &tagContainer, tPrimitive *begin, tPrimitive *end)
     {
-        SendPtrs( pid, tagContainer.data(), begin, end );
+        SendPtrs(pid, tagContainer.data(), begin, end);
     }
 
     template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
-    void SendPtrs( uint32_t pid, std::array< tTagPrimitive, tTagSize > &tagContainer, tPrimitive *begin, size_t count )
+    void SendPtrs(uint32_t pid, std::array< tTagPrimitive, tTagSize > &tagContainer, tPrimitive *begin, size_t count)
     {
-        SendPtrs( pid, tagContainer.data(), begin, count );
+        SendPtrs(pid, tagContainer.data(), begin, count);
     }
 
     template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
-    void SendPtrsWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, tPrimitive *end )
+    void SendPtrsWithCArray(uint32_t pid, tTagPrimitive(&tagContainer)[tTagSize], tPrimitive *begin, tPrimitive *end)
     {
-        SendPtrs( pid, tagContainer, begin, end - begin );
+        SendPtrs(pid, tagContainer, begin, end - begin);
     }
 
     template< typename tPrimitive, typename tTagPrimitive, uint32_t tTagSize >
-    void SendPtrsWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive *begin, size_t count )
+    void SendPtrsWithCArray(uint32_t pid, tTagPrimitive(&tagContainer)[tTagSize], tPrimitive *begin, size_t count)
     {
-        SendPtrs( pid, tagContainer, begin, count );
+        SendPtrs(pid, tagContainer, begin, count);
     }
 
     template< typename tPrimitive, typename tTag >
-    void SendPtrs( uint32_t pid, const tTag &tag, tPrimitive *begin, tPrimitive *end )
+    void SendPtrs(uint32_t pid, const tTag &tag, tPrimitive *begin, tPrimitive *end)
     {
-        SendPtrs( pid, &tag, begin, end );
+        SendPtrs(pid, &tag, begin, end);
     }
 
     template< typename tPrimitive, typename tTag >
-    void SendPtrs( uint32_t pid, const tTag &tag, tPrimitive *begin, size_t count )
+    void SendPtrs(uint32_t pid, const tTag &tag, tPrimitive *begin, size_t count)
     {
-        SendPtrs( pid, &tag, begin, count );
+        SendPtrs(pid, &tag, begin, count);
     }
 
     template< typename tPrimitive >
-    void SendPtrs( uint32_t pid, const std::string &tag, tPrimitive *begin, tPrimitive *end )
+    void SendPtrs(uint32_t pid, const std::string &tag, tPrimitive *begin, tPrimitive *end)
     {
-        SendPtrs( pid, tag.data(), begin, end );
+        SendPtrs(pid, tag.data(), begin, end);
     }
 
     template< typename tPrimitive >
-    void SendPtrs( uint32_t pid, const std::string &tag, tPrimitive *begin, size_t count )
+    void SendPtrs(uint32_t pid, const std::string &tag, tPrimitive *begin, size_t count)
     {
-        SendPtrs( pid, tag.data(), begin, count );
-    }
-
-
-
-
-    template< typename tPrimitive >
-    void SendPtrs( uint32_t pid, tPrimitive *begin, size_t count )
-    {
-        Classic::Send( pid, nullptr, begin, count * sizeof( tPrimitive ) );
-    }
-
-    template< typename tPrimitive >
-    void SendPtrs( uint32_t pid, tPrimitive *begin, tPrimitive *end )
-    {
-        SendPtrs( pid, nullptr, begin, end - begin );
+        SendPtrs(pid, tag.data(), begin, count);
     }
 
 
 
+
     template< typename tPrimitive >
-    void MovePtrs( tPrimitive *payload, uint32_t maxCopySize )
+    void SendPtrs(uint32_t pid, tPrimitive *begin, size_t count)
     {
-        Classic::Move( payload, maxCopySize * sizeof( tPrimitive ) );
+        Classic::Send(pid, nullptr, begin, count * sizeof(tPrimitive));
     }
 
     template< typename tPrimitive >
-    void MovePtrs( tPrimitive *begin, tPrimitive *end )
+    void SendPtrs(uint32_t pid, tPrimitive *begin, tPrimitive *end)
     {
-        MovePtrs( begin, ( uint32_t )( end - begin ) );
+        SendPtrs(pid, nullptr, begin, end - begin);
+    }
+
+
+
+    template< typename tPrimitive >
+    void MovePtrs(tPrimitive *payload, uint32_t maxCopySize)
+    {
+        Classic::Move(payload, maxCopySize * sizeof(tPrimitive));
+    }
+
+    template< typename tPrimitive >
+    void MovePtrs(tPrimitive *begin, tPrimitive *end)
+    {
+        MovePtrs(begin, (uint32_t)(end - begin));
     }
 
     template< typename tIterator >
-    void PushIterator( tIterator begin, size_t count )
+    void PushIterator(tIterator begin, size_t count)
     {
-        PushPtrs( &*begin, count );
+        PushPtrs(&*begin, count);
     }
 
     template< typename tIterator >
-    void PushIterator( tIterator begin, tIterator end )
+    void PushIterator(tIterator begin, tIterator end)
     {
-        assert( end == begin || &*( end - 1 ) - &*begin == end - begin - 1 );
-        PushIterator( begin, end - begin );
+        assert(end == begin || &*(end - 1) - &*begin == end - begin - 1);
+        PushIterator(begin, end - begin);
     }
 
     template < typename tIterator>
-    void PopIterator( tIterator begin )
+    void PopIterator(tIterator begin)
     {
-        PopPtrs( &*begin );
+        PopPtrs(&*begin);
     }
 
     template< typename tIterator, typename tOutputIterator >
-    BSP_FORCEINLINE void PutIterator( uint32_t pid, tIterator srcBegin, size_t count, tOutputIterator resultBegin,
-                                      size_t offset )
+    BSP_FORCEINLINE void PutIterator(uint32_t pid, tIterator srcBegin, size_t count, tOutputIterator resultBegin,
+                                     size_t offset)
     {
-        PutPtrs( pid, &*srcBegin, count, &*resultBegin, offset );
+        PutPtrs(pid, &*srcBegin, count, &*resultBegin, offset);
     }
 
     template< typename tIterator, typename tOutputIterator >
-    void PutIterator( uint32_t pid, tIterator srcBegin, tIterator srcEnd, tOutputIterator resultBegin,
-                      tOutputIterator resultDst )
+    void PutIterator(uint32_t pid, tIterator srcBegin, tIterator srcEnd, tOutputIterator resultBegin,
+                     tOutputIterator resultDst)
     {
-        assert( srcEnd == srcBegin || &*( srcEnd - 1 ) - &*srcBegin == srcEnd - srcBegin - 1 );
-        assert( resultDst == resultBegin || &*( resultDst - 1 ) - &*resultBegin == resultDst - resultBegin - 1 );
-        PutIterator( pid, srcBegin, srcEnd - srcBegin, resultBegin, resultDst - resultBegin );
+        assert(srcEnd == srcBegin || &*(srcEnd - 1) - &*srcBegin == srcEnd - srcBegin - 1);
+        assert(resultDst == resultBegin || &*(resultDst - 1) - &*resultBegin == resultDst - resultBegin - 1);
+        PutIterator(pid, srcBegin, srcEnd - srcBegin, resultBegin, resultDst - resultBegin);
     }
 
     template< typename tIterator >
-    void PutIterator( uint32_t pid, tIterator begin, tIterator cursor, tIterator end )
+    void PutIterator(uint32_t pid, tIterator begin, tIterator cursor, tIterator end)
     {
-        PutIterator( pid, cursor, end, begin, cursor );
+        PutIterator(pid, cursor, end, begin, cursor);
     }
 
     template< typename tIterator >
-    void PutIterator( uint32_t pid, tIterator begin, tIterator end )
+    void PutIterator(uint32_t pid, tIterator begin, tIterator end)
     {
-        PutIterator( pid, begin, begin, end );
+        PutIterator(pid, begin, begin, end);
     }
 
     template< typename tIterator >
-    void PutIterator( uint32_t pid, tIterator begin, size_t offset, size_t count )
+    void PutIterator(uint32_t pid, tIterator begin, size_t offset, size_t count)
     {
-        PutIterator( pid, begin + offset, begin + offset + count, begin, begin + offset );
+        PutIterator(pid, begin + offset, begin + offset + count, begin, begin + offset);
     }
 
     template< typename tIterator, typename tOutputIterator >
-    void GetIterator( uint32_t pid, tIterator srcBegin, size_t offset, tOutputIterator resultBegin, size_t count )
+    void GetIterator(uint32_t pid, tIterator srcBegin, size_t offset, tOutputIterator resultBegin, size_t count)
     {
-        GetPtrs( pid, &*srcBegin, offset, &*resultBegin, count );
+        GetPtrs(pid, &*srcBegin, offset, &*resultBegin, count);
     }
 
     template< typename tIterator, typename tOutputIterator >
-    void GetIterator( uint32_t pid, tIterator srcBegin, tIterator srcCursor, tOutputIterator resultBegin,
-                      tOutputIterator resultEnd )
+    void GetIterator(uint32_t pid, tIterator srcBegin, tIterator srcCursor, tOutputIterator resultBegin,
+                     tOutputIterator resultEnd)
     {
-        GetIterator( pid, srcBegin, srcCursor - srcBegin, resultBegin, resultEnd - resultBegin );
+        GetIterator(pid, srcBegin, srcCursor - srcBegin, resultBegin, resultEnd - resultBegin);
     }
 
     template< typename tIterator >
-    void GetIterator( uint32_t pid, tIterator begin, tIterator cursor, tIterator end )
+    void GetIterator(uint32_t pid, tIterator begin, tIterator cursor, tIterator end)
     {
-        GetIterator( pid, begin, cursor, cursor, end );
+        GetIterator(pid, begin, cursor, cursor, end);
     }
 
     template< typename tIterator >
-    void GetIterator( uint32_t pid, tIterator begin, tIterator end )
+    void GetIterator(uint32_t pid, tIterator begin, tIterator end)
     {
-        GetIterator( pid, begin, begin, end );
+        GetIterator(pid, begin, begin, end);
     }
 
     template< typename tIterator >
-    void GetIterator( uint32_t pid, tIterator begin, size_t offset, size_t count )
+    void GetIterator(uint32_t pid, tIterator begin, size_t offset, size_t count)
     {
-        GetIterator( pid, begin, begin + offset, begin + offset, begin + offset + count );
+        GetIterator(pid, begin, begin + offset, begin + offset, begin + offset + count);
     }
 
     template< typename tIterator, typename tTag >
-    void SendIterator( uint32_t pid, tTag &tag, tIterator begin, size_t count )
+    void SendIterator(uint32_t pid, tTag &tag, tIterator begin, size_t count)
     {
-        SendPtrs( pid, tag, &*begin, count );
+        SendPtrs(pid, tag, &*begin, count);
     }
 
     template< typename tIterator, typename tTag >
-    void SendIterator( uint32_t pid, tTag *tag, tIterator begin, size_t count )
+    void SendIterator(uint32_t pid, tTag *tag, tIterator begin, size_t count)
     {
-        SendPtrs( pid, tag, &*begin, count );
+        SendPtrs(pid, tag, &*begin, count);
     }
 
     template< typename tIterator, typename tTag >
-    void SendIterator( uint32_t pid, tTag &tag, tIterator begin, tIterator end )
+    void SendIterator(uint32_t pid, tTag &tag, tIterator begin, tIterator end)
     {
-        SendIterator( pid, tag, begin, end - begin );
+        SendIterator(pid, tag, begin, end - begin);
     }
 
     template< typename tIterator, typename tTag >
-    void SendIterator( uint32_t pid, tTag *tag, tIterator begin, tIterator end )
+    void SendIterator(uint32_t pid, tTag *tag, tIterator begin, tIterator end)
     {
-        SendIterator( pid, tag, begin, end - begin );
+        SendIterator(pid, tag, begin, end - begin);
     }
 
     template< typename tIterator, typename tTagPrimitive, uint32_t tTagSize >
-    void SendIteratorWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tIterator begin, size_t count )
+    void SendIteratorWithCArray(uint32_t pid, tTagPrimitive(&tagContainer)[tTagSize], tIterator begin, size_t count)
     {
-        SendPtrsWithCArray( pid, tagContainer, &*begin, count );
+        SendPtrsWithCArray(pid, tagContainer, &*begin, count);
     }
 
     template< typename tIterator, typename tTagPrimitive, uint32_t tTagSize >
-    void SendIteratorWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tIterator begin, tIterator end )
+    void SendIteratorWithCArray(uint32_t pid, tTagPrimitive(&tagContainer)[tTagSize], tIterator begin, tIterator end)
     {
-        SendIteratorWithCArray( pid, tagContainer, begin, end - begin );
+        SendIteratorWithCArray(pid, tagContainer, begin, end - begin);
     }
 
     template< typename tIterator >
-    void SendIterator( uint32_t pid, tIterator begin, size_t count )
+    void SendIterator(uint32_t pid, tIterator begin, size_t count)
     {
-        SendPtrs( pid, &*begin, count );
+        SendPtrs(pid, &*begin, count);
     }
 
     template< typename tIterator >
-    void SendIterator( uint32_t pid, tIterator begin, tIterator end )
+    void SendIterator(uint32_t pid, tIterator begin, tIterator end)
     {
-        SendIterator( pid, begin, ( uint32_t )( end - begin ) );
+        SendIterator(pid, begin, (uint32_t)(end - begin));
     }
 
     template< typename tIterator >
-    void MoveIterator( tIterator begin, uint32_t maxCopySize )
+    void MoveIterator(tIterator begin, uint32_t maxCopySize)
     {
-        MovePtrs( &*begin, maxCopySize );
+        MovePtrs(&*begin, maxCopySize);
     }
 
     template< typename tIterator >
-    void MoveIterator( tIterator begin, tIterator end )
+    void MoveIterator(tIterator begin, tIterator end)
     {
-        MoveIterator( begin, ( uint32_t )( end - begin ) );
+        MoveIterator(begin, (uint32_t)(end - begin));
     }
 
     template< typename tPrimitive, size_t tSize >
-    void PushCArray( tPrimitive( &container )[tSize] )
+    void PushCArray(tPrimitive(&container)[tSize])
     {
-        PushPtrs( container, container + tSize );
+        PushPtrs(container, container + tSize);
     }
 
     template< typename tPrimitive, size_t tSize >
-    void PopCArray( tPrimitive( &container )[tSize] )
+    void PopCArray(tPrimitive(&container)[tSize])
     {
-        PopPtrs( container );
+        PopPtrs(container);
     }
 
     template< typename tPrimitive, size_t tSizeIn, size_t tSizeOut  >
-    void PutCArray( uint32_t pid, tPrimitive( &src )[tSizeIn], tPrimitive( &dst )[tSizeOut] )
+    void PutCArray(uint32_t pid, tPrimitive(&src)[tSizeIn], tPrimitive(&dst)[tSizeOut])
     {
-        PutPtrs( pid, src, src + tSizeIn, dst, dst );
+        PutPtrs(pid, src, src + tSizeIn, dst, dst);
     }
 
     template< typename tPrimitive, size_t tSize >
-    void PutCArray( uint32_t pid, tPrimitive( &container )[tSize] )
+    void PutCArray(uint32_t pid, tPrimitive(&container)[tSize])
     {
-        PutCArray( pid, container, container );
+        PutCArray(pid, container, container);
     }
 
     template< typename tPrimitive, size_t tSizeIn, size_t tSizeOut >
-    void GetCArray( uint32_t pid, tPrimitive( &src )[tSizeIn], tPrimitive( &dst )[tSizeOut] )
+    void GetCArray(uint32_t pid, tPrimitive(&src)[tSizeIn], tPrimitive(&dst)[tSizeOut])
     {
-        GetPtrs( pid, src, src, dst, dst + tSizeOut );
+        GetPtrs(pid, src, src, dst, dst + tSizeOut);
     }
 
     template< typename tPrimitive, size_t tSize >
-    void GetCArray( uint32_t pid, tPrimitive( &container )[tSize] )
+    void GetCArray(uint32_t pid, tPrimitive(&container)[tSize])
     {
-        GetCArray( pid, container, container );
+        GetCArray(pid, container, container);
     }
 
     template< typename tPrimitive, typename tTag, size_t tSize >
-    void SendCArray( uint32_t pid, tTag *tag, tPrimitive( &payload )[tSize] )
+    void SendCArray(uint32_t pid, tTag *tag, tPrimitive(&payload)[tSize])
     {
-        SendPtrs( pid, tag, payload, tSize );
+        SendPtrs(pid, tag, payload, tSize);
     }
 
     template< typename tPrimitive, typename tTag, size_t tSize >
-    void SendCArray( uint32_t pid, tTag &tag, tPrimitive( &payload )[tSize] )
+    void SendCArray(uint32_t pid, tTag &tag, tPrimitive(&payload)[tSize])
     {
-        SendPtrs( pid, tag, payload, tSize );
+        SendPtrs(pid, tag, payload, tSize);
     }
 
     template< typename tPrimitive, typename tTagPrimitive, size_t tSize, size_t tTagSize >
-    void SendCArrayWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], tPrimitive( &payload )[tSize] )
+    void SendCArrayWithCArray(uint32_t pid, tTagPrimitive(&tagContainer)[tTagSize], tPrimitive(&payload)[tSize])
     {
-        SendPtrsWithCArray( pid, tagContainer, payload, tSize );
+        SendPtrsWithCArray(pid, tagContainer, payload, tSize);
     }
 
     template< typename tPrimitive, size_t tSize >
-    void SendCArray( uint32_t pid, tPrimitive( &payload )[tSize] )
+    void SendCArray(uint32_t pid, tPrimitive(&payload)[tSize])
     {
-        SendPtrs( pid, payload, tSize );
+        SendPtrs(pid, payload, tSize);
     }
 
     template< typename tPrimitive, size_t tSize >
-    void MoveCArray( tPrimitive( &payload )[tSize] )
+    void MoveCArray(tPrimitive(&payload)[tSize])
     {
-        MovePtrs( payload, tSize );
+        MovePtrs(payload, tSize);
     }
 
     template< typename tContainer >
-    void PushContainer( tContainer &container )
+    void PushContainer(tContainer &container)
     {
-        PushIterator( container.begin(), container.end() );
+        PushIterator(container.begin(), container.end());
     }
 
     template< typename tContainer >
-    void PopContainer( tContainer &container )
+    void PopContainer(tContainer &container)
     {
-        PopIterator( container.begin() );
+        PopIterator(container.begin());
     }
 
     template < typename tContainerIn, typename tContainerOut >
-    void PutContainer( uint32_t pid, tContainerIn &src, tContainerOut &dst )
+    void PutContainer(uint32_t pid, tContainerIn &src, tContainerOut &dst)
     {
-        PutIterator( pid, src.begin(), src.end(), dst.begin(), dst.begin() );
+        PutIterator(pid, src.begin(), src.end(), dst.begin(), dst.begin());
     }
 
     template< typename tContainer >
-    void PutContainer( uint32_t pid, tContainer &container )
+    void PutContainer(uint32_t pid, tContainer &container)
     {
-        PutContainer( pid, container, container );
+        PutContainer(pid, container, container);
     }
 
     template < typename tContainerIn, typename tContainerOut >
-    void GetContainer( uint32_t pid, tContainerIn &src, tContainerOut &dst )
+    void GetContainer(uint32_t pid, tContainerIn &src, tContainerOut &dst)
     {
-        GetIterator( pid, src.begin(), src.begin(), dst.begin(), dst.end() );
+        GetIterator(pid, src.begin(), src.begin(), dst.begin(), dst.end());
     }
 
     template< typename tContainer >
-    void GetContainer( uint32_t pid, tContainer &container )
+    void GetContainer(uint32_t pid, tContainer &container)
     {
-        GetContainer( pid, container, container );
+        GetContainer(pid, container, container);
     }
 
     template< typename tTag, typename tContainer >
-    void SendContainer( uint32_t pid, tTag *tag, tContainer &payload )
+    void SendContainer(uint32_t pid, tTag *tag, tContainer &payload)
     {
-        SendIterator( pid, tag, payload.begin(), payload.end() );
+        SendIterator(pid, tag, payload.begin(), payload.end());
     }
 
     template< typename tTag, typename tContainer >
-    void SendContainer( uint32_t pid, tTag &tag, tContainer &payload )
+    void SendContainer(uint32_t pid, tTag &tag, tContainer &payload)
     {
-        SendIterator( pid, tag, payload.begin(), payload.end() );
+        SendIterator(pid, tag, payload.begin(), payload.end());
     }
 
     template< typename tTagPrimitive, typename tContainer, size_t tTagSize >
-    void SendContainerWithCArray( uint32_t pid, tTagPrimitive( &tag )[tTagSize], tContainer &payload )
+    void SendContainerWithCArray(uint32_t pid, tTagPrimitive(&tag)[tTagSize], tContainer &payload)
     {
-        SendIteratorWithCArray( pid, tag, payload.begin(), payload.end() );
+        SendIteratorWithCArray(pid, tag, payload.begin(), payload.end());
     }
 
     template< typename tContainer >
-    void SendContainer( uint32_t pid, tContainer &payload )
+    void SendContainer(uint32_t pid, tContainer &payload)
     {
-        SendIterator( pid, payload.begin(), payload.end() );
+        SendIterator(pid, payload.begin(), payload.end());
     }
 
     template< typename tContainer >
-    void MoveContainer( tContainer &payload )
+    void MoveContainer(tContainer &payload)
     {
-        MoveIterator( payload.begin(), ( uint32_t )payload.size() );
+        MoveIterator(payload.begin(), (uint32_t)payload.size());
     }
 
     template< typename tPrimitive >
     void SetTagsize()
     {
-        size_t size = sizeof( tPrimitive );
-        Classic::SetTagSize( &size );
+        size_t size = sizeof(tPrimitive);
+        Classic::SetTagSize(&size);
     }
 
     template< typename tPrimitive >
-    void SetTagsize( uint32_t count )
+    void SetTagsize(uint32_t count)
     {
-        size_t size = count * sizeof( tPrimitive );
-        Classic::SetTagSize( &size );
+        size_t size = count * sizeof(tPrimitive);
+        Classic::SetTagSize(&size);
     }
 
-    inline void QSize( size_t &packets )
+    inline void QSize(size_t &packets)
     {
-        Classic::QSize( &packets, nullptr );
+        Classic::QSize(&packets, nullptr);
     }
 
-    inline void QSize( size_t &packets, size_t &accumulatedSize )
+    inline void QSize(size_t &packets, size_t &accumulatedSize)
     {
-        Classic::QSize( &packets, &accumulatedSize );
+        Classic::QSize(&packets, &accumulatedSize);
     }
 
     template< typename tPrimitive >
-    void GetTag( size_t &status, tPrimitive &tag )
+    void GetTag(size_t &status, tPrimitive &tag)
     {
-        Classic::GetTag( &status, &tag );
+        Classic::GetTag(&status, &tag);
     }
 
     template<>
-    inline void GetTag( size_t &status, std::string &tag )
+    inline void GetTag(size_t &status, std::string &tag)
     {
-        Classic::GetTag( &status, &*tag.begin() );
+        Classic::GetTag(&status, &*tag.begin());
     }
 
     template< typename tPrimitive >
-    void GetTagPtr( size_t &status, tPrimitive *tag )
+    void GetTagPtr(size_t &status, tPrimitive *tag)
     {
-        GetTag( status, *tag );
+        GetTag(status, *tag);
     }
 
     template< typename tIterator >
-    void GetTagIterator( size_t &status, tIterator tagBegin )
+    void GetTagIterator(size_t &status, tIterator tagBegin)
     {
-        GetTagPtr( status, &*tagBegin );
+        GetTagPtr(status, &*tagBegin);
     }
 
     template< typename tContainer >
-    void GetTagContainer( size_t &status, tContainer &tag )
+    void GetTagContainer(size_t &status, tContainer &tag)
     {
-        GetTagIterator( status, tag.begin() );
+        GetTagIterator(status, tag.begin());
     }
 
     template< typename tPrimitive, size_t tSize >
-    void GetTagCArray( size_t &status, tPrimitive( &tag )[tSize] )
+    void GetTagCArray(size_t &status, tPrimitive(&tag)[tSize])
     {
-        GetTagPtr( status, tag );
+        GetTagPtr(status, tag);
     }
 
     /**
@@ -840,24 +840,24 @@ namespace BSPLib
      * @return true if it succeeds, false if it fails.
      */
 
-    inline bool Execute( std::function< void() > func, uint32_t nProc, int32_t argc, char **argv )
+    inline bool Execute(std::function< void() > func, uint32_t nProc, int32_t argc, char **argv)
     {
         std::function< void() > spmd = [func, nProc]
         {
-            BSPLib::Classic::Begin( nProc );
+            BSPLib::Classic::Begin(nProc);
 
             func();
 
             BSPLib::Classic::End();
         };
 
-        BSPLib::Classic::Init( spmd, argc, argv );
+        BSPLib::Classic::Init(spmd, argc, argv);
 
         try
         {
             spmd();
         }
-        catch ( BSPInternal::BspAbort & )
+        catch (BSPInternal::BspAbort &)
         {
             return false;
         }
@@ -874,62 +874,62 @@ namespace BSPLib
      * @return true if it succeeds, false if it fails.
      */
 
-    inline bool Execute( std::function< void() > func, uint32_t nProc )
+    inline bool Execute(std::function< void() > func, uint32_t nProc)
     {
-        return Execute( func, nProc, 0, nullptr );
+        return Execute(func, nProc, 0, nullptr);
     }
 
 
 
 
     template< typename tPrimitive, typename tTag >
-    void Send( uint32_t pid, tTag &tag, const tPrimitive &payload )
+    void Send(uint32_t pid, tTag &tag, const tPrimitive &payload)
     {
-        SendPtrs( pid, tag, &payload, 1 );
+        SendPtrs(pid, tag, &payload, 1);
     }
 
     template< typename tTag >
-    void Send( uint32_t pid, tTag &tag, const std::string &payload )
+    void Send(uint32_t pid, tTag &tag, const std::string &payload)
     {
-        SendPtrs( pid, tag, payload.data(), payload.size() );
+        SendPtrs(pid, tag, payload.data(), payload.size());
     }
 
     template< typename tPrimitive, typename tTag >
-    void Send( uint32_t pid, tTag *tag, const tPrimitive &payload )
+    void Send(uint32_t pid, tTag *tag, const tPrimitive &payload)
     {
-        SendPtrs( pid, tag, &payload, 1 );
+        SendPtrs(pid, tag, &payload, 1);
     }
 
     template< typename tTag >
-    void Send( uint32_t pid, tTag *tag, const std::string &payload )
+    void Send(uint32_t pid, tTag *tag, const std::string &payload)
     {
-        SendPtrs( pid, tag, payload.data(), payload.size() );
+        SendPtrs(pid, tag, payload.data(), payload.size());
     }
 
     template< typename tPrimitive >
-    void Send( uint32_t pid, const tPrimitive &payload )
+    void Send(uint32_t pid, const tPrimitive &payload)
     {
-        SendPtrs( pid, &payload, 1 );
+        SendPtrs(pid, &payload, 1);
     }
 
     template<>
-    inline void Send( uint32_t pid, const std::string &payload )
+    inline void Send(uint32_t pid, const std::string &payload)
     {
-        SendPtrs( pid, payload.data(), payload.size() );
+        SendPtrs(pid, payload.data(), payload.size());
     }
 
 
 
     template< typename tTagPrimitive, size_t tTagSize >
-    void SendWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], const std::string &payload )
+    void SendWithCArray(uint32_t pid, tTagPrimitive(&tagContainer)[tTagSize], const std::string &payload)
     {
-        SendPtrs( pid, tagContainer, payload.data(), payload.size() );
+        SendPtrs(pid, tagContainer, payload.data(), payload.size());
     }
 
     template< typename tPrimitive, typename tTagPrimitive, size_t tTagSize >
-    void SendWithCArray( uint32_t pid, tTagPrimitive( &tagContainer )[tTagSize], const tPrimitive &payload )
+    void SendWithCArray(uint32_t pid, tTagPrimitive(&tagContainer)[tTagSize], const tPrimitive &payload)
     {
-        SendPtrs( pid, tagContainer, &payload, 1 );
+        SendPtrs(pid, tagContainer, &payload, 1);
     }
 
 #ifndef BSP_DISABLE_NAMESPACE

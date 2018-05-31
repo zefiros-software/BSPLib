@@ -50,8 +50,8 @@ namespace BSPInternal
          * @param   m The error message.
          */
 
-        explicit BspAbort( std::string m )
-            : msg( m )
+        explicit BspAbort(std::string m)
+            : msg(m)
         {
         }
 

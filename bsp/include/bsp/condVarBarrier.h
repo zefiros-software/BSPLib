@@ -52,11 +52,11 @@ namespace BSPInternal
          * @param   count Number of threads to wait for.
          */
 
-        explicit CondVarBarrier( std::size_t count )
-            : mCurrentCon( &mConVar1 ),
-              mPreviousCon( &mConVar2 ),
-              mCount( count ),
-              mMax( count )
+        explicit CondVarBarrier(std::size_t count)
+            : mCurrentCon(&mConVar1),
+              mPreviousCon(&mConVar2),
+              mCount(count),
+              mMax(count)
         {
         }
 
@@ -68,7 +68,7 @@ namespace BSPInternal
          * @post The amount of threads the barriers waits on equals count.
          */
 
-        void SetSize( size_t count )
+        void SetSize(size_t count)
         {
             mCount = count;
             mMax = count;
@@ -85,23 +85,23 @@ namespace BSPInternal
          * @post all threads have waited for each other to reach the barrier.
          */
 
-        void Wait( const std::atomic_bool &aborted )
+        void Wait(const std::atomic_bool &aborted)
         {
-            std::unique_lock<std::mutex> lock( mMutex );
+            std::unique_lock<std::mutex> lock(mMutex);
 
-            if ( aborted )
+            if (aborted)
             {
                 mCurrentCon->notify_all();
-                throw BspAbort( "Aborted" );
+                throw BspAbort("Aborted");
             }
 
-            if ( --mCount == 0 )
+            if (--mCount == 0)
             {
                 Reset();
             }
             else
             {
-                mCurrentCon->wait( lock );
+                mCurrentCon->wait(lock);
             }
         }
 
